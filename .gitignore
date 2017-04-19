@@ -34,3 +34,8 @@ Compiled
 *.MF
 
 *.pyc
+
+*.sln.include
+
+# Generated files
+PluginModels.cs

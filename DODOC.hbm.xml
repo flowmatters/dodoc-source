@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="FlowMatters.Source.DODOC" auto-import="false">
+  <subclass abstract="true" name="FlowMatters.Source.DODOC.Storage.ProxyStorageSourceSinkModel" lazy="false" discriminator-value="ProxyStorageSourceSinkModel" extends="RiverSystem.SourceSinkModel, RiverSystem">
+    <join table="ProxyStorageSourceSinkMod" fetch="select">
+      <key column="SubclassKey" />
+      <property name="FloodplainElevation" column="FloodplainElevation" access="property" />
+    </join>
+    <subclass name="FlowMatters.Source.DODOC.Storage.StorageDOC" lazy="false" discriminator-value="StorageDOC">
+      <join table="StorageDOC" fetch="select">
+        <key column="SubclassKey" />
+        <property name="DecompositionCoefficient" column="DecompositionCoefficient" access="property" />
+        <property name="MaxAccumulationArea" column="MaxAccumulationArea" access="property" />
+        <property name="Fac" column="Fac" access="property" />
+        <property name="LeafAccumulationConstant" column="LeafAccumulationConstant" access="property" />
+        <property name="ReaerationCoefficient" column="ReaerationCoefficient" access="property" />
+        <property name="DocConsumptionCoefficient" column="DocConsumptionCoefficient" access="property" />
+        <property name="LeafA" column="LeafA" access="property" />
+        <property name="LeafK1" column="LeafK1" access="property" />
+        <property name="LeafK2" column="LeafK2" access="property" />
+      </join>
+    </subclass>
+    <subclass name="FlowMatters.Source.DODOC.Storage.StorageDO" lazy="false" discriminator-value="StorageDO"/>
+  </subclass>
+  <subclass abstract="true" name="FlowMatters.Source.DODOC.Instream.ProxyLinkSourceSinkModel" lazy="false" discriminator-value="ProxyLinkSourceSinkModel" extends="RiverSystem.SourceSinkModel, RiverSystem">
+    <join table="ProxyLinkSourceSinkModel" fetch="select">
+      <key column="SubclassKey" />
+      <property name="IsFloodplain" column="IsFloodplain" access="property" />
+    </join>
+    <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDOC" lazy="false" discriminator-value="InstreamDOC">
+      <join table="InstreamDOC" fetch="select">
+        <key column="SubclassKey" />
+        <property name="DecompositionCoefficient" column="DecompositionCoefficient" access="property" />
+        <property name="MaxAccumulationArea" column="MaxAccumulationArea" access="property" />
+        <property name="Fac" column="Fac" access="property" />
+        <property name="LeafAccumulationConstant" column="LeafAccumulationConstant" access="property" />
+        <property name="ReaerationCoefficient" column="ReaerationCoefficient" access="property" />
+        <property name="DocConsumptionCoefficient" column="DocConsumptionCoefficient" access="property" />
+        <property name="LeafA" column="LeafA" access="property" />
+        <property name="LeafK1" column="LeafK1" access="property" />
+        <property name="LeafK2" column="LeafK2" access="property" />
+      </join>
+    </subclass>
+    <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDO" lazy="false" discriminator-value="InstreamDO"/>
+  </subclass>
+</hibernate-mapping>

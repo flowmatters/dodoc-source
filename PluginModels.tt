@@ -1,0 +1,111 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+
+<#
+string[] prefixes = {"Instream","Storage"};
+string[] parent = {"ProxyLinkSourceSinkModel","ProxyStorageSourceSinkModel"};
+bool[] clone = {true,false};
+string[] flags = {"IsFloodplain"};
+string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","LeafAccumulationConstant",
+					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2"};
+string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double"};#>
+
+using RiverSystem;
+using TIME.Core.Metadata;
+
+<# for(int i=0; i<prefixes.Length; i++)
+   {
+ #>
+namespace FlowMatters.Source.DODOC.<#= prefixes[i] #>
+{
+    public class <#= prefixes[i] #>DO : <#= parent[i] #>
+    {
+        public <#= prefixes[i] #>DO()
+        {
+        }
+
+		<# if(clone[i]){ #>
+			public override LinkSourceSinkModel CloneForMultipleDivisions()
+			{
+				return new <#= prefixes[i] #>DO() { 
+				<# foreach(var flag in flags) { #>
+					<#= flag #> = <#= flag#>,
+				};
+				<# } #>
+			}
+		
+		<# } #>
+
+        protected override void UpdateWorker(double constituentConcentration)
+        {
+            Worker.ConcentrationDo = constituentConcentration;
+        }
+
+        protected override void RetrieveResults()
+        {
+            ProcessedLoad = Worker.DissolvedOxygenLoad;
+        }
+    }
+
+    public class <#= prefixes[i] #>DOC : <#= parent[i] #>
+    {
+        public <#= prefixes[i] #>DOC()
+        {
+        }
+
+        // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
+
+		<# foreach(var param in parameters){ #>
+[Parameter] public double <#= param #> {get; set;}
+		<# } #>
+
+		<# foreach(var output in outputs){ 
+			var nm = output.Split(' ')[0];
+			var dt = output.Split(' ')[1];#>
+[Output] public <#= dt #> <#= nm #> {get; private set;}
+
+		<# } #>
+
+		<# if(clone[i]){ #>
+public override LinkSourceSinkModel CloneForMultipleDivisions()
+{
+	return new <#= prefixes[i] #>DOC() { 
+				<# foreach(var flag in flags) { #>
+	<#= flag #> = <#= flag#>,
+				<# } #>
+				<# foreach(var param in parameters) { #>
+	<#= param #> = <#= param #>,
+				<# } #>
+	};
+	}
+		
+		<# } #>
+
+        protected override void UpdateWorker(double constituentConcentration)
+        {
+            Worker.ConcentrationDoc = constituentConcentration;
+
+			<# foreach( var param in parameters){ #>
+			Worker.<#=param#> = <#=param#>;
+			<# } #>
+        }
+
+        protected override void RetrieveResults()
+        {
+            ProcessedLoad = Worker.DissolvedOrganicCarbonLoad;
+			<# foreach(var output in outputs) {
+			 var nm = output.Split(' ')[0];#>
+			<#=nm#> = Worker.<#=nm#>;
+			<# } #>
+        }
+    }
+
+}
+
+<# } #>
+
+
