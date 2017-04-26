@@ -411,6 +411,8 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 var newZone = new FloodplainData();
                 newZone.Area = Fac*MaxAccumulationArea;
+                newZone.LeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
+                newZone.LeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
                 Zones.Add(newZone);
             }
 
@@ -538,8 +540,8 @@ namespace FlowMatters.Source.DODOC.Core
     {
         public double M2_TO_HA = 1e-4;
         public double Area { get; set; }
-        public double LeafDryMatterReadilyDegradable { get; set; }
-        public double LeafDryMatterNonReadilyDegradable { get; set; }
+        public double LeafDryMatterReadilyDegradable { get; set; } // mass/ha
+        public double LeafDryMatterNonReadilyDegradable { get; set; } // mass/ha
         public double NewArea { get; set; }
         public bool Wet { get; set; }
         public bool Dry { get { return !Wet; } }

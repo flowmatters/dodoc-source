@@ -1,5 +1,6 @@
 ﻿using System;
 using RiverSystem;
+using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.ManagedExtensions;
 
@@ -66,6 +67,12 @@ namespace FlowMatters.Source.DODOC.Core
         public double ConcentrationDo { get; set; }
 
         public double MaxAccumulationArea { get; set; }
+
+        [Parameter, CalculationUnits("kg.ha^-1")]
+        public double InitialLeafDryMatterReadilyDegradable { get; set; }
+
+        [Parameter,CalculationUnits("kg.ha^-1")]
+        public double InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         protected DateTime Last;
 

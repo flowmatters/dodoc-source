@@ -11,7 +11,8 @@ string[] parent = {"ProxyLinkSourceSinkModel","ProxyStorageSourceSinkModel"};
 bool[] clone = {true,false};
 string[] flags = {"IsFloodplain"};
 string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","LeafAccumulationConstant",
-					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2"};
+					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2",
+					   "InitialLeafDryMatterReadilyDegradable","InitialLeafDryMatterNonReadilyDegradable"};
 string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double"};#>
 
 using RiverSystem;

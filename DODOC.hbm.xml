@@ -17,6 +17,8 @@
         <property name="LeafA" column="LeafA" access="property" />
         <property name="LeafK1" column="LeafK1" access="property" />
         <property name="LeafK2" column="LeafK2" access="property" />
+        <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
+        <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Storage.StorageDO" lazy="false" discriminator-value="StorageDO"/>
@@ -38,6 +40,8 @@
         <property name="LeafA" column="LeafA" access="property" />
         <property name="LeafK1" column="LeafK1" access="property" />
         <property name="LeafK2" column="LeafK2" access="property" />
+        <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
+        <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDO" lazy="false" discriminator-value="InstreamDO"/>
