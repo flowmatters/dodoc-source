@@ -24,7 +24,7 @@ namespace FlowMatters.Source.DODOC.Storage
         //private double _prevStorage;
         //private double _prevArea;
 
-        public double Area { get { return _storage.SurfaceArea - _disregardedArea; } }
+        public double Area { get { return Math.Max(0.0,_storage.SurfaceArea - _disregardedArea); } }
 
         //public double PreviousArea
         //{
