@@ -418,7 +418,9 @@ namespace FlowMatters.Source.DODOC.Core
 
             UpdateFloodedAreas();
 
-            var doc = 0.0;
+            double existingDOCMassKg = ConcentrationDoc * WorkingVolume; // kg/m^3 * m^3 = kg
+
+            var docMilligrams = existingDOCMassKg*KG_TO_MG;
 
             if (Areal.Area.LessOrEqual(0.0))
                 FloodCounter = 0;
@@ -447,7 +449,7 @@ namespace FlowMatters.Source.DODOC.Core
                                  scale + zone.NewArea*LeafAccumulationConstant;
 
                 double leafDOC = wetleaf*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma*86400));
-                doc += leafDOC;
+                docMilligrams += leafDOC;
 
                 /*
                   zone(floodrch,isub,ii,2) = max(0.,zone(floodrch,isub,ii,2)-(zone(floodrch,isub,ii,2) * (1 - Exp(-decomp1 * sigma *  86400))))
@@ -471,12 +473,12 @@ namespace FlowMatters.Source.DODOC.Core
                 }
             }
 
-            ConsumedDoc = ConcentrationDoc*WorkingVolume*DocConsumptionCoefficient*Sigma*1e6;
-            ConsumedDoc += DocConsumptionCoefficient*doc*Sigma;
+            //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
+            ConsumedDoc += docMilligrams*DocConsumptionCoefficient*Sigma;
 
-            doc = (doc - ConsumedDoc)*1e-6;
+            docMilligrams = (docMilligrams - ConsumedDoc);
 
-            DissolvedOrganicCarbonLoad = doc;
+            DissolvedOrganicCarbonLoad = docMilligrams*MG_TO_KG;
 
 
 /*

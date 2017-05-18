@@ -19,6 +19,8 @@
         <property name="LeafK2" column="LeafK2" access="property" />
         <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
         <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
+        <property name="SoilO2Scaling" column="SoilO2Scaling" access="property" />
+        <property name="PrimaryProductionReaeration" column="PrimaryProductionR" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Storage.StorageDO" lazy="false" discriminator-value="StorageDO"/>
@@ -42,6 +44,8 @@
         <property name="LeafK2" column="LeafK2" access="property" />
         <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
         <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
+        <property name="SoilO2Scaling" column="SoilO2Scaling" access="property" />
+        <property name="PrimaryProductionReaeration" column="PrimaryProductionR" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDO" lazy="false" discriminator-value="InstreamDO"/>

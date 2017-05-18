@@ -9,6 +9,8 @@ namespace FlowMatters.Source.DODOC.Core
     public abstract class DoDocModel
     {
         public const double MG_L_to_KG_M3 = 1e-3;
+        public const double MG_TO_KG = 1e-6;
+        public const double KG_TO_MG = 1e6;
 
         public double WorkingVolume
         {
@@ -24,11 +26,13 @@ namespace FlowMatters.Source.DODOC.Core
 
         public readonly double[] ProductionCoefficients = new[] {1.0, 0.75, 0.50, 0.25, 0.1 };
         public readonly int[] ProductionBreaks = new[] {3, 5, 8, 20};
-        public const double primaryProduction = 0.43; // +++TODO Fortran says - mg.L.day - does that mean mg/L/day? g/kl, kg/ML
+
+        [Parameter]
+        public double PrimaryProductionReaeration { get; set; } = 0.43; // +++TODO Fortran says - mg.L.day - does that mean mg/L/day? g/kl, kg/ML
 
         public Areal Areal { get; set; }
 
-        protected double TemperatureEst;
+        [Output] public double TemperatureEst { get; protected set; }
         protected double Sigma;
 
         public bool Debug { get; set; }
@@ -38,6 +42,9 @@ namespace FlowMatters.Source.DODOC.Core
         public double DissolvedOrganicCarbonLoad { get; set; }
         [Output]
         public double DissolvedOxygenLoad { get; set; }
+
+        [Parameter]
+        public double SoilO2Scaling { get; set; }
 
         [Parameter]
         public double Fac { get; set; }
@@ -75,6 +82,14 @@ namespace FlowMatters.Source.DODOC.Core
         public double InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         protected DateTime Last;
+        [Output]
+        public double SoilO2Kg { get; private set; }
+        [Output]
+        public double DoCo2 { get; private set; }
+        [Output]
+        public double Production { get; private set; }
+        [Output]
+        public double Reaeration { get; private set; }
 
         public void Run(DateTime dt)
         {
@@ -113,16 +128,17 @@ namespace FlowMatters.Source.DODOC.Core
         protected virtual void ProcessDo()
         {
             // Bring existing concentration into it?
-            var soilO2Kg = 1e-6*SoilO2mg();
 
-            var DOCo2 = 1e-6 * ConsumedDoc/20*32;
+            SoilO2Kg = SoilO2Scaling*1e-6*SoilO2mg();
+
+            DoCo2 = 1e-6 * ConsumedDoc/20*32;
 
             var saturatedo2 = 13.41*Math.Exp(-0.01905*TemperatureEst); // +++TODO UNITS????
-            var waterColumnConcentrationDO = Math.Min(ConcentrationDo, saturatedo2);
+            var waterColumnConcentrationDO = Math.Min(ConcentrationDo, saturatedo2*MG_L_to_KG_M3);
             var existingWaterColumnDO = WorkingVolume * waterColumnConcentrationDO; // +++TODO Units???
 
             // +++TODO Check!
-            var reaeration = existingWaterColumnDO + ReaerationCoefficient* Math.Max(0, (saturatedo2 - waterColumnConcentrationDO))* WorkingVolume * 1e6;
+            Reaeration = ReaerationCoefficient* Math.Max(0, (saturatedo2 - waterColumnConcentrationDO))* WorkingVolume * 1e6;
 
             int i;
             for (i = 0; i < ProductionBreaks.Length; i++)
@@ -131,10 +147,10 @@ namespace FlowMatters.Source.DODOC.Core
                 if (ConcentrationDoc <= ProductionBreaks[i])
                     break;
             }
-            var production = (primaryProduction*MG_L_to_KG_M3)*WorkingVolume*ProductionCoefficients[i];
+            Production = (PrimaryProductionReaeration*MG_L_to_KG_M3)*WorkingVolume*ProductionCoefficients[i];
 
-            var total_oxygen = (production + reaeration) - (soilO2Kg + DOCo2);
-            var subloadO2 = total_oxygen/Fac;
+            var totalOxygen = (existingWaterColumnDO + Production + Reaeration) - (SoilO2Kg + DoCo2);
+            var subloadO2 = totalOxygen/Fac;
 
             if (WorkingVolume.Greater(0.0))
                 DissolvedOxygenLoad = Math.Max(subloadO2,0.0);
