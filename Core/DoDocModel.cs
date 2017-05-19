@@ -9,8 +9,10 @@ namespace FlowMatters.Source.DODOC.Core
     public abstract class DoDocModel
     {
         public const double MG_L_to_KG_M3 = 1e-3;
+        public const double KG_M3_to_MG_L = 1e3;
         public const double MG_TO_KG = 1e-6;
         public const double KG_TO_MG = 1e6;
+        public const double M3_to_L = 1e3;
 
         public double WorkingVolume
         {
@@ -133,23 +135,28 @@ namespace FlowMatters.Source.DODOC.Core
 
             DoCo2 = 1e-6 * ConsumedDoc/20*32;
 
-            var saturatedo2 = 13.41*Math.Exp(-0.01905*TemperatureEst); // +++TODO UNITS????
-            var waterColumnConcentrationDO = Math.Min(ConcentrationDo, saturatedo2*MG_L_to_KG_M3);
-            var existingWaterColumnDO = WorkingVolume * waterColumnConcentrationDO; // +++TODO Units???
+            var saturatedo2mg_L = 13.41*Math.Exp(-0.01905*TemperatureEst); // +++TODO CONFIRM UNITS????
+            var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L*MG_L_to_KG_M3);
+            var existingWaterColumnDOKg = WorkingVolume * waterColumnConcentrationDOKg_M3;
+            var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
 
-            // +++TODO Check!
-            Reaeration = ReaerationCoefficient* Math.Max(0, (saturatedo2 - waterColumnConcentrationDO))* WorkingVolume * 1e6;
+            // +++TODO Check unit conversions!
+            var reaerationmg = ReaerationCoefficient* Math.Max(0, (saturatedo2mg_L/*mg.L-1*/ - waterColumnConcentrationDOmg_L))* WorkingVolume * M3_to_L;
+            Reaeration = reaerationmg*MG_TO_KG;
 
             int i;
+            var concentrationDOCmgL = ConcentrationDoc*KG_M3_to_MG_L;
             for (i = 0; i < ProductionBreaks.Length; i++)
             {
                 // +++TODO Should this concentration be the updated concentration, post DOC run?
-                if (ConcentrationDoc <= ProductionBreaks[i])
+                if (concentrationDOCmgL <= ProductionBreaks[i])
                     break;
             }
             Production = (PrimaryProductionReaeration*MG_L_to_KG_M3)*WorkingVolume*ProductionCoefficients[i];
 
-            var totalOxygen = (existingWaterColumnDO + Production + Reaeration) - (SoilO2Kg + DoCo2);
+            var totalOxygenUnconstrainedKg = (existingWaterColumnDOKg + Production + Reaeration) - (SoilO2Kg + DoCo2);
+            var saturationOxygenKg = saturatedo2mg_L*MG_L_to_KG_M3*WorkingVolume;
+            var totalOxygen = Math.Min(totalOxygenUnconstrainedKg, saturationOxygenKg);
             var subloadO2 = totalOxygen/Fac;
 
             if (WorkingVolume.Greater(0.0))
