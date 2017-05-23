@@ -476,7 +476,7 @@ namespace FlowMatters.Source.DODOC.Core
             //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
             ConsumedDoc += docMilligrams*DocConsumptionCoefficient*Sigma;
 
-            docMilligrams = (docMilligrams - ConsumedDoc);
+            docMilligrams = Math.Max(docMilligrams - ConsumedDoc,0.0);
 
             DissolvedOrganicCarbonLoad = docMilligrams*MG_TO_KG;
 
