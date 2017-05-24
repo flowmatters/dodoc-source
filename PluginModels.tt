@@ -15,7 +15,8 @@ string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","L
 					   "InitialLeafDryMatterReadilyDegradable","InitialLeafDryMatterNonReadilyDegradable",
 					   "SoilO2Scaling","PrimaryProductionReaeration"};
 string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double",
-			        "TemperatureEst double","SoilO2Kg double","DoCo2 double","Production double","Reaeration double"};#>
+			        "TemperatureEst double","SoilO2Kg double","DoCo2 double","Production double","Reaeration double",
+					"ConsumedDocMilligrams double","DOCEnteringWater double"};#>
 
 using RiverSystem;
 using TIME.Core.Metadata;

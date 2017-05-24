@@ -5,9 +5,9 @@
         protected override void ProcessDoc()
         {
             var load = ConcentrationDoc * WorkingVolume;
-            ConsumedDoc = load*DocConsumptionCoefficient*Sigma*1e6;
+            ConsumedDocMilligrams = load*DocConsumptionCoefficient*Sigma*1e6;
             //DissolvedOrganicCarbonLoad = -1* ConsumedDoc / Fac*1e-6;
-            DissolvedOrganicCarbonLoad = load - ConsumedDoc*1e-6;
+            DissolvedOrganicCarbonLoad = load - ConsumedDocMilligrams*1e-6;
 
             /*
                             !only DOC and O2 loads calculated (remove 1% DOC per day)

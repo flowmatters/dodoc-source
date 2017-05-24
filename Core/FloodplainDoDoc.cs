@@ -433,6 +433,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             var decomp1 = DecompositionCoefficient*leach1;
 
+            DOCEnteringWater = 0;
             foreach (var zone in Zones)
             {
                 if (Areal.Area.Less(zone.AreaM2))
@@ -448,7 +449,7 @@ namespace FlowMatters.Source.DODOC.Core
                                  LeafAccumulationConstant);
 
                 double leafDOC = wetleafKg*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma*86400)); // ??? How is this converting kg->mg (*1e-6)
-                docMilligrams += leafDOC;
+                DOCEnteringWater += leafDOC;
 
                 /*
                   zone(floodrch,isub,ii,2) = max(0.,zone(floodrch,isub,ii,2)-(zone(floodrch,isub,ii,2) * (1 - Exp(-decomp1 * sigma *  86400))))
@@ -459,6 +460,8 @@ namespace FlowMatters.Source.DODOC.Core
                 zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*leadingRate);
 
             }
+
+            docMilligrams += DOCEnteringWater;
 
             foreach (var zone in Zones)
             {
@@ -473,9 +476,9 @@ namespace FlowMatters.Source.DODOC.Core
             }
 
             //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
-            ConsumedDoc = docMilligrams*DocConsumptionCoefficient*Sigma;
+            ConsumedDocMilligrams = docMilligrams*DocConsumptionCoefficient*Sigma;
 
-            docMilligrams = Math.Max(docMilligrams - ConsumedDoc,0.0);
+            docMilligrams = Math.Max(docMilligrams - ConsumedDocMilligrams,0.0);
 
             DissolvedOrganicCarbonLoad = docMilligrams*MG_TO_KG;
 
