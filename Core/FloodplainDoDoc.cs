@@ -37,7 +37,7 @@ namespace FlowMatters.Source.DODOC.Core
         {
             get
             {
-                return Zones.Sum(z=>z.Mass(z.LeafDryMatterReadilyDegradable));
+                return Zones.Sum(z=>z.DryMassKg(z.LeafDryMatterReadilyDegradable));
             }
         }
 
@@ -45,7 +45,7 @@ namespace FlowMatters.Source.DODOC.Core
         {
             get
             {
-                return Zones.Sum(z => z.Mass(z.LeafDryMatterNonReadilyDegradable));
+                return Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable));
             }
         }
 
@@ -87,7 +87,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             for (int i = 0; i < Zones.Count; i++)
             {
-                if (Zones[i].Area < 1)
+                if (Zones[i].AreaM2 < 1)
                 {
                     Zones.RemoveAt(i);
                     i = 0;
@@ -137,15 +137,15 @@ namespace FlowMatters.Source.DODOC.Core
             for(int i = 0;i< Zones.Count; i++)
             {
                 var zone = Zones[i];
-                if (Areal.Area < zone.Area && zone.Wet)
+                if (Areal.Area < zone.AreaM2 && zone.Wet)
                 {
                     if (i == (Zones.Count - 1))
                     {
                         var newDryZone = new FloodplainData();
-                        newDryZone.Area = zone.Area;
+                        newDryZone.AreaM2 = zone.AreaM2;
                         newDryZone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable;
                         newDryZone.LeafDryMatterNonReadilyDegradable = zone.LeafDryMatterNonReadilyDegradable;
-                        newDryZone.NewArea = zone.Area;
+                        newDryZone.NewAreaM2 = zone.AreaM2;
                         newDryZone.Wet = false;
                         Zones.Add(newDryZone);
                         break;
@@ -170,22 +170,22 @@ namespace FlowMatters.Source.DODOC.Core
                             var floodZone = Zones[j];
                             if (floodZone.Wet)
                             {
-                                shortleaf1 += floodZone.LeafDryMatterReadilyDegradable*(floodZone.Area - Areal.Area)/
-                                              Zones[lastFloodZone].Area;
-                                shortleaf2 += floodZone.LeafDryMatterNonReadilyDegradable * (floodZone.Area - Areal.Area) /
-                                              Zones[lastFloodZone].Area;
+                                shortleaf1 += floodZone.LeafDryMatterReadilyDegradable*(floodZone.AreaM2 - Areal.Area)/
+                                              Zones[lastFloodZone].AreaM2;
+                                shortleaf2 += floodZone.LeafDryMatterNonReadilyDegradable * (floodZone.AreaM2 - Areal.Area) /
+                                              Zones[lastFloodZone].AreaM2;
                             }
                         }
-                        shortleaf1 += zone.LeafDryMatterReadilyDegradable*(zone.Area - Areal.Area)/
-                                      Zones[lastFloodZone].Area;
-                        shortleaf2 += zone.LeafDryMatterNonReadilyDegradable* (zone.Area - Areal.Area) /
-                                      Zones[lastFloodZone].Area;
+                        shortleaf1 += zone.LeafDryMatterReadilyDegradable*(zone.AreaM2 - Areal.Area)/
+                                      Zones[lastFloodZone].AreaM2;
+                        shortleaf2 += zone.LeafDryMatterNonReadilyDegradable* (zone.AreaM2 - Areal.Area) /
+                                      Zones[lastFloodZone].AreaM2;
 
                         var newDryZone = new FloodplainData();
-                        newDryZone.Area = Zones[lastFloodZone].Area;
+                        newDryZone.AreaM2 = Zones[lastFloodZone].AreaM2;
                         newDryZone.LeafDryMatterReadilyDegradable = shortleaf1;
                         newDryZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
-                        newDryZone.NewArea = newDryZone.Area;
+                        newDryZone.NewAreaM2 = newDryZone.AreaM2;
                         newDryZone.Wet = false;
                         break;
                     }
@@ -197,7 +197,7 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 for (int i = 0; i < Zones.Count; i++)
                 {
-                    if (Zones[i].Wet || Zones[i].Area < 1)
+                    if (Zones[i].Wet || Zones[i].AreaM2 < 1)
                     {
                         Zones.RemoveAt(i);
                         i--;
@@ -207,15 +207,15 @@ namespace FlowMatters.Source.DODOC.Core
 
             for (int i = 0; i < (Zones.Count - 1); i++)
             {
-                if (!(Zones[i].Area - Zones[i + 1].Area).EqualWithTolerance(Zones[i].NewArea))
+                if (!(Zones[i].AreaM2 - Zones[i + 1].AreaM2).EqualWithTolerance(Zones[i].NewAreaM2))
                 { // Why the if?
-                    Zones[i].NewArea = Zones[i].Area - Zones[i + 1].Area;
+                    Zones[i].NewAreaM2 = Zones[i].AreaM2 - Zones[i + 1].AreaM2;
                 }
             }
 
-            if (!Zones.Last().Area.EqualWithTolerance(Zones.Last().NewArea))
+            if (!Zones.Last().AreaM2.EqualWithTolerance(Zones.Last().NewAreaM2))
             { // Why the if?
-                Zones.Last().NewArea = Zones.Last().Area;
+                Zones.Last().NewAreaM2 = Zones.Last().AreaM2;
             }
 
             FloodCounter = 0;
@@ -233,7 +233,7 @@ namespace FlowMatters.Source.DODOC.Core
             for (int i = 0; i < Zones.Count; i++)
             {
                 var zone = Zones[i];
-                if (Areal.Area.GreaterOrEqual(zone.Area) || zone.Dry)
+                if (Areal.Area.GreaterOrEqual(zone.AreaM2) || zone.Dry)
                     continue;
 
                 int removeWetZones = 0;
@@ -263,28 +263,28 @@ namespace FlowMatters.Source.DODOC.Core
                     var zoneJ = Zones[j];
                     if (zoneJ.Wet)
                     {
-                        double ratio = zoneJ.NewArea/reducedArea;
+                        double ratio = zoneJ.NewAreaM2/reducedArea;
                         shortleaf1 += (zoneJ.LeafDryMatterReadilyDegradable*ratio);
                         shortleaf2 += (zoneJ.LeafDryMatterNonReadilyDegradable*ratio);
                     }
                 }
-                double ratioReducedArea = (zone.Area - Areal.Area)/reducedArea;
+                double ratioReducedArea = (zone.AreaM2 - Areal.Area)/reducedArea;
                 shortleaf1 += (zone.LeafDryMatterReadilyDegradable*ratioReducedArea);
                     // !use remaining area
                 shortleaf2 += (zone.LeafDryMatterNonReadilyDegradable*ratioReducedArea);
 
                 var newZone = new FloodplainData();
-                newZone.Area = Zones[lastFloodZone].Area;
+                newZone.AreaM2 = Zones[lastFloodZone].AreaM2;
                 newZone.LeafDryMatterReadilyDegradable = shortleaf1;
                 newZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
-                newZone.NewArea = reducedArea;
+                newZone.NewAreaM2 = reducedArea;
                 newZone.Wet = false;
                 Zones.Add(newZone);
 
-                zone.NewArea -= zone.Area - Areal.Area;
-                zone.Area = Areal.Area;
-                if (zone.NewArea.Less(0.0))
-                    zone.NewArea = Areal.Area;
+                zone.NewAreaM2 -= zone.AreaM2 - Areal.Area;
+                zone.AreaM2 = Areal.Area;
+                if (zone.NewAreaM2.Less(0.0))
+                    zone.NewAreaM2 = Areal.Area;
 
                 if (Areal.Area.EqualWithTolerance(0.0))
                     Zones.RemoveRange(i, removeWetZones);
@@ -293,23 +293,23 @@ namespace FlowMatters.Source.DODOC.Core
                 return;
             }
 
-            if (Areal.Area.Less(Zones.Last().Area) && Zones.Last().Wet)
+            if (Areal.Area.Less(Zones.Last().AreaM2) && Zones.Last().Wet)
             {
                 var last = Zones.Last();
 
                 var newZone = new FloodplainData();
-                newZone.Area = last.Area;
+                newZone.AreaM2 = last.AreaM2;
                 newZone.LeafDryMatterReadilyDegradable = last.LeafDryMatterReadilyDegradable;
                 newZone.LeafDryMatterNonReadilyDegradable = last.LeafDryMatterNonReadilyDegradable;
-                newZone.NewArea = reducedArea;
+                newZone.NewAreaM2 = reducedArea;
                 newZone.Wet = false;
                 Zones.Add(newZone);
 
-                last.NewArea -= last.Area - Areal.Area;
-                last.Area = Areal.Area;
-                if (last.NewArea.Less(0.0))
+                last.NewAreaM2 -= last.AreaM2 - Areal.Area;
+                last.AreaM2 = Areal.Area;
+                if (last.NewAreaM2.Less(0.0))
                 {
-                    last.NewArea = Areal.Area;
+                    last.NewAreaM2 = Areal.Area;
                 } // TODO ++ Common code...
             }
         }
@@ -329,7 +329,7 @@ namespace FlowMatters.Source.DODOC.Core
                 minDryZone = Zones.Count-1;
                 for (int i = (Zones.Count - 1); i >= 0; i--)
                 {
-                    if (Areal.Area.Less(Zones[i].Area) && Zones[i].Dry)
+                    if (Areal.Area.Less(Zones[i].AreaM2) && Zones[i].Dry)
                     {
                         minDryZone = i;
                         break;
@@ -354,7 +354,7 @@ namespace FlowMatters.Source.DODOC.Core
                     {
                         if (Zones[i].Wet) continue;
 
-                        double ratioNewArea = (Zones[i].Area - (Areal.Area - newarea))/newarea;
+                        double ratioNewArea = (Zones[i].AreaM2 - (Areal.Area - newarea))/newarea;
                         shortleaf1 = shortleaf1 +
                                      Zones[i].LeafDryMatterReadilyDegradable*ratioNewArea; // !use ratio;
                         shortleaf2 = shortleaf2 +
@@ -363,14 +363,14 @@ namespace FlowMatters.Source.DODOC.Core
                         {
                             if (Zones[j].Dry)
                             {
-                                double ratio2 = Zones[j].NewArea/newarea;
+                                double ratio2 = Zones[j].NewAreaM2/newarea;
                                 shortleaf1 = shortleaf1 +
                                              (Zones[j].LeafDryMatterReadilyDegradable*ratio2);
                                 shortleaf2 = shortleaf2 +
                                              (Zones[j].LeafDryMatterNonReadilyDegradable*ratio2);
                             }
                         }
-                        double anotherRatio = (Areal.Area - Zones[minDryZone + 1].Area)/newarea;
+                        double anotherRatio = (Areal.Area - Zones[minDryZone + 1].AreaM2)/newarea;
                         shortleaf1 = shortleaf1 + Zones[minDryZone].LeafDryMatterReadilyDegradable*anotherRatio; //  !use ratio
                         shortleaf2 = shortleaf2 + Zones[minDryZone].LeafDryMatterNonReadilyDegradable*anotherRatio;
                         break;
@@ -379,22 +379,22 @@ namespace FlowMatters.Source.DODOC.Core
             }
 
             var newZone = new FloodplainData();
-            newZone.Area = Areal.Area;
+            newZone.AreaM2 = Areal.Area;
             newZone.LeafDryMatterReadilyDegradable = shortleaf1;
             newZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
-            newZone.NewArea = newarea;
+            newZone.NewAreaM2 = newarea;
             newZone.Wet = true;
             Zones.Add(newZone);
 
             if (minDryZone >= 0)
-                Zones[minDryZone].NewArea = Zones[minDryZone].Area - Areal.Area;
+                Zones[minDryZone].NewAreaM2 = Zones[minDryZone].AreaM2 - Areal.Area;
 
             int removedDryZones = 0;
             int minZone = Zones.Count;
 
             for (int i = (Zones.Count - 1); i >= 0 ; i--)
             {
-                if (Areal.Area.GreaterOrEqual(Zones[i].Area)&&Zones[i].Dry)
+                if (Areal.Area.GreaterOrEqual(Zones[i].AreaM2)&&Zones[i].Dry)
                 {
                     minZone = i;
                     removedDryZones++;
@@ -410,7 +410,7 @@ namespace FlowMatters.Source.DODOC.Core
             if (Zones.Count == 0)
             {
                 var newZone = new FloodplainData();
-                newZone.Area = Fac*MaxAccumulationArea;
+                newZone.AreaM2 = Fac*MaxAccumulationArea;
                 newZone.LeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
                 newZone.LeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
                 Zones.Add(newZone);
@@ -425,18 +425,17 @@ namespace FlowMatters.Source.DODOC.Core
             if (Areal.Area.LessOrEqual(0.0))
                 FloodCounter = 0;
 
-
             //!the DOC dissolution rate constant is temp dependent
             double leach1 = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_k.ToList(), TemperatureEst,
                 DOC_k.Length);
             double DOCmax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst,
-                DOC_max.Length);
+                DOC_max.Length); // presumably a concentration?
 
             var decomp1 = DecompositionCoefficient*leach1;
 
             foreach (var zone in Zones)
             {
-                if (Areal.Area.Less(zone.Area))
+                if (Areal.Area.Less(zone.AreaM2))
                     continue;
 
                 var scale = 1.0;
@@ -444,11 +443,11 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     scale = 1.3;
                 }
-                double wetleaf = zone.NewArea*
-                                 (zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable)*
-                                 scale + zone.NewArea*LeafAccumulationConstant;
+                double wetleafKg = zone.NewAreaM2*M2_TO_HA*
+                                 ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable)*scale + 
+                                 LeafAccumulationConstant);
 
-                double leafDOC = wetleaf*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma*86400));
+                double leafDOC = wetleafKg*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma*86400)); // ??? How is this converting kg->mg (*1e-6)
                 docMilligrams += leafDOC;
 
                 /*
@@ -463,7 +462,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             foreach (var zone in Zones)
             {
-                if (Areal.Area.Less(zone.Area) && zone.Dry)
+                if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) +
                                                           (LeafAccumulationConstant*LeafA);
@@ -474,7 +473,7 @@ namespace FlowMatters.Source.DODOC.Core
             }
 
             //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
-            ConsumedDoc += docMilligrams*DocConsumptionCoefficient*Sigma;
+            ConsumedDoc = docMilligrams*DocConsumptionCoefficient*Sigma;
 
             docMilligrams = Math.Max(docMilligrams - ConsumedDoc,0.0);
 
@@ -512,7 +511,7 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 var z = Zones[i];
                 sw.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7}", 
-                    Last.ToShortDateString(), deltaArea, i, z.Area, z.NewArea, z.Wet,
+                    Last.ToShortDateString(), deltaArea, i, z.AreaM2, z.NewAreaM2, z.Wet,
                     z.LeafDryMatterReadilyDegradable, z.LeafDryMatterNonReadilyDegradable);
             }
 
@@ -541,16 +540,16 @@ namespace FlowMatters.Source.DODOC.Core
     public class FloodplainData
     {
         public double M2_TO_HA = 1e-4;
-        public double Area { get; set; }
+        public double AreaM2 { get; set; }
         public double LeafDryMatterReadilyDegradable { get; set; } // mass/ha
         public double LeafDryMatterNonReadilyDegradable { get; set; } // mass/ha
-        public double NewArea { get; set; }
+        public double NewAreaM2 { get; set; }
         public bool Wet { get; set; }
         public bool Dry { get { return !Wet; } }
 
-        internal double Mass(double byArea)
+        internal double DryMassKg(double byArea)
         {
-            return Wet ? 0.0 : (NewArea*M2_TO_HA)*byArea;
+            return Wet ? 0.0 : (NewAreaM2*M2_TO_HA)*byArea;
         }
     }
 }

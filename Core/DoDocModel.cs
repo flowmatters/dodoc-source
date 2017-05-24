@@ -13,6 +13,7 @@ namespace FlowMatters.Source.DODOC.Core
         public const double MG_TO_KG = 1e-6;
         public const double KG_TO_MG = 1e6;
         public const double M3_to_L = 1e3;
+        public const double M2_TO_HA = 1e-4;
 
         public double WorkingVolume
         {
@@ -75,6 +76,7 @@ namespace FlowMatters.Source.DODOC.Core
         [Input]
         public double ConcentrationDo { get; set; }
 
+        [Parameter]
         public double MaxAccumulationArea { get; set; }
 
         [Parameter, CalculationUnits("kg.ha^-1")]
@@ -92,6 +94,7 @@ namespace FlowMatters.Source.DODOC.Core
         public double Production { get; private set; }
         [Output]
         public double Reaeration { get; private set; }
+
 
         public void Run(DateTime dt)
         {
