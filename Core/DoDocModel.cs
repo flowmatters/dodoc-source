@@ -39,6 +39,7 @@ namespace FlowMatters.Source.DODOC.Core
 
         public Areal Areal { get; set; }
 
+        [Input] public double TemperatureObs { get; set; }
         [Output] public double TemperatureEst { get; protected set; }
         protected double Sigma;
 
@@ -125,7 +126,11 @@ namespace FlowMatters.Source.DODOC.Core
         protected virtual void PreTimeStep(DateTime dt)
         {
             // +++TODO How many of these should be parameters to make the model transferable???
-            TemperatureEst = 17.2388 + (7.8574 * Math.Sin(((2 * Math.PI * dt.DayOfYear) / 361.8) + 1.178));
+            if (TemperatureObs > 0)
+                TemperatureEst = TemperatureObs;
+            else
+                TemperatureEst = 17.2388 + (7.8574*Math.Sin(((2*Math.PI*dt.DayOfYear)/361.8) + 1.178));
+
             Sigma = Math.Pow(1.05, TemperatureEst - 20);
 
             // Reaeration_coeff = valcon(ReaerCoeff(irch))       

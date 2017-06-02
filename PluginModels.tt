@@ -13,7 +13,7 @@ string[] flags = {"IsFloodplain"};
 string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","LeafAccumulationConstant",
 					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2",
 					   "InitialLeafDryMatterReadilyDegradable","InitialLeafDryMatterNonReadilyDegradable",
-					   "SoilO2Scaling","PrimaryProductionReaeration"};
+					   "SoilO2Scaling","PrimaryProductionReaeration","TemperatureObs"};
 string[] arrayParams = {"tempX","DOC_max","DOC_k","ProductionCoefficients","ProductionBreaks"};
 string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double",
 			        "TemperatureEst double","SoilO2Kg double","DoCo2 double","Production double","Reaeration double",
