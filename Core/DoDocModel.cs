@@ -27,8 +27,12 @@ namespace FlowMatters.Source.DODOC.Core
         public virtual double LeafDryMatterReadilyDegradable { get { return 0; } }
         public virtual double LeafDryMatterNonReadilyDegradable { get { return 0; } }
 
-        public readonly double[] ProductionCoefficients = new[] {1.0, 0.75, 0.50, 0.25, 0.1 };
-        public readonly int[] ProductionBreaks = new[] {3, 5, 8, 20};
+        public double[] tempX { get; set; } = new[] { 0d, 5d, 10d, 15d, 20d, 25d, 30d };
+        public double[] DOC_k { get; set; } = new[] { 0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864 };
+        public double[] DOC_max { get; set; } = new[] { 0d, 100d, 105d, 110d, 115d, 120d, 150d };
+
+        public double[] ProductionCoefficients { get; set; }= new[] {1.0, 0.75, 0.50, 0.25, 0.1 };
+        public double[] ProductionBreaks { get; set; } = new[] {3d, 5d, 8d, 20d};
 
         [Parameter]
         public double PrimaryProductionReaeration { get; set; } = 0.43; // +++TODO Fortran says - mg.L.day - does that mean mg/L/day? g/kl, kg/ML

@@ -14,6 +14,7 @@ string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","L
 					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2",
 					   "InitialLeafDryMatterReadilyDegradable","InitialLeafDryMatterNonReadilyDegradable",
 					   "SoilO2Scaling","PrimaryProductionReaeration"};
+string[] arrayParams = {"tempX","DOC_max","DOC_k","ProductionCoefficients","ProductionBreaks"};
 string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double",
 			        "TemperatureEst double","SoilO2Kg double","DoCo2 double","Production double","Reaeration double",
 					"ConsumedDocMilligrams double","DOCEnteringWater double"};#>
@@ -67,6 +68,10 @@ namespace FlowMatters.Source.DODOC.<#= prefixes[i] #>
 [Parameter] public double <#= param #> {get; set;}
 		<# } #>
 
+		<# foreach(var param in arrayParams){ #>
+[Parameter] public double[] <#= param #> {get; set;}
+		<# } #>
+		
 		<# foreach(var output in outputs){ 
 			var nm = output.Split(' ')[0];
 			var dt = output.Split(' ')[1];#>
@@ -84,6 +89,11 @@ public override LinkSourceSinkModel CloneForMultipleDivisions()
 				<# foreach(var param in parameters) { #>
 	<#= param #> = <#= param #>,
 				<# } #>
+				<# foreach(var param in arrayParams) { #>
+	<#= param #> = (double[])<#= param #>.Clone(),
+				<# } #>
+
+
 	};
 	}
 		
@@ -95,6 +105,14 @@ public override LinkSourceSinkModel CloneForMultipleDivisions()
 
 			<# foreach( var param in parameters){ #>
 			Worker.<#=param#> = <#=param#>;
+			<# } #>
+
+			<# foreach( var param in arrayParams){ #>
+			  if(<#=param#>==null){
+			<#=param#> = Worker.<#=param#>;
+			  } else {
+			Worker.<#=param#> = <#=param#>;
+			  }
 			<# } #>
         }
 

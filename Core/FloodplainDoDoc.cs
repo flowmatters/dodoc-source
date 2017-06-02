@@ -9,9 +9,6 @@ namespace FlowMatters.Source.DODOC.Core
 {
     class FloodplainDoDoc : DoDocModel
     {
-        public readonly double[] tempX = new[] {0d, 5d, 10d, 15d, 20d, 25d, 30d};
-        public readonly double[] DOC_k = new[] {0.0, 0.0000044, 0.0000047, 0.0000049, 0.0000055, 0.0000083, 0.00001};
-        public readonly double[] DOC_max = new[] {0d, 100d, 105d, 110d, 115d, 120d, 150d};
         public List<FloodplainData> Zones { get; private set;  }
         protected double PreviousArea { get; set; }
 
@@ -141,12 +138,11 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     if (i == (Zones.Count - 1))
                     {
-                        var newDryZone = new FloodplainData();
+                        var newDryZone = new FloodplainData(false);
                         newDryZone.AreaM2 = zone.AreaM2;
                         newDryZone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable;
                         newDryZone.LeafDryMatterNonReadilyDegradable = zone.LeafDryMatterNonReadilyDegradable;
                         newDryZone.NewAreaM2 = zone.AreaM2;
-                        newDryZone.Wet = false;
                         Zones.Add(newDryZone);
                         break;
                     }
@@ -181,12 +177,11 @@ namespace FlowMatters.Source.DODOC.Core
                         shortleaf2 += zone.LeafDryMatterNonReadilyDegradable* (zone.AreaM2 - Areal.Area) /
                                       Zones[lastFloodZone].AreaM2;
 
-                        var newDryZone = new FloodplainData();
+                        var newDryZone = new FloodplainData(false);
                         newDryZone.AreaM2 = Zones[lastFloodZone].AreaM2;
                         newDryZone.LeafDryMatterReadilyDegradable = shortleaf1;
                         newDryZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
                         newDryZone.NewAreaM2 = newDryZone.AreaM2;
-                        newDryZone.Wet = false;
                         break;
                     }
                 }
@@ -273,12 +268,11 @@ namespace FlowMatters.Source.DODOC.Core
                     // !use remaining area
                 shortleaf2 += (zone.LeafDryMatterNonReadilyDegradable*ratioReducedArea);
 
-                var newZone = new FloodplainData();
+                var newZone = new FloodplainData(false);
                 newZone.AreaM2 = Zones[lastFloodZone].AreaM2;
                 newZone.LeafDryMatterReadilyDegradable = shortleaf1;
                 newZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
                 newZone.NewAreaM2 = reducedArea;
-                newZone.Wet = false;
                 Zones.Add(newZone);
 
                 zone.NewAreaM2 -= zone.AreaM2 - Areal.Area;
@@ -297,12 +291,11 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 var last = Zones.Last();
 
-                var newZone = new FloodplainData();
+                var newZone = new FloodplainData(false);
                 newZone.AreaM2 = last.AreaM2;
                 newZone.LeafDryMatterReadilyDegradable = last.LeafDryMatterReadilyDegradable;
                 newZone.LeafDryMatterNonReadilyDegradable = last.LeafDryMatterNonReadilyDegradable;
                 newZone.NewAreaM2 = reducedArea;
-                newZone.Wet = false;
                 Zones.Add(newZone);
 
                 last.NewAreaM2 -= last.AreaM2 - Areal.Area;
@@ -323,6 +316,7 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 shortleaf1 = Zones[0].LeafDryMatterReadilyDegradable;
                 shortleaf2 = Zones[0].LeafDryMatterNonReadilyDegradable;
+                minDryZone = 0; // Departure from Fortran. To override NewAreaM2
             }
             else
             {
@@ -378,12 +372,11 @@ namespace FlowMatters.Source.DODOC.Core
                 }
             }
 
-            var newZone = new FloodplainData();
+            var newZone = new FloodplainData(true);
             newZone.AreaM2 = Areal.Area;
             newZone.LeafDryMatterReadilyDegradable = shortleaf1;
             newZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
             newZone.NewAreaM2 = newarea;
-            newZone.Wet = true;
             Zones.Add(newZone);
 
             if (minDryZone >= 0)
@@ -409,10 +402,11 @@ namespace FlowMatters.Source.DODOC.Core
         {
             if (Zones.Count == 0)
             {
-                var newZone = new FloodplainData();
+                var newZone = new FloodplainData(false);
                 newZone.AreaM2 = Fac*MaxAccumulationArea;
                 newZone.LeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
                 newZone.LeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
+                newZone.NewAreaM2 = newZone.AreaM2;
                 Zones.Add(newZone);
             }
 
@@ -448,17 +442,16 @@ namespace FlowMatters.Source.DODOC.Core
                                  ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable)*scale + 
                                  LeafAccumulationConstant);
 
-                double leafDOC = wetleafKg*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma*86400)); // ??? How is this converting kg->mg (*1e-6)
+                double leafDOC = wetleafKg*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma)); // ??? How is this converting kg->mg (*1e-6)
                 DOCEnteringWater += leafDOC;
 
                 /*
                   zone(floodrch,isub,ii,2) = max(0.,zone(floodrch,isub,ii,2)-(zone(floodrch,isub,ii,2) * (1 - Exp(-decomp1 * sigma *  86400))))
                   zone(floodrch,isub,ii,3) = max(0.,zone(floodrch,isub,ii,3)-(zone(floodrch,isub,ii,3) * (1 - Exp(-decomp1 * sigma *  86400))))
                 */
-                double leadingRate = Math.Exp(-decomp1*Sigma*86400);
+                double leadingRate = Math.Exp(-decomp1*Sigma);
                 zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*leadingRate);
                 zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*leadingRate);
-
             }
 
             docMilligrams += DOCEnteringWater;
@@ -542,12 +535,17 @@ namespace FlowMatters.Source.DODOC.Core
 
     public class FloodplainData
     {
+        public FloodplainData(bool wet)
+        {
+            Wet = wet;
+        }
+
         public double M2_TO_HA = 1e-4;
         public double AreaM2 { get; set; }
         public double LeafDryMatterReadilyDegradable { get; set; } // mass/ha
         public double LeafDryMatterNonReadilyDegradable { get; set; } // mass/ha
         public double NewAreaM2 { get; set; }
-        public bool Wet { get; set; }
+        public bool Wet { get; }
         public bool Dry { get { return !Wet; } }
 
         internal double DryMassKg(double byArea)
