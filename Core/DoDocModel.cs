@@ -58,8 +58,9 @@ namespace FlowMatters.Source.DODOC.Core
         public double Fac { get; set; }
 
         #region Parameters from valcon
+
         [Parameter]
-        public double DecompositionCoefficient { get; set; }
+        public double DecompositionCoefficient { get; set; } = 1.0;
 
         [Parameter]
         public double DocConsumptionCoefficient { get; set; }
@@ -102,6 +103,9 @@ namespace FlowMatters.Source.DODOC.Core
 
         [Output]
         public double DOCEnteringWater { get; protected set; }
+
+        [Output]
+        public double TotalWetLeaf { get; protected set; }
 
         public void Run(DateTime dt)
         {

@@ -425,9 +425,8 @@ namespace FlowMatters.Source.DODOC.Core
             double DOCmax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst,
                 DOC_max.Length); // presumably a concentration?
 
-            var decomp1 = DecompositionCoefficient*leach1;
-
             DOCEnteringWater = 0;
+            TotalWetLeaf = 0;
             foreach (var zone in Zones)
             {
                 if (Areal.Area.Less(zone.AreaM2))
@@ -442,16 +441,17 @@ namespace FlowMatters.Source.DODOC.Core
                                  ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable)*scale + 
                                  LeafAccumulationConstant);
 
-                double leafDOC = wetleafKg*1000*DOCmax*(1 - Math.Exp(-leach1*Sigma)); // ??? How is this converting kg->mg (*1e-6)
+                TotalWetLeaf += wetleafKg;
+                double leachingRate = 1 - Math.Exp(-leach1 * Sigma);
+                double leafDOC = wetleafKg*1000*DOCmax*(leachingRate); // ??? How is this converting kg->mg (*1e-6)
                 DOCEnteringWater += leafDOC;
 
                 /*
                   zone(floodrch,isub,ii,2) = max(0.,zone(floodrch,isub,ii,2)-(zone(floodrch,isub,ii,2) * (1 - Exp(-decomp1 * sigma *  86400))))
                   zone(floodrch,isub,ii,3) = max(0.,zone(floodrch,isub,ii,3)-(zone(floodrch,isub,ii,3) * (1 - Exp(-decomp1 * sigma *  86400))))
                 */
-                double leadingRate = Math.Exp(-decomp1*Sigma);
-                zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*leadingRate);
-                zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*leadingRate);
+                zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-leachingRate));
+                zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1-leachingRate));
             }
 
             docMilligrams += DOCEnteringWater;
@@ -462,7 +462,8 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) +
                                                           (LeafAccumulationConstant*LeafA);
-                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(2850d,
+                    double MaxmimumNonReadilyDegradable = 2850d;
+                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable,
                         zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) +
                         (LeafAccumulationConstant*(1 - LeafA)));
                 }

@@ -17,7 +17,7 @@ string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","L
 string[] arrayParams = {"tempX","DOC_max","DOC_k","ProductionCoefficients","ProductionBreaks"};
 string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double",
 			        "TemperatureEst double","SoilO2Kg double","DoCo2 double","Production double","Reaeration double",
-					"ConsumedDocMilligrams double","DOCEnteringWater double"};#>
+					"ConsumedDocMilligrams double","DOCEnteringWater double","TotalWetLeaf double"};#>
 
 using RiverSystem;
 using TIME.Core.Metadata;
