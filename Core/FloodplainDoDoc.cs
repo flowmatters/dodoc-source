@@ -459,13 +459,8 @@ namespace FlowMatters.Source.DODOC.Core
                 if (Areal.Area.Less(zone.AreaM2))
                     continue;
 
-                var scale = 1.0;
-                if (Areal.Area < (Fac*MaxAccumulationArea/10))
-                {
-                    scale = 1.3;
-                }
                 double wetleafKg = zone.NewAreaM2*M2_TO_HA*
-                                 ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable)*scale + 
+                                 ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable) + 
                                  LeafAccumulationConstant);
 
                 TotalWetLeaf += wetleafKg;
