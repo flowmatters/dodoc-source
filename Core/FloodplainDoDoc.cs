@@ -46,6 +46,32 @@ namespace FlowMatters.Source.DODOC.Core
             }
         }
 
+        public override double LeafWetMatterReadilyDegradable
+        {
+            get
+            {
+                return Zones.Sum(z => z.WetMassKg(z.LeafDryMatterReadilyDegradable));
+            }
+        }
+
+        public override double LeafWetMatterNonReadilyDegradable
+        {
+            get
+            {
+                return Zones.Sum(z => z.WetMassKg(z.LeafDryMatterNonReadilyDegradable));
+            }
+        }
+
+        public override double FloodplainDryAreaHa
+        {
+            get { return Zones.Sum(z => z.DryMassKg(1.0)); }
+        }
+
+        public override double FloodplainWetAreaHa
+        {
+            get { return Zones.Sum(z => z.WetMassKg(1.0)); }
+        }
+
         public int FloodCounter { get; set; }
 
         public FloodplainDoDoc()
@@ -420,13 +446,14 @@ namespace FlowMatters.Source.DODOC.Core
                 FloodCounter = 0;
 
             //!the DOC dissolution rate constant is temp dependent
-            double leach1 = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_k.ToList(), TemperatureEst,
+            Leach1 = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_k.ToList(), TemperatureEst,
                 DOC_k.Length);
-            double DOCmax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst,
+            DocMax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst,
                 DOC_max.Length); // presumably a concentration?
 
             DOCEnteringWater = 0;
             TotalWetLeaf = 0;
+            LeachingRate = 1 - Math.Exp(-Leach1 * Sigma);
             foreach (var zone in Zones)
             {
                 if (Areal.Area.Less(zone.AreaM2))
@@ -442,16 +469,15 @@ namespace FlowMatters.Source.DODOC.Core
                                  LeafAccumulationConstant);
 
                 TotalWetLeaf += wetleafKg;
-                double leachingRate = 1 - Math.Exp(-leach1 * Sigma);
-                double leafDOC = wetleafKg*1000*DOCmax*(leachingRate); // ??? How is this converting kg->mg (*1e-6)
+                double leafDOC = wetleafKg*1000*DocMax*(LeachingRate); // ??? How is this converting kg->mg (*1e-6)
                 DOCEnteringWater += leafDOC;
 
                 /*
                   zone(floodrch,isub,ii,2) = max(0.,zone(floodrch,isub,ii,2)-(zone(floodrch,isub,ii,2) * (1 - Exp(-decomp1 * sigma *  86400))))
                   zone(floodrch,isub,ii,3) = max(0.,zone(floodrch,isub,ii,3)-(zone(floodrch,isub,ii,3) * (1 - Exp(-decomp1 * sigma *  86400))))
                 */
-                zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-leachingRate));
-                zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1-leachingRate));
+                zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-LeachingRate));
+                zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1-LeachingRate));
             }
 
             docMilligrams += DOCEnteringWater;
@@ -552,6 +578,11 @@ namespace FlowMatters.Source.DODOC.Core
         internal double DryMassKg(double byArea)
         {
             return Wet ? 0.0 : (NewAreaM2*M2_TO_HA)*byArea;
+        }
+
+        public double WetMassKg(double byArea)
+        {
+            return Dry ? 0.0 : (NewAreaM2 * M2_TO_HA) * byArea;
         }
     }
 }

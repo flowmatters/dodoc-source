@@ -27,6 +27,12 @@ namespace FlowMatters.Source.DODOC.Core
         public virtual double LeafDryMatterReadilyDegradable { get { return 0; } }
         public virtual double LeafDryMatterNonReadilyDegradable { get { return 0; } }
 
+        public virtual double LeafWetMatterReadilyDegradable { get { return 0; } }
+        public virtual double LeafWetMatterNonReadilyDegradable { get { return 0; } }
+
+        public virtual double FloodplainDryAreaHa { get { return 0; } }
+        public virtual double FloodplainWetAreaHa { get { return 0; } }
+
         public double[] tempX { get; set; } = new[] { 0d, 5d, 10d, 15d, 20d, 25d, 30d };
         public double[] DOC_k { get; set; } = new[] { 0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864 };
         public double[] DOC_max { get; set; } = new[] { 0d, 100d, 105d, 110d, 115d, 120d, 150d };
@@ -107,6 +113,15 @@ namespace FlowMatters.Source.DODOC.Core
         [Output]
         public double TotalWetLeaf { get; protected set; }
 
+        [Output]
+        public double LeachingRate { get; protected set; }
+
+        [Output]
+        public double Leach1 { get; protected set; }
+
+        [Output]
+        public double DocMax { get; protected set; }
+
         public void Run(DateTime dt)
         {
             if (dt.Date == Last.Date)
@@ -121,10 +136,13 @@ namespace FlowMatters.Source.DODOC.Core
             ProcessDoc();
 
             ProcessDo();
+            TimeStep++;
         }
 
+        protected int TimeStep;
         protected virtual void Reset()
         {
+            TimeStep = 0;
         }
 
         protected virtual void PreTimeStep(DateTime dt)
