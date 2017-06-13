@@ -169,7 +169,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             SoilO2Kg = SoilO2Scaling*1e-6*SoilO2mg();
 
-            DoCo2 = 1e-6 * ConsumedDocMilligrams/20*32;
+            DoCo2 = 1e-6 * ConsumedDocMilligrams*2.667;
 
             var saturatedo2mg_L = 13.41*Math.Exp(-0.01905*TemperatureEst); // +++TODO CONFIRM UNITS????
             var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L*MG_L_to_KG_M3);
