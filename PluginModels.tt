@@ -114,6 +114,12 @@ public override LinkSourceSinkModel CloneForMultipleDivisions()
 			Worker.<#=param#> = <#=param#>;
 			  }
 			<# } #>
+
+			<# if(clone[i]){ #>
+			Worker.Fac = 1/(this.Link.Divisions.Count);
+			<# } else { #>
+			Worker.Fac = 1.0;
+			<# } #>
         }
 
         protected override void RetrieveResults()
