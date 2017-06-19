@@ -50,7 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\Areal.cs" />
+    <Compile Include="Core\IAreal.cs" />
     <Compile Include="Core\CentralSourceSinkModel.cs" />
     <Compile Include="Core\DoDocModel.cs" />
     <Compile Include="Core\FloodplainDoDoc.cs" />

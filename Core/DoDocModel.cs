@@ -43,7 +43,7 @@ namespace FlowMatters.Source.DODOC.Core
         [Parameter]
         public double PrimaryProductionReaeration { get; set; } = 0.43; // +++TODO Fortran says - mg.L.day - does that mean mg/L/day? g/kl, kg/ML
 
-        public Areal Areal { get; set; }
+        public IAreal Areal { get; set; }
 
         [Input] public double TemperatureObs { get; set; }
         [Output] public double TemperatureEst { get; protected set; }
@@ -91,6 +91,17 @@ namespace FlowMatters.Source.DODOC.Core
         [Parameter]
         public double MaxAccumulationArea { get; set; }
 
+        public double EffectiveMaximumArea
+        {
+            get
+            {
+                if (MaxAccumulationArea > 0)
+                {
+                    return Math.Min(MaxAccumulationArea, Areal.MaxArea);
+                }
+                return Areal.MaxArea;
+            }
+        }
         [Parameter, CalculationUnits("kg.ha^-1")]
         public double InitialLeafDryMatterReadilyDegradable { get; set; }
 

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace FlowMatters.Source.DODOC.Core
 {
-    public interface Areal
+    public interface IAreal
     {
         double Area { get; }
+        double MaxArea { get; }
     }
 }

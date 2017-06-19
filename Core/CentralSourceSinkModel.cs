@@ -24,9 +24,9 @@ namespace FlowMatters.Source.DODOC.Core
             }
         }
 
-        private ConcurrentDictionary<Areal, DoDocModel> _models;
+        private ConcurrentDictionary<IAreal, DoDocModel> _models;
 
-        public DoDocModel GetModel(Areal key,bool floodplain)
+        public DoDocModel GetModel(IAreal key,bool floodplain)
         {
             DoDocModel result = _models.GetOrAdd(key, k => floodplain?((DoDocModel)new FloodplainDoDoc()):(new RoutingDoDoc()));
             result.Areal = key;
@@ -36,7 +36,7 @@ namespace FlowMatters.Source.DODOC.Core
         public void Reset()
         {
             if(_models==null||_models.Count>0)
-                _models = new ConcurrentDictionary<Areal, DoDocModel>();
+                _models = new ConcurrentDictionary<IAreal, DoDocModel>();
         }
     }
 }

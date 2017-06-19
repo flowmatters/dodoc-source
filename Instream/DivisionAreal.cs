@@ -1,9 +1,10 @@
-﻿using FlowMatters.Source.DODOC.Core;
+﻿using System;
+using FlowMatters.Source.DODOC.Core;
 using RiverSystem;
 
 namespace FlowMatters.Source.DODOC.Instream
 {
-    public class DivisionAreal : Areal
+    public class DivisionAreal : IAreal
     {
         public DivisionAreal(Division d)
         {
@@ -16,6 +17,11 @@ namespace FlowMatters.Source.DODOC.Instream
         public double Area
         {
             get { return _division.Area; }
+        }
+
+        public double MaxArea
+        {
+            get { return Double.MaxValue; }
         }
 
         //public double PreviousArea

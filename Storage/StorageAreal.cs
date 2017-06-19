@@ -8,19 +8,23 @@ using RiverSystem.Nodes;
 
 namespace FlowMatters.Source.DODOC.Storage
 {
-    class StorageAreal:Areal
+    class StorageAreal:IAreal
     {
         public StorageAreal(StorageNodeModel s,double elevation)
         {
             _storage = s;
             _minElevation = elevation;
             _disregardedArea = _storage.StoreGeometry.surfaceAreaForHeight(_minElevation);
+            MaxArea = _storage.StoreGeometry.surfaceAreaForHeight(_storage.StoreGeometry.MaxHeight()) -
+                      _disregardedArea;
             //_prevStorage = -1;
         }
 
         private StorageNodeModel _storage;
         private double _minElevation;
         private double _disregardedArea;
+
+        public double MaxArea { get; private set; }
         //private double _prevStorage;
         //private double _prevArea;
 

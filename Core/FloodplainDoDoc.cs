@@ -429,7 +429,7 @@ namespace FlowMatters.Source.DODOC.Core
             if (Zones.Count == 0)
             {
                 var newZone = new FloodplainData(false);
-                newZone.AreaM2 = Fac*MaxAccumulationArea;
+                newZone.AreaM2 = Fac* EffectiveMaximumArea;
                 newZone.LeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
                 newZone.LeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
                 newZone.NewAreaM2 = newZone.AreaM2;
