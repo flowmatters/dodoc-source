@@ -116,7 +116,7 @@ public override LinkSourceSinkModel CloneForMultipleDivisions()
 			<# } #>
 
 			<# if(clone[i]){ #>
-			Worker.Fac = 1/(this.Link.Divisions.Count);
+			Worker.Fac = 1.0/(this.Link.Divisions.Count);
 			<# } else { #>
 			Worker.Fac = 1.0;
 			<# } #>
