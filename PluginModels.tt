@@ -10,10 +10,10 @@ string[] prefixes = {"Instream","Storage"};
 string[] parent = {"ProxyLinkSourceSinkModel","ProxyStorageSourceSinkModel"};
 bool[] clone = {true,false};
 string[] flags = {"IsFloodplain"};
-string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea squareMetres","Fac","LeafAccumulationConstant",
+string[] parameters = {"MaxAccumulationArea squareMetres","LeafAccumulationConstant",
 					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2",
 					   "InitialLeafDryMatterReadilyDegradable","InitialLeafDryMatterNonReadilyDegradable",
-					   "SoilO2Scaling","PrimaryProductionReaeration","TemperatureObs"};
+					   "PrimaryProductionReaeration","TemperatureObs"};
 string[] arrayParams = {"tempX","DOC_max","DOC_k","ProductionCoefficients","ProductionBreaks"};
 string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones int","LeafDryMatterReadilyDegradable double","LeafDryMatterNonReadilyDegradable double",
 			        "TemperatureEst double","SoilO2Kg double","DoCo2 double","Production double","Reaeration double",

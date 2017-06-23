@@ -64,10 +64,6 @@ namespace FlowMatters.Source.DODOC.Core
         public double Fac { get; set; }
 
         #region Parameters from valcon
-
-        [Parameter]
-        public double DecompositionCoefficient { get; set; } = 1.0;
-
         [Parameter]
         public double DocConsumptionCoefficient { get; set; }
 
