@@ -10,7 +10,7 @@ string[] prefixes = {"Instream","Storage"};
 string[] parent = {"ProxyLinkSourceSinkModel","ProxyStorageSourceSinkModel"};
 bool[] clone = {true,false};
 string[] flags = {"IsFloodplain"};
-string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea","Fac","LeafAccumulationConstant",
+string[] parameters = {"DecompositionCoefficient","MaxAccumulationArea squareMetres","Fac","LeafAccumulationConstant",
 					   "ReaerationCoefficient","DocConsumptionCoefficient","LeafA","LeafK1","LeafK2",
 					   "InitialLeafDryMatterReadilyDegradable","InitialLeafDryMatterNonReadilyDegradable",
 					   "SoilO2Scaling","PrimaryProductionReaeration","TemperatureObs"};
@@ -24,6 +24,7 @@ string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones 
 
 using RiverSystem;
 using TIME.Core.Metadata;
+using TIME.Core;
 
 <# for(int i=0; i<prefixes.Length; i++)
    {
@@ -66,8 +67,10 @@ namespace FlowMatters.Source.DODOC.<#= prefixes[i] #>
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
-		<# foreach(var param in parameters){ #>
-[Parameter] public double <#= param #> {get; set;}
+		<# foreach(var param in parameters){ 
+		var bits = param.Split(' ');
+		var p = bits[0];#>
+[Parameter<# if(bits.Length>1){#>,CalculationUnits(CommonUnits.<#=bits[1]#>)<#}#>] public double <#= p #> {get; set;}
 		<# } #>
 
 		<# foreach(var param in arrayParams){ #>
@@ -88,8 +91,11 @@ public override LinkSourceSinkModel CloneForMultipleDivisions()
 				<# foreach(var flag in flags) { #>
 	<#= flag #> = <#= flag#>,
 				<# } #>
-				<# foreach(var param in parameters) { #>
-	<#= param #> = <#= param #>,
+				<# foreach(var param in parameters) {
+						var p = param.Split(' ')[0];
+						#>
+ 
+	<#= p#> = <#= p#>,
 				<# } #>
 				<# foreach(var param in arrayParams) { #>
 	<#= param #> = (double[])((<#= param #>==null)?null:<#= param #>.Clone()),
@@ -103,8 +109,10 @@ public override LinkSourceSinkModel CloneForMultipleDivisions()
         {
             Worker.ConcentrationDoc = constituentConcentration;
 
-			<# foreach( var param in parameters){ #>
-			Worker.<#=param#> = <#=param#>;
+			<# foreach( var param in parameters){
+					var p = param.Split(' ')[0];
+ #>
+			Worker.<#=p#> = <#=p#>;
 			<# } #>
 
 			<# foreach( var param in arrayParams){ #>
