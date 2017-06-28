@@ -14,6 +14,6 @@
     <dependencies />
   </metadata>
   <files>
-    <file src="..\Output\FlowMatters.Source.DODOC.dll" target="lib\FlowMatters.Source.DODOC.dll" />
+    <file src="..\Output\Plugins\CommunityPlugins\FlowMatters.Source.DODOC.dll" target="lib\FlowMatters.Source.DODOC.dll" />
   </files>
 </package>
