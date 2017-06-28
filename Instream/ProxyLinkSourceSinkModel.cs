@@ -12,13 +12,6 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter]
         public bool IsFloodplain { get; set; }
 
-        [Parameter,Description("Numeric parameter for user interface. Set to 0 to disable floodplain. +ve values enable floodplain.")]
-        public double ModelAsFloodplain
-        {
-            get { return IsFloodplain ? 1.0 : 0.0; }
-            set { IsFloodplain = value > 0; }
-        }
-
         public DoDocModel Worker { get; private set; }
 
         public bool Debug { get; set; }
