@@ -8,6 +8,10 @@
 <#
 string[] prefixes = {"Instream","Storage"};
 string[] parent = {"ProxyLinkSourceSinkModel","ProxyStorageSourceSinkModel"};
+string[][] parentParameters=new[]{
+	new[]{"bool IsFloodplain"},
+	new[]{"double FloodplainElevation"}
+};
 bool[] clone = {true,false};
 string[] flags = {"IsFloodplain"};
 string[] parameters = {"MaxAccumulationArea squareMetres","LeafAccumulationConstant",
@@ -25,29 +29,57 @@ string[] outputs = {"ZoneCount double","CountInundatedZones int","CountDryZones 
 using RiverSystem;
 using TIME.Core.Metadata;
 using TIME.Core;
+using RiverSystem.Api.NetworkElements.Common.Constituents;
 
 <# for(int i=0; i<prefixes.Length; i++)
    {
  #>
 namespace FlowMatters.Source.DODOC.<#= prefixes[i] #>
 {
+	[WorksWith(typeof(<#= prefixes[i] #>DO))]
+	public class <#= prefixes[i] #>DOAPI : ProcessingModel<<#= prefixes[i] #>DO >{
+		public new string Name
+		{
+			get
+			{
+				return "<#= prefixes[i] #> DO";
+			}
+		}
+
+<#
+foreach(var pp in parentParameters[i]) {
+		  var ptype = pp.Split(' ')[0];
+		  var pname = pp.Split(' ')[1];#>
+		public <#= pp #>
+		{
+			get{ return Feature.<#=pname#>; }
+			set{ Feature.<#=pname#> = value; }
+		}
+<#
+} #>
+	}
+
     public class <#= prefixes[i] #>DO : <#= parent[i] #>
     {
         public <#= prefixes[i] #>DO()
         {
         }
 
-		<# if(clone[i]){ #>
+<#
+if(clone[i]){ #>
 			public override LinkSourceSinkModel CloneForMultipleDivisions()
 			{
 				return new <#= prefixes[i] #>DO() { 
-				<# foreach(var flag in flags) { #>
+<#
+foreach(var flag in flags) { #>
 					<#= flag #> = <#= flag#>,
 				};
-				<# } #>
+<#
+} #>
 			}
 		
-		<# } #>
+<#
+} #>
 
         protected override void UpdateWorker(double constituentConcentration)
         {
@@ -60,6 +92,54 @@ namespace FlowMatters.Source.DODOC.<#= prefixes[i] #>
         }
     }
 
+	[WorksWith(typeof(<#= prefixes[i] #>DOC))]
+	public class <#= prefixes[i] #>DOCAPI : ProcessingModel<<#= prefixes[i] #>DOC >{
+		public new string Name
+		{
+			get
+			{
+				return "<#= prefixes[i] #> DOC";
+			}
+		}
+
+<#
+foreach(var pp in parentParameters[i]) {
+		  var ptype = pp.Split(' ')[0];
+		  var pname = pp.Split(' ')[1];#>
+		public <#= pp #>
+		{
+			get{ return Feature.<#=pname#>; }
+			set{ Feature.<#=pname#> = value; }
+		}
+<#
+} #>
+
+<#
+foreach(var param in parameters){ 
+		var bits = param.Split(' ');
+		var p = bits[0];#>
+		[Parameter<# if(bits.Length>1){#>,CalculationUnits(CommonUnits.<#=bits[1]#>)<#}#>]
+		public double <#= p #> {
+			get{ return Feature.<#= p #>;} 
+			set{ Feature.<#= p #> = value;}
+		}
+<#
+} #>
+
+<#
+foreach(var param in arrayParams){ #>
+		[Parameter]
+		public double[] <#= param #> {
+			get{ return Feature.<#= param #>;} 
+			set{ Feature.<#= param #> = value;}
+		}
+<#
+} #>
+
+
+	}
+
+
     public class <#= prefixes[i] #>DOC : <#= parent[i] #>
     {
         public <#= prefixes[i] #>DOC()
@@ -67,76 +147,99 @@ namespace FlowMatters.Source.DODOC.<#= prefixes[i] #>
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
-		<# foreach(var param in parameters){ 
+<#
+foreach(var param in parameters){ 
 		var bits = param.Split(' ');
 		var p = bits[0];#>
-[Parameter<# if(bits.Length>1){#>,CalculationUnits(CommonUnits.<#=bits[1]#>)<#}#>] public double <#= p #> {get; set;}
-		<# } #>
+		[Parameter<# if(bits.Length>1){#>,CalculationUnits(CommonUnits.<#=bits[1]#>)<#}#>] public double <#= p #> {get; set;}
+<#
+} #>
 
-		<# foreach(var param in arrayParams){ #>
-[Parameter] public double[] <#= param #> {get; set;}
-		<# } #>
+<#
+foreach(var param in arrayParams){ #>
+		[Parameter] public double[] <#= param #> {get; set;}
+<#
+} #>
 		
-		<# foreach(var output in outputs){ 
+<#
+foreach(var output in outputs){ 
 			var nm = output.Split(' ')[0];
 			var dt = output.Split(' ')[1];#>
-[Output] public <#= dt #> <#= nm #> {get; private set;}
+		[Output] public <#= dt #> <#= nm #> {get; private set;}
 
-		<# } #>
+<#
+} #>
 
-		<# if(clone[i]){ #>
-public override LinkSourceSinkModel CloneForMultipleDivisions()
-{
-	return new <#= prefixes[i] #>DOC() { 
-				<# foreach(var flag in flags) { #>
-	<#= flag #> = <#= flag#>,
-				<# } #>
-				<# foreach(var param in parameters) {
+<#
+if(clone[i]){ #>
+		public override LinkSourceSinkModel CloneForMultipleDivisions()
+		{
+			return new <#= prefixes[i] #>DOC() { 
+<#
+foreach(var flag in flags) { #>
+				<#= flag #> = <#= flag#>,
+<#
+} #>
+<#
+foreach(var param in parameters) {
 						var p = param.Split(' ')[0];
 						#>
  
-	<#= p#> = <#= p#>,
-				<# } #>
-				<# foreach(var param in arrayParams) { #>
-	<#= param #> = (double[])((<#= param #>==null)?null:<#= param #>.Clone()),
-				<# } #>
-	};
-	}
+				<#= p#> = <#= p#>,
+<#
+} #>
+<#
+foreach(var param in arrayParams) { #>
+				<#= param #> = (double[])((<#= param #>==null)?null:<#= param #>.Clone()),
+<#
+} #>
+			};
+		}
 		
-		<# } #>
+<#
+} #>
 
         protected override void UpdateWorker(double constituentConcentration)
         {
             Worker.ConcentrationDoc = constituentConcentration;
 
-			<# foreach( var param in parameters){
+<#
+foreach( var param in parameters){
 					var p = param.Split(' ')[0];
  #>
 			Worker.<#=p#> = <#=p#>;
-			<# } #>
+<#
+} #>
 
-			<# foreach( var param in arrayParams){ #>
+<#
+foreach( var param in arrayParams){ #>
 			  if(<#=param#>==null){
 			<#=param#> = Worker.<#=param#>;
 			  } else {
 			Worker.<#=param#> = <#=param#>;
 			  }
-			<# } #>
+<#
+} #>
 
-			<# if(clone[i]){ #>
+<#
+if(clone[i]){ #>
 			Worker.Fac = 1.0/(this.Link.Divisions.Count);
-			<# } else { #>
+<#
+} else { #>
 			Worker.Fac = 1.0;
-			<# } #>
+<#
+} #>
         }
 
         protected override void RetrieveResults()
         {
             ProcessedLoad = Worker.DissolvedOrganicCarbonLoad;
-			<# foreach(var output in outputs) {
+<#
+foreach(var output in outputs) {
 			 var nm = output.Split(' ')[0];#>
 			<#=nm#> = Worker.<#=nm#>;
-			<# } #>
+<#
+} #>
         }
     }
 
