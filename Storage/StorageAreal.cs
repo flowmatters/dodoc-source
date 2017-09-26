@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FlowMatters.Source.DODOC.Core;
-using RiverSystem.Nodes;
+using RiverSystem.Storages;
+using RiverSystem.Storages.Interfaces;
 
 namespace FlowMatters.Source.DODOC.Storage
 {
     class StorageAreal:IAreal
     {
-        public StorageAreal(StorageNodeModel s,double elevation)
+        public StorageAreal(IStorageModel s,double elevation)
         {
             _storage = s;
             _minElevation = elevation;
@@ -20,7 +17,7 @@ namespace FlowMatters.Source.DODOC.Storage
             //_prevStorage = -1;
         }
 
-        private StorageNodeModel _storage;
+        private IStorageModel _storage;
         private double _minElevation;
         private double _disregardedArea;
 

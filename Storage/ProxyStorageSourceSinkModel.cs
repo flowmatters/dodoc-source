@@ -27,7 +27,7 @@ namespace FlowMatters.Source.DODOC.Storage
 
         private DoDocModel GetWorker()
         {
-            StorageAreal storageAreal = new StorageAreal(StorageNodeModel,FloodplainElevation);
+            StorageAreal storageAreal = new StorageAreal(StorageModel,FloodplainElevation);
             return CentralSourceSinkModel.Instance.GetModel(storageAreal,true);
         }
 
