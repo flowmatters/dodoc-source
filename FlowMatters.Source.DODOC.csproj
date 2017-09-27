@@ -12,11 +12,12 @@
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <WarningLevel>4</WarningLevel>
-    <OutputPath>..\Output\Plugins\CommunityPlugins</OutputPath>
-    <ReferencePath>.\References;.\References\Plugins;..\Output;..\Output\Plugins;..\3rdParty</ReferencePath>
     <TargetFrameworkProfile />
     <NoWarn>1591,1587</NoWarn>
     <LangVersion>6</LangVersion>
+    <RootPath>..\</RootPath>
+    <ReferencePath>$(RootPath)Output;$(RootPath)3rdParty</ReferencePath>
+    <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,7 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <OutputPath>..\Output\Plugins\CommunityPlugins</OutputPath>
+    <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DebugSymbols>false</DebugSymbols>
-    <OutputPath>..\Output\Plugins\CommunityPlugins</OutputPath>
+    <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RiverSystem.Api">
