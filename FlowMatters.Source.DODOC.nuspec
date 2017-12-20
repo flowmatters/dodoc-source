@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>FlowMatters.Source.DODOC</id>
+    <version></version>
+    <title>Blackwater Plugin</title>
+    <authors>Joel Rahman, Flow Matters</authors>
+    <owners>Flow Matters</owners>
+	<iconUrl>http://www.flowmatters.com.au/images/LogoOnly.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Instream and In-storage Dissolved Oxygen and Dissolved Organic Carbon models.</description>
+    <copyright></copyright>
+	<tags></tags>
+    <dependencies />
+  </metadata>
+  <files>
+    <file src="..\Output\Plugins\CommunityPlugins\FlowMatters.Source.DODOC.dll" target="lib\FlowMatters.Source.DODOC.dll" />
+  </files>
+</package>

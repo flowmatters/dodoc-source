@@ -8,9 +8,7 @@
     <subclass name="FlowMatters.Source.DODOC.Storage.StorageDOC" lazy="false" discriminator-value="StorageDOC">
       <join table="StorageDOC" fetch="select">
         <key column="SubclassKey" />
-        <property name="DecompositionCoefficient" column="DecompositionCoefficient" access="property" />
         <property name="MaxAccumulationArea" column="MaxAccumulationArea" access="property" />
-        <property name="Fac" column="Fac" access="property" />
         <property name="LeafAccumulationConstant" column="LeafAccumulationConstant" access="property" />
         <property name="ReaerationCoefficient" column="ReaerationCoefficient" access="property" />
         <property name="DocConsumptionCoefficient" column="DocConsumptionCoefficient" access="property" />
@@ -19,7 +17,6 @@
         <property name="LeafK2" column="LeafK2" access="property" />
         <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
         <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
-        <property name="SoilO2Scaling" column="SoilO2Scaling" access="property" />
         <property name="PrimaryProductionReaeration" column="PrimaryProductionR" access="property" />
       </join>
     </subclass>
@@ -33,9 +30,7 @@
     <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDOC" lazy="false" discriminator-value="InstreamDOC">
       <join table="InstreamDOC" fetch="select">
         <key column="SubclassKey" />
-        <property name="DecompositionCoefficient" column="DecompositionCoefficient" access="property" />
         <property name="MaxAccumulationArea" column="MaxAccumulationArea" access="property" />
-        <property name="Fac" column="Fac" access="property" />
         <property name="LeafAccumulationConstant" column="LeafAccumulationConstant" access="property" />
         <property name="ReaerationCoefficient" column="ReaerationCoefficient" access="property" />
         <property name="DocConsumptionCoefficient" column="DocConsumptionCoefficient" access="property" />
@@ -44,7 +39,6 @@
         <property name="LeafK2" column="LeafK2" access="property" />
         <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
         <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
-        <property name="SoilO2Scaling" column="SoilO2Scaling" access="property" />
         <property name="PrimaryProductionReaeration" column="PrimaryProductionR" access="property" />
       </join>
     </subclass>
