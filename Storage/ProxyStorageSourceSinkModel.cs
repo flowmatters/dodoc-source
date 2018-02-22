@@ -46,6 +46,7 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.Debug = Debug;
             var constituentConcentration = TotalInitialVolume.EqualWithTolerance(0.0) ? 0.0 : (UnprocessedLoad / TotalInitialVolume);
             Worker.WorkingVolume = TotalInitialVolume;
+            Worker.Elevation = StorageModel.level;
             UpdateWorker(constituentConcentration);
         }
 

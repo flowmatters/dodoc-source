@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using RiverSystem;
-using RiverSystem.Api.Utils;
-using RiverSystem.Attributes;
+﻿using RiverSystem.Attributes;
 using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.Science.Mathematics.Functions;
@@ -9,16 +6,16 @@ using TIME.Science.Mathematics.Functions;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace FlowMatters.Source.DODOC.Instream
+namespace FlowMatters.Source.DODOC.Storage
 {
-    public class InstreamDOC : ProxyLinkSourceSinkModel
+    public class StorageDOC : ProxyStorageSourceSinkModel
     {
-        public InstreamDOC()
+        public StorageDOC()
         {
             InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
             InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
         }
-
+        
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
         [Parameter]
         [CalculationUnits(CommonUnits.squareMetres)]
@@ -42,13 +39,6 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter]
         public double LeafK2 { get; set; }
 
-
-        [Parameter]
-        public double PrimaryProductionReaeration { get; set; }
-
-        [Parameter]
-        public double TemperatureObs { get; set; }
-
         [Parameter]
         [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres,
             "Initial Leaf dry matter non readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
@@ -59,10 +49,20 @@ namespace FlowMatters.Source.DODOC.Instream
             "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
+        [Parameter]
+        public double PrimaryProductionReaeration { get; set; }
+
+        [Parameter]
+        public double TemperatureObs { get; set; }
+
         public double[] tempX { get; set; }
+
         public double[] DOC_max { get; set; }
+
         public double[] DOC_k { get; set; }
+
         public double[] ProductionCoefficients { get; set; }
+
         public double[] ProductionBreaks { get; set; }
 
         [Output]
@@ -126,41 +126,6 @@ namespace FlowMatters.Source.DODOC.Instream
         public double DocMax { get; private set; }
 
 
-        public override LinkSourceSinkModel CloneForMultipleDivisions()
-        {
-            return new InstreamDOC
-            {
-                IsFloodplain = IsFloodplain,
-
-                MaxAccumulationArea = MaxAccumulationArea,
-
-                LeafAccumulationConstant = LeafAccumulationConstant,
-
-                ReaerationCoefficient = ReaerationCoefficient,
-
-                DocConsumptionCoefficient = DocConsumptionCoefficient,
-
-                LeafA = LeafA,
-
-                LeafK1 = LeafK1,
-
-                LeafK2 = LeafK2,
-
-                InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable.Clone(),
-                InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable.Clone(),
-
-                PrimaryProductionReaeration = PrimaryProductionReaeration,
-
-                TemperatureObs = TemperatureObs,
-                tempX = tempX?.ToArray(),
-                DOC_max = DOC_max?.ToArray(),
-                DOC_k = DOC_k?.ToArray(),
-                ProductionCoefficients = ProductionCoefficients?.ToArray(),
-                ProductionBreaks = ProductionBreaks?.ToArray()
-            };
-        }
-
-
         protected override void UpdateWorker(double constituentConcentration)
         {
             Worker.ConcentrationDoc = constituentConcentration;
@@ -172,8 +137,8 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.LeafA = LeafA;
             Worker.LeafK1 = LeafK1;
             Worker.LeafK2 = LeafK2;
-            Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
+            Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.TemperatureObs = TemperatureObs;
 
@@ -222,7 +187,7 @@ namespace FlowMatters.Source.DODOC.Instream
                 Worker.ProductionBreaks = ProductionBreaks;
             }
 
-            Worker.Fac = 1.0 / Link.Divisions.Count;
+            Worker.Fac = 1.0;
         }
 
         protected override void RetrieveResults()

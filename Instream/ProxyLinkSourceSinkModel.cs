@@ -21,7 +21,6 @@ namespace FlowMatters.Source.DODOC.Instream
             base.reset();
             Worker = null;
             CentralSourceSinkModel.Instance.Reset();
-//            worker = CentralSourceSinkModel.Instance.GetWorker(Link);
         }
 
         private DoDocModel GetWorker()
@@ -34,7 +33,6 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.Run(now); // If not run
 
             RetrieveResults();
-//            ProcessedLoad = worker.getFlux(ModelledConstituent, theTimeStepInSeconds);
         }
 
         public override void InputsUpdated()
@@ -44,6 +42,7 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.Debug = Debug;
             var constituentConcentration = TotalInitialVolume.EqualWithTolerance(0.0)?0.0: (UnprocessedLoad / TotalInitialVolume);
             Worker.WorkingVolume = TotalInitialVolume;
+            Worker.Elevation = Link.Elevation;
             UpdateWorker(constituentConcentration);
         }
 
