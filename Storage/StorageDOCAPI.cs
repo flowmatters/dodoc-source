@@ -1,6 +1,8 @@
 ﻿using RiverSystem.Api.NetworkElements.Common.Constituents;
+using RiverSystem.Api.Utils;
 using TIME.Core;
 using TIME.Core.Metadata;
+using TIME.Science.Mathematics.Functions;
 
 namespace FlowMatters.Source.DODOC.Storage
 {
@@ -66,20 +68,21 @@ namespace FlowMatters.Source.DODOC.Storage
             set { Feature.LeafK2 = value; }
         }
 
+        
         [Parameter]
-        public double InitialLeafDryMatterReadilyDegradable
+        public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable
         {
-            get { return Feature.InitialLeafDryMatterReadilyDegradable; }
-            set { Feature.InitialLeafDryMatterReadilyDegradable = value; }
+            get { return Feature.InitialLeafDryMatterReadilyDegradable?.Clone(); }
+            set { value.copyPointsTo(Feature.InitialLeafDryMatterReadilyDegradable); }
         }
 
         [Parameter]
-        public double InitialLeafDryMatterNonReadilyDegradable
+        public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable
         {
-            get { return Feature.InitialLeafDryMatterNonReadilyDegradable; }
-            set { Feature.InitialLeafDryMatterNonReadilyDegradable = value; }
+            get { return Feature.InitialLeafDryMatterNonReadilyDegradable?.Clone(); }
+            set { value.copyPointsTo(Feature.InitialLeafDryMatterNonReadilyDegradable); }
         }
-
+        
         [Parameter]
         public double PrimaryProductionReaeration
         {

@@ -69,28 +69,14 @@ namespace FlowMatters.Source.DODOC.Instream
         }
 
         [Parameter]
-        public double InitialLeafDryMatterReadilyDegradable
-        {
-            get { return Feature.InitialLeafDryMatterReadilyDegradable; }
-            set { Feature.InitialLeafDryMatterReadilyDegradable = value; }
-        }
-
-        [Parameter]
-        public LinearPerPartFunction InitialLeafDryMatterReadilyDegradableFunc
+        public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable
         {
             get { return Feature.InitialLeafDryMatterReadilyDegradable?.Clone(); }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterReadilyDegradable); }
         }
 
         [Parameter]
-        public double InitialLeafDryMatterNonReadilyDegradable
-        {
-            get { return Feature.InitialLeafDryMatterNonReadilyDegradable; }
-            set { Feature.InitialLeafDryMatterNonReadilyDegradable = value; }
-        }
-        
-        [Parameter]
-        public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradableFunc
+        public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable
         {
             get { return Feature.InitialLeafDryMatterNonReadilyDegradable?.Clone(); }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterNonReadilyDegradable); }
