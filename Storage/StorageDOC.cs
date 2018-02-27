@@ -15,28 +15,28 @@ namespace FlowMatters.Source.DODOC.Storage
             InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
             InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
         }
-        
+
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
-        [Parameter]
+        [Parameter, Aka("Max Accumulation Area")]
         [CalculationUnits(CommonUnits.squareMetres)]
         public double MaxAccumulationArea { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Leaf Accumulation Constant")]
         public double LeafAccumulationConstant { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Doc Comsumption Coefficient")]
         public double DocConsumptionCoefficient { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Leaf A")]
         public double LeafA { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Leaf K1")]
         public double LeafK1 { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Leaf K1")]
         public double LeafK2 { get; set; }
 
         [Parameter]
@@ -49,10 +49,10 @@ namespace FlowMatters.Source.DODOC.Storage
             "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Primary Production Reaeration")]
         public double PrimaryProductionReaeration { get; set; }
 
-        [Parameter]
+        [Parameter, Aka("Temperature Obs")]
         public double TemperatureObs { get; set; }
 
         public double[] tempX { get; set; }

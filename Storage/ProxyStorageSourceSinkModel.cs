@@ -12,7 +12,7 @@ namespace FlowMatters.Source.DODOC.Storage
 {
     public abstract class ProxyStorageSourceSinkModel : StorageSourceSinkModel
     {
-        [Parameter] public double FloodplainElevation { get; set; }
+        [Parameter, Aka("Flood Plain Elevation")] public double FloodplainElevation { get; set; }
 
         public DoDocModel Worker { get; private set; }
 
