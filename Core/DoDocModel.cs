@@ -1,6 +1,4 @@
 ﻿using System;
-using RiverSystem;
-using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.ManagedExtensions;
 using TIME.Science.Mathematics.Functions;
@@ -71,7 +69,7 @@ namespace FlowMatters.Source.DODOC.Core
         public double DocConsumptionCoefficient { get; set; }
 
         [Parameter]
-        public double LeafA { get; set; }
+        public LinearPerPartFunction LeafA { get; set; }
         [Parameter]
         public double LeafK1 { get; set; }
         [Parameter]

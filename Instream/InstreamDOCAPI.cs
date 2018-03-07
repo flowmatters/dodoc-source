@@ -48,10 +48,10 @@ namespace FlowMatters.Source.DODOC.Instream
         }
 
         [Parameter]
-        public double LeafA
+        public LinearPerPartFunction LeafA
         {
-            get { return Feature.LeafA; }
-            set { Feature.LeafA = value; }
+            get { return Feature.LeafA?.Clone(); }
+            set { value.copyPointsTo(Feature.LeafA); }
         }
 
         [Parameter]

@@ -442,6 +442,9 @@ namespace FlowMatters.Source.DODOC.Core
 
             var docMilligrams = existingDOCMassKg*KG_TO_MG;
 
+            // calculate the accumulation value by looking up agaist elevation
+            var leafAccumulation = LeafA.f(Elevation);
+                 
             if (Areal.Area.LessOrEqual(0.0))
                 FloodCounter = 0;
 
@@ -482,11 +485,11 @@ namespace FlowMatters.Source.DODOC.Core
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) +
-                                                          (LeafAccumulationConstant*LeafA);
+                                                          (LeafAccumulationConstant* leafAccumulation);
                     double MaxmimumNonReadilyDegradable = 2850d;
                     zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable,
                         zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) +
-                        (LeafAccumulationConstant*(1 - LeafA)));
+                        (LeafAccumulationConstant*(1 - leafAccumulation)));
                 }
             }
 

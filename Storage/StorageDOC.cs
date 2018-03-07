@@ -14,6 +14,7 @@ namespace FlowMatters.Source.DODOC.Storage
         {
             InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
             InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
+            LeafA = new LinearPerPartFunction();
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
@@ -30,8 +31,8 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Doc Comsumption Coefficient")]
         public double DocConsumptionCoefficient { get; set; }
 
-        [Parameter, Aka("Leaf A")]
-        public double LeafA { get; set; }
+        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation", CommonUnits.none, CommonUnits.none)]
+        public LinearPerPartFunction LeafA { get; set; }
 
         [Parameter, Aka("Leaf K1")]
         public double LeafK1 { get; set; }
