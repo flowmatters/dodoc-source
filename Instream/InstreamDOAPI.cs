@@ -8,11 +8,5 @@ namespace FlowMatters.Source.DODOC.Instream
     public class InstreamDOAPI : ProcessingModel<InstreamDO>
     {
         public new string Name => "Instream DO";
-
-        public bool IsFloodplain
-        {
-            get { return Feature.IsFloodplain; }
-            set { Feature.IsFloodplain = value; }
-        }
     }
 }

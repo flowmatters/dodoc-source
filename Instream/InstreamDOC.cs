@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using FlowMatters.Source.DODOC.Core;
 using RiverSystem;
 using RiverSystem.Api.Utils;
 using RiverSystem.Attributes;
+using RiverSystem.Constituents;
 using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.Science.Mathematics.Functions;
@@ -125,6 +127,9 @@ namespace FlowMatters.Source.DODOC.Instream
 
         [Output]
         public double DocMax { get; private set; }
+        
+        [Parameter]
+        public bool IsFloodplain { get; set; }
 
 
         public override LinkSourceSinkModel CloneForMultipleDivisions()
@@ -224,6 +229,14 @@ namespace FlowMatters.Source.DODOC.Instream
             }
 
             Worker.Fac = 1.0 / Link.Divisions.Count;
+        }
+
+        public override void SetUpLinkSourceSinkModel(IRiverReach link, Division division, Constituent constituent,
+            SystemConstituentsConfiguration constituentsConfig)
+        {
+            base.SetUpLinkSourceSinkModel(link, division, constituent, constituentsConfig);
+            // division gets set in the base method
+            CentralSourceSinkModel.Instance.IsFloodPlain[new DivisionAreal(Division)] = IsFloodplain;
         }
 
         protected override void RetrieveResults()

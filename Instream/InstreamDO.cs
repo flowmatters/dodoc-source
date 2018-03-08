@@ -4,15 +4,9 @@ namespace FlowMatters.Source.DODOC.Instream
 {
     public class InstreamDO : ProxyLinkSourceSinkModel
     {
-        public InstreamDO()
-        {
-        }
-
         public override LinkSourceSinkModel CloneForMultipleDivisions()
         {
-            return new InstreamDO() { 
-                IsFloodplain = IsFloodplain,
-            };
+            return new InstreamDO();
         }
 		
 

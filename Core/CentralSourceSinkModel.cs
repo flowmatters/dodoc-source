@@ -25,10 +25,16 @@ namespace FlowMatters.Source.DODOC.Core
         }
 
         private ConcurrentDictionary<IAreal, DoDocModel> _models;
+        public ConcurrentDictionary<IAreal, bool> IsFloodPlain { get; private set; }
 
-        public DoDocModel GetModel(IAreal key,bool floodplain)
+        public DoDocModel GetModel(IAreal key)
         {
-            DoDocModel result = _models.GetOrAdd(key, k => floodplain?((DoDocModel)new FloodplainDoDoc()):(new RoutingDoDoc()));
+            bool floodplain;
+            var hasValue = IsFloodPlain.TryGetValue(key, out floodplain);
+            // storages wont set anything in IsFloodPlain but by default use the FloodplainDoDoc
+            if (!hasValue)
+                floodplain = true;
+            var result = _models.GetOrAdd(key, k => floodplain?((DoDocModel)new FloodplainDoDoc()):(new RoutingDoDoc()));
             result.Areal = key;
             return result;
         }
@@ -37,6 +43,7 @@ namespace FlowMatters.Source.DODOC.Core
         {
             if(_models==null||_models.Count>0)
                 _models = new ConcurrentDictionary<IAreal, DoDocModel>();
+            IsFloodPlain = new ConcurrentDictionary<IAreal, bool>();
         }
     }
 }

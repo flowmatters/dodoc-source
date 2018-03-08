@@ -7,6 +7,12 @@ namespace FlowMatters.Source.DODOC.Core
 {
     public abstract class DoDocModel
     {
+        protected DoDocModel()
+        {
+            InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
+            InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
+        }
+        
         private const double MG_L_to_KG_M3 = 1e-3;
         private const double KG_M3_to_MG_L = 1e3;
         protected const double MG_TO_KG = 1e-6;
