@@ -1,47 +1,53 @@
 ﻿using System;
-using RiverSystem;
-using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.ManagedExtensions;
+using TIME.Science.Mathematics.Functions;
 
 namespace FlowMatters.Source.DODOC.Core
 {
     public abstract class DoDocModel
     {
-        public const double MG_L_to_KG_M3 = 1e-3;
-        public const double KG_M3_to_MG_L = 1e3;
-        public const double MG_TO_KG = 1e-6;
-        public const double KG_TO_MG = 1e6;
-        public const double M3_to_L = 1e3;
-        public const double M2_TO_HA = 1e-4;
+        protected DoDocModel()
+        {
+            InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
+            InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
+        }
+        
+        private const double MG_L_to_KG_M3 = 1e-3;
+        private const double KG_M3_to_MG_L = 1e3;
+        protected const double MG_TO_KG = 1e-6;
+        protected const double KG_TO_MG = 1e6;
+        private const double M3_to_L = 1e3;
+        protected const double M2_TO_HA = 1e-4;
 
         public double WorkingVolume
         {
-            get;set;
+            get; set;
         }
 
-        public virtual int ZoneCount { get { return 0; } }
-        public virtual int CountInundatedZones { get { return 0; } }
-        public virtual int CountDryZones { get { return 0; } }
+        public virtual int ZoneCount => 0;
+        public virtual int CountInundatedZones => 0;
+        public virtual int CountDryZones => 0;
 
-        public virtual double LeafDryMatterReadilyDegradable { get { return 0; } }
-        public virtual double LeafDryMatterNonReadilyDegradable { get { return 0; } }
+        public virtual double LeafDryMatterReadilyDegradable => 0;
+        public virtual double LeafDryMatterNonReadilyDegradable => 0;
 
-        public virtual double LeafWetMatterReadilyDegradable { get { return 0; } }
-        public virtual double LeafWetMatterNonReadilyDegradable { get { return 0; } }
+        public virtual double LeafWetMatterReadilyDegradable => 0;
+        public virtual double LeafWetMatterNonReadilyDegradable => 0;
 
-        public virtual double FloodplainDryAreaHa { get { return 0; } }
-        public virtual double FloodplainWetAreaHa { get { return 0; } }
+        public virtual double FloodplainDryAreaHa => 0;
+        public virtual double FloodplainWetAreaHa => 0;
 
-        public double[] tempX { get; set; } = new[] { 0d, 5d, 10d, 15d, 20d, 25d, 30d };
-        public double[] DOC_k { get; set; } = new[] { 0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864 };
-        public double[] DOC_max { get; set; } = new[] { 0d, 100d, 105d, 110d, 115d, 120d, 150d };
+        public double[] tempX { get; set; } = {0d, 5d, 10d, 15d, 20d, 25d, 30d};
+        public double[] DOC_k { get; set; } = {0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864};
+        public double[] DOC_max { get; set; } = {0d, 100d, 105d, 110d, 115d, 120d, 150d};
 
-        public double[] ProductionCoefficients { get; set; }= new[] {1.0, 0.75, 0.50, 0.25, 0.1 };
-        public double[] ProductionBreaks { get; set; } = new[] {3d, 5d, 8d, 20d};
+        public double[] ProductionCoefficients { get; set; } = {1.0, 0.75, 0.50, 0.25, 0.1};
+        public double[] ProductionBreaks { get; set; } = {3d, 5d, 8d, 20d};
 
         [Parameter]
-        public double PrimaryProductionReaeration { get; set; } = 0.43; // +++TODO Fortran says - mg.L.day - does that mean mg/L/day? g/kl, kg/ML
+        // +++TODO Fortran says - mg.L.day - does that mean mg/L/day? g/kl, kg/ML
+        public double PrimaryProductionReaeration { get; set; } = 0.43; 
 
         public IAreal Areal { get; set; }
 
@@ -51,7 +57,8 @@ namespace FlowMatters.Source.DODOC.Core
 
         public bool Debug { get; set; }
 
-        [Output] public double ConsumedDocMilligrams { get; set; }
+        [Output] 
+        public double ConsumedDocMilligrams { get; set; }
         [Output]
         public double DissolvedOrganicCarbonLoad { get; set; }
         [Output]
@@ -68,7 +75,7 @@ namespace FlowMatters.Source.DODOC.Core
         public double DocConsumptionCoefficient { get; set; }
 
         [Parameter]
-        public double LeafA { get; set; }
+        public LinearPerPartFunction LeafA { get; set; }
         [Parameter]
         public double LeafK1 { get; set; }
         [Parameter]
@@ -98,11 +105,9 @@ namespace FlowMatters.Source.DODOC.Core
                 return Areal.MaxArea;
             }
         }
-        [Parameter, CalculationUnits("kg.ha^-1")]
-        public double InitialLeafDryMatterReadilyDegradable { get; set; }
-
-        [Parameter,CalculationUnits("kg.ha^-1")]
-        public double InitialLeafDryMatterNonReadilyDegradable { get; set; }
+        
+        public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
+        public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         protected DateTime Last;
         [Output]
@@ -129,13 +134,12 @@ namespace FlowMatters.Source.DODOC.Core
         [Output]
         public double DocMax { get; protected set; }
 
+        public double Elevation { get; set; }
+
         public void Run(DateTime dt)
         {
             if (dt.Date == Last.Date)
                 return;
-
-            if (dt.Date < Last.Date)
-                Reset();
 
             Last = dt;
 
@@ -143,16 +147,9 @@ namespace FlowMatters.Source.DODOC.Core
             ProcessDoc();
 
             ProcessDo();
-            TimeStep++;
         }
 
-        protected int TimeStep;
-        protected virtual void Reset()
-        {
-            TimeStep = 0;
-        }
-
-        protected virtual void PreTimeStep(DateTime dt)
+        private void PreTimeStep(DateTime dt)
         {
             // +++TODO How many of these should be parameters to make the model transferable???
             if (TemperatureObs > 0)
@@ -161,16 +158,12 @@ namespace FlowMatters.Source.DODOC.Core
                 TemperatureEst = 17.2388 + (7.8574*Math.Sin(((2*Math.PI*dt.DayOfYear)/361.8) + 1.178));
 
             Sigma = Math.Pow(1.05, TemperatureEst - 20);
-
-            // Reaeration_coeff = valcon(ReaerCoeff(irch))       
-            // DOC_consumption_coeff = valcon(DOCCoeff(irch))
-
         }
 
         protected abstract void ProcessDoc();
         protected abstract double SoilO2mg();
 
-        protected virtual void ProcessDo()
+        private void ProcessDo()
         {
             // Bring existing concentration into it?
 
@@ -184,7 +177,8 @@ namespace FlowMatters.Source.DODOC.Core
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
 
             // +++TODO Check unit conversions!
-            var reaerationmg = ReaerationCoefficient* Math.Max(0, (saturatedo2mg_L/*mg.L-1*/ - waterColumnConcentrationDOmg_L))* WorkingVolume * M3_to_L;
+            var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L/*mg.L-1*/ - waterColumnConcentrationDOmg_L))
+                                                     * WorkingVolume * M3_to_L;
             Reaeration = reaerationmg*MG_TO_KG;
 
             int i;

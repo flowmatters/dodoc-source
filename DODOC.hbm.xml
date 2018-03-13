@@ -12,21 +12,17 @@
         <property name="LeafAccumulationConstant" column="LeafAccumulationConstant" access="property" />
         <property name="ReaerationCoefficient" column="ReaerationCoefficient" access="property" />
         <property name="DocConsumptionCoefficient" column="DocConsumptionCoefficient" access="property" />
-        <property name="LeafA" column="LeafA" access="property" />
+        <many-to-one name="LeafA" column="LeafA" access="property" fetch="select" cascade="all-delete-orphan"/>
         <property name="LeafK1" column="LeafK1" access="property" />
         <property name="LeafK2" column="LeafK2" access="property" />
-        <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
-        <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
+        <many-to-one name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMRD" access="property" fetch="select" cascade="all-delete-orphan"/>
+        <many-to-one name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMNND"  access="property" fetch="select" cascade="all-delete-orphan"/>
         <property name="PrimaryProductionReaeration" column="PrimaryProductionR" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Storage.StorageDO" lazy="false" discriminator-value="StorageDO"/>
   </subclass>
-  <subclass abstract="true" name="FlowMatters.Source.DODOC.Instream.ProxyLinkSourceSinkModel" lazy="false" discriminator-value="ProxyLinkSourceSinkModel" extends="RiverSystem.SourceSinkModel, RiverSystem">
-    <join table="ProxyLinkSourceSinkModel" fetch="select">
-      <key column="SubclassKey" />
-      <property name="IsFloodplain" column="IsFloodplain" access="property" />
-    </join>
+  <subclass abstract="true" name="FlowMatters.Source.DODOC.Instream.ProxyLinkSourceSinkModel" lazy="false" extends="RiverSystem.SourceSinkModel, RiverSystem">
     <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDOC" lazy="false" discriminator-value="InstreamDOC">
       <join table="InstreamDOC" fetch="select">
         <key column="SubclassKey" />
@@ -34,11 +30,12 @@
         <property name="LeafAccumulationConstant" column="LeafAccumulationConstant" access="property" />
         <property name="ReaerationCoefficient" column="ReaerationCoefficient" access="property" />
         <property name="DocConsumptionCoefficient" column="DocConsumptionCoefficient" access="property" />
-        <property name="LeafA" column="LeafA" access="property" />
+        <many-to-one name="LeafA" column="LeafA" access="property" fetch="select" cascade="all-delete-orphan"/>
         <property name="LeafK1" column="LeafK1" access="property" />
         <property name="LeafK2" column="LeafK2" access="property" />
-        <property name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMRD" access="property" />
-        <property name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMNND" access="property" />
+        <property name="IsFloodplain" column="IsFloodplain" access="property" />
+        <many-to-one name="InitialLeafDryMatterNonReadilyDegradable" column="InitialLDMRD" access="property" fetch="select" cascade="all-delete-orphan"/>
+        <many-to-one name="InitialLeafDryMatterReadilyDegradable" column="InitialLDMNND" access="property" fetch="select" cascade="all-delete-orphan"/>
         <property name="PrimaryProductionReaeration" column="PrimaryProductionR" access="property" />
       </join>
     </subclass>
