@@ -134,6 +134,9 @@ namespace FlowMatters.Source.DODOC.Core
         [Output]
         public double DocMax { get; protected set; }
 
+        [Output]
+        public double LeafAccumulation => LeafA.f(Elevation);
+
         public double Elevation { get; set; }
 
         public void Run(DateTime dt)

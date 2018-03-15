@@ -42,7 +42,7 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Leaf K1")]
         public double LeafK1 { get; set; }
 
-        [Parameter, Aka("Leaf K1")]
+        [Parameter, Aka("Leaf K2")]
         public double LeafK2 { get; set; }
 
 
@@ -130,6 +130,9 @@ namespace FlowMatters.Source.DODOC.Instream
         
         [Parameter]
         public bool IsFloodplain { get; set; }
+
+        [Output, Aka("Leaf Accumlation")]
+        public double LeafAccumulation => LeafA.f(Worker.Elevation);
 
 
         public override LinkSourceSinkModel CloneForMultipleDivisions()
