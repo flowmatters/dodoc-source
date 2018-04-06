@@ -33,9 +33,6 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Doc Comsumption Coefficient")]
-        public double DocConsumptionCoefficient { get; set; }
-
         [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation", CommonUnits.none, CommonUnits.none)]
         public LinearPerPartFunction LeafA { get; set; }
 
@@ -62,9 +59,15 @@ namespace FlowMatters.Source.DODOC.Instream
             "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
-        public double[] tempX { get; set; }
-        public double[] DOC_max { get; set; }
-        public double[] DOC_k { get; set; }
+        [Parameter, Aka("First Order DOC Release Rate at 20ºC")]
+        public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
+
+        [Parameter, Aka("Max DOC Released from Litter at 20ºC")]
+        public double MaxDOCReleasedAt20DegreeC { get; set; }
+
+        [Parameter, Aka("DOC Decay Constant at 20ºC")]
+        public double DOCDecayConstantAt20DegreeC { get; set; }
+
         public double[] ProductionCoefficients { get; set; }
         public double[] ProductionBreaks { get; set; }
 
@@ -146,9 +149,7 @@ namespace FlowMatters.Source.DODOC.Instream
                 LeafAccumulationConstant = LeafAccumulationConstant,
 
                 ReaerationCoefficient = ReaerationCoefficient,
-
-                DocConsumptionCoefficient = DocConsumptionCoefficient,
-
+                
                 LeafA = LeafA,
 
                 LeafK1 = LeafK1,
@@ -161,9 +162,11 @@ namespace FlowMatters.Source.DODOC.Instream
                 PrimaryProductionReaeration = PrimaryProductionReaeration,
 
                 TemperatureObs = TemperatureObs,
-                tempX = tempX?.ToArray(),
-                DOC_max = DOC_max?.ToArray(),
-                DOC_k = DOC_k?.ToArray(),
+
+                FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC,
+                MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
+                DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
+
                 ProductionCoefficients = ProductionCoefficients?.ToArray(),
                 ProductionBreaks = ProductionBreaks?.ToArray()
             };
@@ -177,7 +180,6 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.MaxAccumulationArea = MaxAccumulationArea;
             Worker.LeafAccumulationConstant = LeafAccumulationConstant;
             Worker.ReaerationCoefficient = ReaerationCoefficient;
-            Worker.DocConsumptionCoefficient = DocConsumptionCoefficient;
             Worker.LeafA = LeafA;
             Worker.LeafK1 = LeafK1;
             Worker.LeafK2 = LeafK2;
@@ -185,33 +187,9 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.TemperatureObs = TemperatureObs;
-
-            if (tempX == null)
-            {
-                tempX = Worker.tempX;
-            }
-            else
-            {
-                Worker.tempX = tempX;
-            }
-
-            if (DOC_max == null)
-            {
-                DOC_max = Worker.DOC_max;
-            }
-            else
-            {
-                Worker.DOC_max = DOC_max;
-            }
-
-            if (DOC_k == null)
-            {
-                DOC_k = Worker.DOC_k;
-            }
-            else
-            {
-                Worker.DOC_k = DOC_k;
-            }
+            Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
+            Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
+            Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
 
             if (ProductionCoefficients == null)
             {

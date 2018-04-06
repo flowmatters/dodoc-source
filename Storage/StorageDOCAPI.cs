@@ -41,13 +41,6 @@ namespace FlowMatters.Source.DODOC.Storage
         }
 
         [Parameter]
-        public double DocConsumptionCoefficient
-        {
-            get { return Feature.DocConsumptionCoefficient; }
-            set { Feature.DocConsumptionCoefficient = value; }
-        }
-
-        [Parameter]
         public LinearPerPartFunction LeafA
         {
             get { return Feature.LeafA?.Clone(); }
@@ -68,7 +61,7 @@ namespace FlowMatters.Source.DODOC.Storage
             set { Feature.LeafK2 = value; }
         }
 
-        
+
         [Parameter]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable
         {
@@ -82,7 +75,7 @@ namespace FlowMatters.Source.DODOC.Storage
             get { return Feature.InitialLeafDryMatterNonReadilyDegradable?.Clone(); }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterNonReadilyDegradable); }
         }
-        
+
         [Parameter]
         public double PrimaryProductionReaeration
         {
@@ -98,27 +91,6 @@ namespace FlowMatters.Source.DODOC.Storage
         }
 
         [Parameter]
-        public double[] tempX
-        {
-            get { return Feature.tempX; }
-            set { Feature.tempX = value; }
-        }
-
-        [Parameter]
-        public double[] DOC_max
-        {
-            get { return Feature.DOC_max; }
-            set { Feature.DOC_max = value; }
-        }
-
-        [Parameter]
-        public double[] DOC_k
-        {
-            get { return Feature.DOC_k; }
-            set { Feature.DOC_k = value; }
-        }
-
-        [Parameter]
         public double[] ProductionCoefficients
         {
             get { return Feature.ProductionCoefficients; }
@@ -130,6 +102,27 @@ namespace FlowMatters.Source.DODOC.Storage
         {
             get { return Feature.ProductionBreaks; }
             set { Feature.ProductionBreaks = value; }
+        }
+
+        [Parameter]
+        public double FirstOrderDOCReleaseRateAt20DegreeC
+        {
+            get { return Feature.FirstOrderDOCReleaseRateAt20DegreeC; }
+            set { Feature.FirstOrderDOCReleaseRateAt20DegreeC = value; }
+        }
+
+        [Parameter]
+        public double MaxDOCReleasedFromComponentOfLitterAt20DegreeC
+        {
+            get { return Feature.MaxDOCReleasedAt20DegreeC;}
+            set { Feature.MaxDOCReleasedAt20DegreeC = value; }
+        }
+
+        [Parameter]
+        public double DOCDecayConstantAt20DegreeC
+        {
+            get { return Feature.DOCDecayConstantAt20DegreeC; }
+            set { Feature.DOCDecayConstantAt20DegreeC = value; }
         }
     }
 }

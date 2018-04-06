@@ -429,7 +429,7 @@ namespace FlowMatters.Source.DODOC.Core
             if (Zones.Count == 0)
             {
                 var newZone = new FloodplainData(false);
-                newZone.AreaM2 = Fac* EffectiveMaximumArea;
+                newZone.AreaM2 = Fac * EffectiveMaximumArea;
                 newZone.LeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable.f(Elevation);
                 newZone.LeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable.f(Elevation);
                 newZone.NewAreaM2 = newZone.AreaM2;
@@ -449,10 +449,13 @@ namespace FlowMatters.Source.DODOC.Core
                 FloodCounter = 0;
 
             //!the DOC dissolution rate constant is temp dependent
-            Leach1 = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_k.ToList(), TemperatureEst,
-                DOC_k.Length);
-            DocMax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst,
-                DOC_max.Length); // presumably a concentration?
+            //            Leach1 = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_k.ToList(), TemperatureEst, DOC_k.Length);
+            //            DocMax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst, DOC_max.Length); // presumably a concentration?
+            
+            //Get the first order rate constant for decay of leaf litter based on temperature. 
+            Leach1 = DOC_k(TemperatureEst);
+            //Get maximum amount of DOC that can be leached from leaf litter based on temperature.
+            DocMax = DOC_max(TemperatureEst);
 
             DOCEnteringWater = 0;
             TotalWetLeaf = 0;
@@ -494,11 +497,11 @@ namespace FlowMatters.Source.DODOC.Core
             }
 
             //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
-            ConsumedDocMilligrams = docMilligrams*DocConsumptionCoefficient*Sigma;
+            ConsumedDocMilligrams = docMilligrams * DocConsumptionCoefficient(TemperatureObs) * Sigma;
 
             docMilligrams = Math.Max(docMilligrams - ConsumedDocMilligrams,0.0);
 
-            DissolvedOrganicCarbonLoad = docMilligrams*MG_TO_KG;
+            DissolvedOrganicCarbonLoad = docMilligrams * MG_TO_KG;
 
 
 /*
@@ -515,7 +518,7 @@ namespace FlowMatters.Source.DODOC.Core
                                                                                     */
 
         }
-
+        
         private void PrintZones(double deltaArea)
         {
             string logFn = "D:\\temp\\zone_stats.csv";
