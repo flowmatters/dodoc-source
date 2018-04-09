@@ -28,9 +28,6 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Doc Comsumption Coefficient")]
-        public double DocConsumptionCoefficient { get; set; }
-
         [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation", CommonUnits.none, CommonUnits.none)]
         public LinearPerPartFunction LeafA { get; set; }
 
@@ -53,15 +50,18 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Primary Production Reaeration")]
         public double PrimaryProductionReaeration { get; set; }
 
-        [Parameter, Aka("Temperature Obs")]
-        public double TemperatureObs { get; set; }
+        [Parameter, Aka("Water Temperature")]
+        public double WaterTemperature { get; set; }
 
-        public double[] tempX { get; set; }
+        [Parameter, Aka("First Order DOC Release Rate at 20ºC")]
+        public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
 
-        public double[] DOC_max { get; set; }
-
-        public double[] DOC_k { get; set; }
-
+        [Parameter, Aka("Max DOC Released from Litter at 20ºC")]
+        public double MaxDOCReleasedAt20DegreeC { get; set; }
+        
+        [Parameter, Aka("DOC Decay Constant at 20ºC")]
+        public double DOCDecayConstantAt20DegreeC { get; set; }
+        
         public double[] ProductionCoefficients { get; set; }
 
         public double[] ProductionBreaks { get; set; }
@@ -137,41 +137,16 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.MaxAccumulationArea = MaxAccumulationArea;
             Worker.LeafAccumulationConstant = LeafAccumulationConstant;
             Worker.ReaerationCoefficient = ReaerationCoefficient;
-            Worker.DocConsumptionCoefficient = DocConsumptionCoefficient;
             Worker.LeafA = LeafA;
             Worker.LeafK1 = LeafK1;
             Worker.LeafK2 = LeafK2;
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
             Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
-            Worker.TemperatureObs = TemperatureObs;
-
-            if (tempX == null)
-            {
-                tempX = Worker.tempX;
-            }
-            else
-            {
-                Worker.tempX = tempX;
-            }
-
-            if (DOC_max == null)
-            {
-                DOC_max = Worker.DOC_max;
-            }
-            else
-            {
-                Worker.DOC_max = DOC_max;
-            }
-
-            if (DOC_k == null)
-            {
-                DOC_k = Worker.DOC_k;
-            }
-            else
-            {
-                Worker.DOC_k = DOC_k;
-            }
+            Worker.WaterTemperature = WaterTemperature;
+            Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
+            Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
+            Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC; 
 
             if (ProductionCoefficients == null)
             {
@@ -193,7 +168,7 @@ namespace FlowMatters.Source.DODOC.Storage
 
             Worker.Fac = 1.0;
         }
-
+        
         protected override void RetrieveResults()
         {
             ProcessedLoad = Worker.DissolvedOrganicCarbonLoad;
@@ -202,7 +177,7 @@ namespace FlowMatters.Source.DODOC.Storage
             CountDryZones = Worker.CountDryZones;
             LeafDryMatterReadilyDegradable = Worker.LeafDryMatterReadilyDegradable;
             LeafDryMatterNonReadilyDegradable = Worker.LeafDryMatterNonReadilyDegradable;
-            TemperatureEst = Worker.TemperatureEst;
+            TemperatureEst = Worker.WaterTemperatureEst;
             SoilO2Kg = Worker.SoilO2Kg;
             DoCo2 = Worker.DoCo2;
             Production = Worker.Production;

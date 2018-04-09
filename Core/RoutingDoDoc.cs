@@ -5,8 +5,8 @@
         protected override void ProcessDoc()
         {
             var load = ConcentrationDoc * WorkingVolume;
-            ConsumedDocMilligrams = load*DocConsumptionCoefficient*Sigma*KG_TO_MG;
-            DissolvedOrganicCarbonLoad = load - ConsumedDocMilligrams*MG_TO_KG;
+            ConsumedDocMilligrams = load * DocConsumptionCoefficient(WaterTemperature) * Sigma * KG_TO_MG;
+            DissolvedOrganicCarbonLoad = load - ConsumedDocMilligrams * MG_TO_KG;
         }
 
         protected override double SoilO2mg()

@@ -1,4 +1,5 @@
 ﻿using System;
+using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.ManagedExtensions;
 using TIME.Science.Mathematics.Functions;
@@ -37,11 +38,55 @@ namespace FlowMatters.Source.DODOC.Core
 
         public virtual double FloodplainDryAreaHa => 0;
         public virtual double FloodplainWetAreaHa => 0;
+        
+        // public double[] tempX { get; set; } = {0d, 5d, 10d, 15d, 20d, 25d, 30d};
+        
+        /// <summary>
+        /// DOC-k is the first order rate constant for decay of leaf litter. 
+        /// </summary>
+        /// <param name="tempDegreeC"></param>
+        /// <returns></returns>
+        public double DOC_k(double tempDegreeC)
+        {
+            //NOTE: Previously a hardcoded array => { get; set; } = {0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864};
+           
+            var DOC_k20 = FirstOrderDOCReleaseRateAt20DegreeC;
 
-        public double[] tempX { get; set; } = {0d, 5d, 10d, 15d, 20d, 25d, 30d};
-        public double[] DOC_k { get; set; } = {0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864};
-        public double[] DOC_max { get; set; } = {0d, 100d, 105d, 110d, 115d, 120d, 150d};
+            //DOC_k = DOC_k20C * 1.03(T-20)        ### with default DOC_k20C = 0.864 for leaves (as per below).
+            //   where DOC_k20C => is the DOC-k at 20 degrees. e.g. DOC_k20C for leaves is said to be 0.864 
+            return DOC_k20 * 1.03 * (tempDegreeC - 20);
+        }
+        
+        /// <summary>
+        /// DOC_max = maximum amount of DOC that can be leached from leaf litter
+        /// </summary>
+        /// <param name="tempDegreeC"></param>
+        /// <returns></returns>
+        public double DOC_max(double tempDegreeC)
+        {
+            //NOTE: Previously a hardcoded array => { get; set; } = {0d, 100d, 105d, 110d, 115d, 120d, 150d};
+            
+            var m20 = MaxDOCReleasedAt20DegreeC;
 
+            // m = m20 x (0.93255 + 0.06745 x e^(0.2047 * (T - 20)))
+            //   where m20 => is the value of m measured at 20 degree C
+            //   where T   => is the temperature in degree C
+            //   returns m => maximum amount of DOC released (mg g^-1)
+            return m20 * (0.93255 + 0.06745 * Math.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
+        }
+
+        /// <summary>
+        /// Temperature sensitive decay constant for DOC 
+        /// NOTE: This won't return DOCDecayConstantAt20DegreeC at temperatureObs = 20 due to rounding in the function
+        ///       this has been implemented as suggested in Whitworth and Baldwin 202016 BRAT
+        /// </summary>
+        /// <param name="waterTemperature"></param>
+        /// <returns></returns>
+        public double DocConsumptionCoefficient(double waterTemperature)
+        {
+            return DOCDecayConstantAt20DegreeC * (-0.2088 + (0.0604 * waterTemperature));
+        }
+        
         public double[] ProductionCoefficients { get; set; } = {1.0, 0.75, 0.50, 0.25, 0.1};
         public double[] ProductionBreaks { get; set; } = {3d, 5d, 8d, 20d};
 
@@ -51,9 +96,24 @@ namespace FlowMatters.Source.DODOC.Core
 
         public IAreal Areal { get; set; }
 
-        [Input] public double TemperatureObs { get; set; }
-        [Output] public double TemperatureEst { get; protected set; }
+        [Input] public double WaterTemperature { get; set; }
+        [Output] public double WaterTemperatureEst { get; protected set; }
         protected double Sigma;
+
+        /// <summary>
+        /// Maximum amount of DOC that can be leached from leaf litter at 20 degree C
+        /// </summary>
+        [Parameter]
+        public double MaxDOCReleasedAt20DegreeC { get; set; }
+        
+        /// <summary>
+        /// First order rate constant for decay of leaf / bark / trig litter at 20 degree C
+        /// </summary>
+        [Parameter]
+        public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
+
+        [Parameter]
+        public double DOCDecayConstantAt20DegreeC { get; set; }
 
         public bool Debug { get; set; }
 
@@ -71,9 +131,6 @@ namespace FlowMatters.Source.DODOC.Core
         public double Fac { get; set; }
 
         #region Parameters from valcon
-        [Parameter]
-        public double DocConsumptionCoefficient { get; set; }
-
         [Parameter]
         public LinearPerPartFunction LeafA { get; set; }
         [Parameter]
@@ -155,12 +212,13 @@ namespace FlowMatters.Source.DODOC.Core
         private void PreTimeStep(DateTime dt)
         {
             // +++TODO How many of these should be parameters to make the model transferable???
-            if (TemperatureObs > 0)
-                TemperatureEst = TemperatureObs;
+            if (WaterTemperature > 0)
+                WaterTemperatureEst = WaterTemperature;
             else
-                TemperatureEst = 17.2388 + (7.8574*Math.Sin(((2*Math.PI*dt.DayOfYear)/361.8) + 1.178));
+                //Default: Use sin curve to predict what the temprature at supplied date.
+                WaterTemperatureEst = 17.2388 + (7.8574 * Math.Sin(((2 * Math.PI * dt.DayOfYear) / 361.8) + 1.178));
 
-            Sigma = Math.Pow(1.05, TemperatureEst - 20);
+            Sigma = Math.Pow(1.05, WaterTemperatureEst - 20);
         }
 
         protected abstract void ProcessDoc();
@@ -169,18 +227,18 @@ namespace FlowMatters.Source.DODOC.Core
         private void ProcessDo()
         {
             // Bring existing concentration into it?
+             
+            SoilO2Kg = SoilO2Scaling * 1e-6 * SoilO2mg();
 
-            SoilO2Kg = SoilO2Scaling*1e-6*SoilO2mg();
+            DoCo2 = 1e-6 * ConsumedDocMilligrams * 2.667;
 
-            DoCo2 = 1e-6 * ConsumedDocMilligrams*2.667;
-
-            var saturatedo2mg_L = 13.41*Math.Exp(-0.01905*TemperatureEst); // +++TODO CONFIRM UNITS????
-            var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L*MG_L_to_KG_M3);
+            var saturatedo2mg_L = 13.41 * Math.Exp(-0.01905 * WaterTemperatureEst); // +++TODO CONFIRM UNITS????
+            var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L * MG_L_to_KG_M3);
             var existingWaterColumnDOKg = WorkingVolume * waterColumnConcentrationDOKg_M3;
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
 
             // +++TODO Check unit conversions!
-            var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L/*mg.L-1*/ - waterColumnConcentrationDOmg_L))
+            var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L))
                                                      * WorkingVolume * M3_to_L;
             Reaeration = reaerationmg*MG_TO_KG;
 
@@ -192,15 +250,15 @@ namespace FlowMatters.Source.DODOC.Core
                 if (concentrationDOCmgL <= ProductionBreaks[i])
                     break;
             }
-            Production = (PrimaryProductionReaeration*MG_L_to_KG_M3)*WorkingVolume*ProductionCoefficients[i];
+            Production = (PrimaryProductionReaeration * MG_L_to_KG_M3) * WorkingVolume * ProductionCoefficients[i];
 
             var totalOxygenUnconstrainedKg = (existingWaterColumnDOKg + Production + Reaeration) - (SoilO2Kg + DoCo2);
-            var saturationOxygenKg = saturatedo2mg_L*MG_L_to_KG_M3*WorkingVolume;
+            var saturationOxygenKg = saturatedo2mg_L * MG_L_to_KG_M3 * WorkingVolume;
             var totalOxygen = Math.Min(totalOxygenUnconstrainedKg, saturationOxygenKg);
-            var subloadO2 = totalOxygen/Fac;
+            var subloadO2 = totalOxygen / Fac;
 
             if (WorkingVolume.Greater(0.0))
-                DissolvedOxygenLoad = Math.Max(subloadO2,0.0);
+                DissolvedOxygenLoad = Math.Max(subloadO2, 0.0);
             else
                 DissolvedOxygenLoad = 0.0;
         }
