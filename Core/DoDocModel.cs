@@ -80,11 +80,11 @@ namespace FlowMatters.Source.DODOC.Core
         /// NOTE: This won't return DOCDecayConstantAt20DegreeC at temperatureObs = 20 due to rounding in the function
         ///       this has been implemented as suggested in Whitworth and Baldwin 202016 BRAT
         /// </summary>
-        /// <param name="temperatureObs"></param>
+        /// <param name="waterTemperature"></param>
         /// <returns></returns>
-        public double DocConsumptionCoefficient(double temperatureObs)
+        public double DocConsumptionCoefficient(double waterTemperature)
         {
-            return DOCDecayConstantAt20DegreeC * (-0.2088 + (0.0604 * temperatureObs));
+            return DOCDecayConstantAt20DegreeC * (-0.2088 + (0.0604 * waterTemperature));
         }
         
         public double[] ProductionCoefficients { get; set; } = {1.0, 0.75, 0.50, 0.25, 0.1};
@@ -96,8 +96,8 @@ namespace FlowMatters.Source.DODOC.Core
 
         public IAreal Areal { get; set; }
 
-        [Input] public double TemperatureObs { get; set; }
-        [Output] public double TemperatureEst { get; protected set; }
+        [Input] public double WaterTemperature { get; set; }
+        [Output] public double WaterTemperatureEst { get; protected set; }
         protected double Sigma;
 
         /// <summary>
@@ -212,13 +212,13 @@ namespace FlowMatters.Source.DODOC.Core
         private void PreTimeStep(DateTime dt)
         {
             // +++TODO How many of these should be parameters to make the model transferable???
-            if (TemperatureObs > 0)
-                TemperatureEst = TemperatureObs;
+            if (WaterTemperature > 0)
+                WaterTemperatureEst = WaterTemperature;
             else
                 //Default: Use sin curve to predict what the temprature at supplied date.
-                TemperatureEst = 17.2388 + (7.8574 * Math.Sin(((2 * Math.PI * dt.DayOfYear) / 361.8) + 1.178));
+                WaterTemperatureEst = 17.2388 + (7.8574 * Math.Sin(((2 * Math.PI * dt.DayOfYear) / 361.8) + 1.178));
 
-            Sigma = Math.Pow(1.05, TemperatureEst - 20);
+            Sigma = Math.Pow(1.05, WaterTemperatureEst - 20);
         }
 
         protected abstract void ProcessDoc();
@@ -232,7 +232,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             DoCo2 = 1e-6 * ConsumedDocMilligrams * 2.667;
 
-            var saturatedo2mg_L = 13.41 * Math.Exp(-0.01905 * TemperatureEst); // +++TODO CONFIRM UNITS????
+            var saturatedo2mg_L = 13.41 * Math.Exp(-0.01905 * WaterTemperatureEst); // +++TODO CONFIRM UNITS????
             var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L * MG_L_to_KG_M3);
             var existingWaterColumnDOKg = WorkingVolume * waterColumnConcentrationDOKg_M3;
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;

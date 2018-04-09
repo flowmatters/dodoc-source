@@ -83,10 +83,10 @@ namespace FlowMatters.Source.DODOC.Instream
         }
 
         [Parameter]
-        public double TemperatureObs
+        public double WaterTemperature
         {
-            get { return Feature.TemperatureObs; }
-            set { Feature.TemperatureObs = value; }
+            get { return Feature.WaterTemperature; }
+            set { Feature.WaterTemperature = value; }
         }
 
         [Parameter]

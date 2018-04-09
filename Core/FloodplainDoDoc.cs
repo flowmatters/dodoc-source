@@ -449,13 +449,10 @@ namespace FlowMatters.Source.DODOC.Core
                 FloodCounter = 0;
 
             //!the DOC dissolution rate constant is temp dependent
-            //            Leach1 = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_k.ToList(), TemperatureEst, DOC_k.Length);
-            //            DocMax = AbstractLumpedFlowRouting.Lintrpl(tempX.ToList(), DOC_max.ToList(), TemperatureEst, DOC_max.Length); // presumably a concentration?
-            
             //Get the first order rate constant for decay of leaf litter based on temperature. 
-            Leach1 = DOC_k(TemperatureEst);
+            Leach1 = DOC_k(WaterTemperatureEst);
             //Get maximum amount of DOC that can be leached from leaf litter based on temperature.
-            DocMax = DOC_max(TemperatureEst);
+            DocMax = DOC_max(WaterTemperatureEst);
 
             DOCEnteringWater = 0;
             TotalWetLeaf = 0;
@@ -497,7 +494,7 @@ namespace FlowMatters.Source.DODOC.Core
             }
 
             //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
-            ConsumedDocMilligrams = docMilligrams * DocConsumptionCoefficient(TemperatureObs) * Sigma;
+            ConsumedDocMilligrams = docMilligrams * DocConsumptionCoefficient(WaterTemperature) * Sigma;
 
             docMilligrams = Math.Max(docMilligrams - ConsumedDocMilligrams,0.0);
 
@@ -557,7 +554,7 @@ namespace FlowMatters.Source.DODOC.Core
         endif
         soilo2 = 148162 * (1. - Exp(-0.093 * (2. ** (temperature - 20.)) * subrchdata(irch,isub,5))) * subrchdata(irch,isub,2)
            */
-            return 148162*(1 - Math.Exp(-0.093*(Math.Pow(2, TemperatureEst - 20))*FloodCounter))*Areal.Area;
+            return 148162*(1 - Math.Exp(-0.093*(Math.Pow(2, WaterTemperatureEst - 20))*FloodCounter))*Areal.Area;
         }
     }
 

@@ -50,8 +50,8 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Primary Production Reaeration")]
         public double PrimaryProductionReaeration { get; set; }
 
-        [Parameter, Aka("Temperature Obs")]
-        public double TemperatureObs { get; set; }
+        [Parameter, Aka("Water Temperature")]
+        public double WaterTemperature { get; set; }
 
         [Parameter, Aka("First Order DOC Release Rate at 20ºC")]
         public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
@@ -143,7 +143,7 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
             Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
-            Worker.TemperatureObs = TemperatureObs;
+            Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC; 
@@ -177,7 +177,7 @@ namespace FlowMatters.Source.DODOC.Storage
             CountDryZones = Worker.CountDryZones;
             LeafDryMatterReadilyDegradable = Worker.LeafDryMatterReadilyDegradable;
             LeafDryMatterNonReadilyDegradable = Worker.LeafDryMatterNonReadilyDegradable;
-            TemperatureEst = Worker.TemperatureEst;
+            TemperatureEst = Worker.WaterTemperatureEst;
             SoilO2Kg = Worker.SoilO2Kg;
             DoCo2 = Worker.DoCo2;
             Production = Worker.Production;

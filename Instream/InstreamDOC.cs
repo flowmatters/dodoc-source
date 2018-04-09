@@ -46,8 +46,8 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Primary Production Reaeration")]
         public double PrimaryProductionReaeration { get; set; }
 
-        [Parameter, Aka("Temperature Obs")]
-        public double TemperatureObs { get; set; }
+        [Parameter, Aka("Water Temperature")]
+        public double WaterTemperature { get; set; }
 
         [Parameter]
         [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres,
@@ -161,7 +161,7 @@ namespace FlowMatters.Source.DODOC.Instream
 
                 PrimaryProductionReaeration = PrimaryProductionReaeration,
 
-                TemperatureObs = TemperatureObs,
+                WaterTemperature = WaterTemperature,
 
                 FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC,
                 MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
@@ -186,7 +186,7 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
-            Worker.TemperatureObs = TemperatureObs;
+            Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
@@ -228,7 +228,7 @@ namespace FlowMatters.Source.DODOC.Instream
             CountDryZones = Worker.CountDryZones;
             LeafDryMatterReadilyDegradable = Worker.LeafDryMatterReadilyDegradable;
             LeafDryMatterNonReadilyDegradable = Worker.LeafDryMatterNonReadilyDegradable;
-            TemperatureEst = Worker.TemperatureEst;
+            TemperatureEst = Worker.WaterTemperatureEst;
             SoilO2Kg = Worker.SoilO2Kg;
             DoCo2 = Worker.DoCo2;
             Production = Worker.Production;

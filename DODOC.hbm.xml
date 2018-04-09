@@ -20,6 +20,7 @@
         <property name="FirstOrderDOCReleaseRateAt20DegreeC" column="DOCReleaseRateAt20DegreeC" access="property" />
         <property name="MaxDOCReleasedAt20DegreeC" column="MaxDOCReleasedAt20DegreeC" access="property" />
         <property name="DOCDecayConstantAt20DegreeC" column="DOCDecayConstantAt20DegreeC" access="property" />
+        <property name="WaterTemperature" column="WaterTemperature" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Storage.StorageDO" lazy="false" discriminator-value="StorageDO"/>
@@ -41,6 +42,7 @@
         <property name="FirstOrderDOCReleaseRateAt20DegreeC" column="DOCReleaseRateAt20DegreeC" access="property" />
         <property name="MaxDOCReleasedAt20DegreeC" column="MaxDOCReleasedAt20DegreeC" access="property" />
         <property name="DOCDecayConstantAt20DegreeC" column="DOCDecayConstantAt20DegreeC" access="property" />
+        <property name="WaterTemperature" column="WaterTemperature" access="property" />
       </join>
     </subclass>
     <subclass name="FlowMatters.Source.DODOC.Instream.InstreamDO" lazy="false" discriminator-value="InstreamDO"/>
