@@ -61,7 +61,16 @@ namespace FlowMatters.Source.DODOC.Storage
         
         [Parameter, Aka("DOC Decay Constant at 20ºC")]
         public double DOCDecayConstantAt20DegreeC { get; set; }
-        
+
+        [Parameter, Aka("Water Quality Factor")]
+        public double WaterQualityFactor { get; set; }
+
+        [Parameter, Aka("Weir/Dam/Spillway Reaeration Coefficient")]
+        public double StructureRerationCoefficient { get; set; }
+
+        [Parameter, Aka("Static Head Loss"), CalculationUnits(CommonUnits.metres)]
+        public double StaticHeadLoss { get; set; }
+
         public double[] ProductionCoefficients { get; set; }
 
         public double[] ProductionBreaks { get; set; }
@@ -146,7 +155,10 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
-            Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC; 
+            Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
+            Worker.StructureRerationCoefficient = StructureRerationCoefficient;
+            Worker.WaterQualityFactor = WaterQualityFactor;
+            Worker.StaticHeadLoss = StaticHeadLoss;
 
             if (ProductionCoefficients == null)
             {

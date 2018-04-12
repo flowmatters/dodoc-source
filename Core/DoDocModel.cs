@@ -140,7 +140,17 @@ namespace FlowMatters.Source.DODOC.Core
         [Parameter]
         public double LeafAccumulationConstant { get; set; }
         [Parameter]
-        public double ReaerationCoefficient { get; set; }        
+        public double ReaerationCoefficient { get; set; }
+
+        [Parameter]
+        public double WaterQualityFactor { get; set; }
+
+        [Parameter]
+        public double StructureRerationCoefficient { get; set; }
+
+        [Parameter, CalculationUnits(CommonUnits.metres)]
+        public double StaticHeadLoss { get; set; }
+
         #endregion
 
         [Input]
@@ -238,9 +248,13 @@ namespace FlowMatters.Source.DODOC.Core
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
 
             // +++TODO Check unit conversions!
-            var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L))
-                                                     * WorkingVolume * M3_to_L;
+            var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L)) * WorkingVolume * M3_to_L;
             Reaeration = reaerationmg*MG_TO_KG;
+
+            // extra DO from generated from regulated scructures
+            var deficitRatio = 1 + 0.38 * StructureRerationCoefficient * WaterQualityFactor * StaticHeadLoss * (1 - 0.11 * StaticHeadLoss) * (1 + 0.046 * WaterTemperature);
+            var doFromRegulatedScructure = ((saturatedo2mg_L - ConcentrationDo) / deficitRatio) + saturatedo2mg_L;
+            var doFromRegulatedScructureLoad = doFromRegulatedScructure * WorkingVolume * MG_L_to_KG_M3;
 
             int i;
             var concentrationDOCmgL = ConcentrationDoc*KG_M3_to_MG_L;
@@ -258,9 +272,10 @@ namespace FlowMatters.Source.DODOC.Core
             var subloadO2 = totalOxygen / Fac;
 
             if (WorkingVolume.Greater(0.0))
-                DissolvedOxygenLoad = Math.Max(subloadO2, 0.0);
+                DissolvedOxygenLoad = Math.Max(subloadO2 + doFromRegulatedScructureLoad, 0.0);
             else
                 DissolvedOxygenLoad = 0.0;
+
         }
 
     }
