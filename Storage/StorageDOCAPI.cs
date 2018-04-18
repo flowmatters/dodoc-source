@@ -124,5 +124,26 @@ namespace FlowMatters.Source.DODOC.Storage
             get { return Feature.DOCDecayConstantAt20DegreeC; }
             set { Feature.DOCDecayConstantAt20DegreeC = value; }
         }
+
+        [Parameter]
+        public double WaterQualityFactor
+        {
+            get { return Feature.WaterQualityFactor; }
+            set { Feature.WaterQualityFactor = value; }
+        }
+
+        [Parameter]
+        public double StructureRerationCoefficient
+        {
+            get { return Feature.StructureRerationCoefficient; }
+            set { Feature.StructureRerationCoefficient = value; }
+        }
+
+        [Parameter]
+        public double WaterQuaStaticHeadLosslityFactor
+        {
+            get { return Feature.StaticHeadLoss; }
+            set { Feature.StaticHeadLoss = value; }
+        }
     }
 }
