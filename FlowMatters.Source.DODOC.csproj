@@ -84,27 +84,27 @@
     <Compile Include="Core\FloodplainDoDoc.cs" />
     <Compile Include="Instream\DivisionAreal.cs" />
     <Compile Include="Instream\InstreamDO.cs" />
+    <Compile Include="Instream\InstreamDOAPI.cs" />
     <Compile Include="Instream\InstreamDOC.cs" />
+    <Compile Include="Instream\InstreamDOCAPI.cs" />
     <Compile Include="Instream\ProxyLinkSourceSinkModel.cs" />
-    <Compile Include="PluginModels.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PluginModels.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\RoutingDoDoc.cs" />
     <Compile Include="Storage\ProxyStorageSourceSinkModel.cs" />
     <Compile Include="Storage\StorageAreal.cs" />
+    <Compile Include="Storage\StorageDO.cs" />
+    <Compile Include="Storage\StorageDOAPI.cs" />
+    <Compile Include="Storage\StorageDOC.cs" />
+    <Compile Include="Storage\StorageDOCAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DODOC.hbm.xml" />
-    <Content Include="PluginModels.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>PluginModels.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="API" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

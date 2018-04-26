@@ -1,9 +1,4 @@
-﻿using System.Linq;
-using FlowMatters.Source.DODOC.Core;
-using RiverSystem;
-using RiverSystem.Api.Utils;
-using RiverSystem.Attributes;
-using RiverSystem.Constituents;
+﻿using RiverSystem.Attributes;
 using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.Science.Mathematics.Functions;
@@ -11,11 +6,11 @@ using TIME.Science.Mathematics.Functions;
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace FlowMatters.Source.DODOC.Instream
+namespace FlowMatters.Source.DODOC.Storage
 {
-    public class InstreamDOC : ProxyLinkSourceSinkModel
+    public class StorageDOC : ProxyStorageSourceSinkModel
     {
-        public InstreamDOC()
+        public StorageDOC()
         {
             InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
             InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
@@ -39,15 +34,8 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Leaf K1")]
         public double LeafK1 { get; set; }
 
-        [Parameter, Aka("Leaf K2")]
+        [Parameter, Aka("Leaf K1")]
         public double LeafK2 { get; set; }
-
-
-        [Parameter, Aka("Primary Production Reaeration")]
-        public double PrimaryProductionReaeration { get; set; }
-
-        [Parameter, Aka("Water Temperature")]
-        public double WaterTemperature { get; set; }
 
         [Parameter]
         [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres,
@@ -59,12 +47,18 @@ namespace FlowMatters.Source.DODOC.Instream
             "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
+        [Parameter, Aka("Primary Production Reaeration")]
+        public double PrimaryProductionReaeration { get; set; }
+
+        [Parameter, Aka("Water Temperature")]
+        public double WaterTemperature { get; set; }
+
         [Parameter, Aka("First Order DOC Release Rate at 20ºC")]
         public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
 
         [Parameter, Aka("Max DOC Released from Litter at 20ºC")]
         public double MaxDOCReleasedAt20DegreeC { get; set; }
-
+        
         [Parameter, Aka("DOC Decay Constant at 20ºC")]
         public double DOCDecayConstantAt20DegreeC { get; set; }
 
@@ -78,6 +72,7 @@ namespace FlowMatters.Source.DODOC.Instream
         public double StaticHeadLoss { get; set; }
 
         public double[] ProductionCoefficients { get; set; }
+
         public double[] ProductionBreaks { get; set; }
 
         [Output]
@@ -139,47 +134,9 @@ namespace FlowMatters.Source.DODOC.Instream
 
         [Output]
         public double DocMax { get; private set; }
-        
-        [Parameter]
-        public bool IsFloodplain { get; set; }
 
         [Output, Aka("Leaf Accumlation")]
         public double LeafAccumulation => LeafA.f(Worker.Elevation);
-
-
-        public override LinkSourceSinkModel CloneForMultipleDivisions()
-        {
-            return new InstreamDOC
-            {
-                IsFloodplain = IsFloodplain,
-
-                MaxAccumulationArea = MaxAccumulationArea,
-
-                LeafAccumulationConstant = LeafAccumulationConstant,
-
-                ReaerationCoefficient = ReaerationCoefficient,
-                
-                LeafA = LeafA,
-
-                LeafK1 = LeafK1,
-
-                LeafK2 = LeafK2,
-
-                InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable.Clone(),
-                InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable.Clone(),
-
-                PrimaryProductionReaeration = PrimaryProductionReaeration,
-
-                WaterTemperature = WaterTemperature,
-
-                FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC,
-                MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
-                DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
-
-                ProductionCoefficients = ProductionCoefficients?.ToArray(),
-                ProductionBreaks = ProductionBreaks?.ToArray()
-            };
-        }
 
 
         protected override void UpdateWorker(double constituentConcentration)
@@ -192,8 +149,8 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.LeafA = LeafA;
             Worker.LeafK1 = LeafK1;
             Worker.LeafK2 = LeafK2;
-            Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
+            Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
@@ -221,17 +178,9 @@ namespace FlowMatters.Source.DODOC.Instream
                 Worker.ProductionBreaks = ProductionBreaks;
             }
 
-            Worker.Fac = 1.0 / Link.Divisions.Count;
+            Worker.Fac = 1.0;
         }
-
-        public override void SetUpLinkSourceSinkModel(IRiverReach link, Division division, Constituent constituent,
-            SystemConstituentsConfiguration constituentsConfig)
-        {
-            base.SetUpLinkSourceSinkModel(link, division, constituent, constituentsConfig);
-            // division gets set in the base method
-            CentralSourceSinkModel.Instance.IsFloodPlain[new DivisionAreal(Division)] = IsFloodplain;
-        }
-
+        
         protected override void RetrieveResults()
         {
             ProcessedLoad = Worker.DissolvedOrganicCarbonLoad;
