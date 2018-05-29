@@ -251,11 +251,6 @@ namespace FlowMatters.Source.DODOC.Core
             var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L)) * WorkingVolume * M3_to_L;
             Reaeration = reaerationmg*MG_TO_KG;
 
-            // extra DO from generated from regulated scructures
-            var deficitRatio = 1 + 0.38 * StructureRerationCoefficient * WaterQualityFactor * StaticHeadLoss * (1 - 0.11 * StaticHeadLoss) * (1 + 0.046 * WaterTemperature);
-            var doFromRegulatedScructure = ((saturatedo2mg_L - ConcentrationDo) / deficitRatio) + saturatedo2mg_L;
-            var doFromRegulatedScructureLoad = doFromRegulatedScructure * WorkingVolume * MG_L_to_KG_M3;
-
             int i;
             var concentrationDOCmgL = ConcentrationDoc*KG_M3_to_MG_L;
             for (i = 0; i < ProductionBreaks.Length; i++)
@@ -267,12 +262,18 @@ namespace FlowMatters.Source.DODOC.Core
             Production = (PrimaryProductionReaeration * MG_L_to_KG_M3) * WorkingVolume * ProductionCoefficients[i];
 
             var totalOxygenUnconstrainedKg = (existingWaterColumnDOKg + Production + Reaeration) - (SoilO2Kg + DoCo2);
+
             var saturationOxygenKg = saturatedo2mg_L * MG_L_to_KG_M3 * WorkingVolume;
-            var totalOxygen = Math.Min(totalOxygenUnconstrainedKg, saturationOxygenKg);
+
+            // extra DO from generated from regulated scructures
+            var deficitRatio = 1 + 0.38 * StructureRerationCoefficient * WaterQualityFactor * StaticHeadLoss * (1 - 0.11 * StaticHeadLoss) * (1 + 0.046 * WaterTemperature);
+            var doFromRegulatedScructureKg = saturationOxygenKg - (saturationOxygenKg - totalOxygenUnconstrainedKg) / deficitRatio;
+
+            var totalOxygen = Math.Min(doFromRegulatedScructureKg, saturationOxygenKg);
             var subloadO2 = totalOxygen / Fac;
 
             if (WorkingVolume.Greater(0.0))
-                DissolvedOxygenLoad = Math.Max(subloadO2 + doFromRegulatedScructureLoad, 0.0);
+                DissolvedOxygenLoad = Math.Max(subloadO2, 0.0);
             else
                 DissolvedOxygenLoad = 0.0;
 
