@@ -136,7 +136,10 @@ namespace FlowMatters.Source.DODOC.Storage
         public double DocMax { get; private set; }
 
         [Output, Aka("Leaf Accumlation")]
-        public double LeafAccumulation => LeafA.f(Worker.Elevation);
+        public double LeafAccumulation
+        {
+            get { return LeafA.f(Worker.Elevation); }
+        }
 
 
         protected override void UpdateWorker(double constituentConcentration)

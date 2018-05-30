@@ -7,6 +7,9 @@ namespace FlowMatters.Source.DODOC.Instream
     // ReSharper disable once UnusedMember.Global
     public class InstreamDOAPI : ProcessingModel<InstreamDO>
     {
-        public new string Name => "Instream DO";
+        public new string Name
+        {
+            get { return "Instream DO"; }
+        }
     }
 }

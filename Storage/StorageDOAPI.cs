@@ -7,7 +7,10 @@ namespace FlowMatters.Source.DODOC.Storage
     // ReSharper disable once UnusedMember.Global
     public class StorageDOAPI : ProcessingModel<StorageDO>
     {
-        public new string Name => "Storage DO";
+        public new string Name
+        {
+            get { return "Storage DO"; }
+        }
 
         public double FloodplainElevation
         {

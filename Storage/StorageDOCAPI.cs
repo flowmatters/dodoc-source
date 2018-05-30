@@ -10,7 +10,10 @@ namespace FlowMatters.Source.DODOC.Storage
     // ReSharper disable once UnusedMember.Global
     public class StorageDOCAPI : ProcessingModel<StorageDOC>
     {
-        public new string Name => "Storage DOC";
+        public new string Name
+        {
+            get { return "Storage DOC"; }
+        }
 
         public double FloodplainElevation
         {
@@ -43,7 +46,7 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter]
         public LinearPerPartFunction LeafA
         {
-            get { return Feature.LeafA?.Clone(); }
+            get { return Feature.LeafA != null ? Feature.LeafA.Clone() : null; }
             set { value.copyPointsTo(Feature.LeafA); }
         }
 
@@ -65,14 +68,14 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable
         {
-            get { return Feature.InitialLeafDryMatterReadilyDegradable?.Clone(); }
+            get { return Feature.InitialLeafDryMatterReadilyDegradable != null ? Feature.InitialLeafDryMatterReadilyDegradable.Clone() : null; }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterReadilyDegradable); }
         }
 
         [Parameter]
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable
         {
-            get { return Feature.InitialLeafDryMatterNonReadilyDegradable?.Clone(); }
+            get { return Feature.InitialLeafDryMatterNonReadilyDegradable != null ? Feature.InitialLeafDryMatterNonReadilyDegradable.Clone() : null; }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterNonReadilyDegradable); }
         }
 

@@ -144,7 +144,10 @@ namespace FlowMatters.Source.DODOC.Instream
         public bool IsFloodplain { get; set; }
 
         [Output, Aka("Leaf Accumlation")]
-        public double LeafAccumulation => LeafA.f(Worker.Elevation);
+        public double LeafAccumulation
+        {
+            get { return LeafA.f(Worker.Elevation); }
+        }
 
 
         public override LinkSourceSinkModel CloneForMultipleDivisions()
@@ -176,8 +179,8 @@ namespace FlowMatters.Source.DODOC.Instream
                 MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
                 DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
 
-                ProductionCoefficients = ProductionCoefficients?.ToArray(),
-                ProductionBreaks = ProductionBreaks?.ToArray()
+                ProductionCoefficients = ProductionCoefficients != null ? ProductionCoefficients.ToArray() : null,
+                ProductionBreaks = ProductionBreaks != null ? ProductionBreaks.ToArray() : null
             };
         }
 

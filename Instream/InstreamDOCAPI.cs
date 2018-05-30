@@ -10,7 +10,10 @@ namespace FlowMatters.Source.DODOC.Instream
     // ReSharper disable once UnusedMember.Global
     public class InstreamDOCAPI : ProcessingModel<InstreamDOC>
     {
-        public new string Name => "Instream DOC";
+        public new string Name
+        {
+            get { return "Instream DOC"; }
+        }
 
         public bool IsFloodplain
         {
@@ -43,7 +46,7 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter]
         public LinearPerPartFunction LeafA
         {
-            get { return Feature.LeafA?.Clone(); }
+            get { return Feature.LeafA != null ? Feature.LeafA.Clone() : null; }
             set { value.copyPointsTo(Feature.LeafA); }
         }
 
@@ -64,14 +67,14 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable
         {
-            get { return Feature.InitialLeafDryMatterReadilyDegradable?.Clone(); }
+            get { return Feature.InitialLeafDryMatterReadilyDegradable != null ? Feature.InitialLeafDryMatterReadilyDegradable.Clone() : null; }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterReadilyDegradable); }
         }
 
         [Parameter]
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable
         {
-            get { return Feature.InitialLeafDryMatterNonReadilyDegradable?.Clone(); }
+            get { return Feature.InitialLeafDryMatterNonReadilyDegradable != null ? Feature.InitialLeafDryMatterNonReadilyDegradable.Clone() : null; }
             set { value.copyPointsTo(Feature.InitialLeafDryMatterNonReadilyDegradable); }
         }
 

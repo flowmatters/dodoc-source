@@ -26,19 +26,51 @@ namespace FlowMatters.Source.DODOC.Core
             get; set;
         }
 
-        public virtual int ZoneCount => 0;
-        public virtual int CountInundatedZones => 0;
-        public virtual int CountDryZones => 0;
+        public virtual int ZoneCount
+        {
+            get { return 0; }
+        }
 
-        public virtual double LeafDryMatterReadilyDegradable => 0;
-        public virtual double LeafDryMatterNonReadilyDegradable => 0;
+        public virtual int CountInundatedZones
+        {
+            get { return 0; }
+        }
 
-        public virtual double LeafWetMatterReadilyDegradable => 0;
-        public virtual double LeafWetMatterNonReadilyDegradable => 0;
+        public virtual int CountDryZones
+        {
+            get { return 0; }
+        }
 
-        public virtual double FloodplainDryAreaHa => 0;
-        public virtual double FloodplainWetAreaHa => 0;
-        
+        public virtual double LeafDryMatterReadilyDegradable
+        {
+            get { return 0; }
+        }
+
+        public virtual double LeafDryMatterNonReadilyDegradable
+        {
+            get { return 0; }
+        }
+
+        public virtual double LeafWetMatterReadilyDegradable
+        {
+            get { return 0; }
+        }
+
+        public virtual double LeafWetMatterNonReadilyDegradable
+        {
+            get { return 0; }
+        }
+
+        public virtual double FloodplainDryAreaHa
+        {
+            get { return 0; }
+        }
+
+        public virtual double FloodplainWetAreaHa
+        {
+            get { return 0; }
+        }
+
         // public double[] tempX { get; set; } = {0d, 5d, 10d, 15d, 20d, 25d, 30d};
         
         /// <summary>
@@ -202,7 +234,10 @@ namespace FlowMatters.Source.DODOC.Core
         public double DocMax { get; protected set; }
 
         [Output]
-        public double LeafAccumulation => LeafA.f(Elevation);
+        public double LeafAccumulation
+        {
+            get { return LeafA.f(Elevation); }
+        }
 
         public double Elevation { get; set; }
 
