@@ -484,12 +484,9 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
-                    zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) +
-                                                          (LeafAccumulationConstant* leafAccumulation);
+                    zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (LeafAccumulationConstant* leafAccumulation);
                     double MaxmimumNonReadilyDegradable = 2850d;
-                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable,
-                        zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) +
-                        (LeafAccumulationConstant*(1 - leafAccumulation)));
+                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (LeafAccumulationConstant*(1 - leafAccumulation)));
                 }
             }
 

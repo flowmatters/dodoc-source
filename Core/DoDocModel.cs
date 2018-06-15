@@ -221,12 +221,8 @@ namespace FlowMatters.Source.DODOC.Core
 
         private void PreTimeStep(DateTime dt)
         {
-            // +++TODO How many of these should be parameters to make the model transferable???
             if (WaterTemperature > 0)
                 WaterTemperatureEst = WaterTemperature;
-            else
-                //Default: Use sin curve to predict what the temprature at supplied date.
-                WaterTemperatureEst = 17.2388 + (7.8574 * Math.Sin(((2 * Math.PI * dt.DayOfYear) / 361.8) + 1.178));
 
             Sigma = Math.Pow(1.05, WaterTemperatureEst - 20);
         }

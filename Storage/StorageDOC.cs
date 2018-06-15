@@ -15,6 +15,17 @@ namespace FlowMatters.Source.DODOC.Storage
             InitialLeafDryMatterNonReadilyDegradable = new LinearPerPartFunction();
             InitialLeafDryMatterReadilyDegradable = new LinearPerPartFunction();
             LeafA = new LinearPerPartFunction();
+            
+            // set default values
+            DOCDecayConstantAt20DegreeC = 0.03;
+            FirstOrderDOCReleaseRateAt20DegreeC = 0.4;
+            LeafK1 = 0.03;
+            LeafK2 = 0.003;
+            MaxDOCReleasedAt20DegreeC = 40;
+            ReaerationCoefficient = 0.08;
+            StructureRerationCoefficient = 0.6;
+            WaterQualityFactor = 0.65;
+            WaterTemperature = 20;
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
@@ -31,10 +42,10 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation", CommonUnits.none, CommonUnits.none)]
         public LinearPerPartFunction LeafA { get; set; }
 
-        [Parameter, Aka("Leaf K1")]
+        [Parameter, Aka("Leaf dry matter readily degradable decay rate")]
         public double LeafK1 { get; set; }
 
-        [Parameter, Aka("Leaf K1")]
+        [Parameter, Aka("Leaf dry matter non readily degradable decay rate")]
         public double LeafK2 { get; set; }
 
         [Parameter]
@@ -43,14 +54,13 @@ namespace FlowMatters.Source.DODOC.Storage
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres,
-            "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
         [Parameter, Aka("Primary Production Reaeration")]
         public double PrimaryProductionReaeration { get; set; }
 
-        [Parameter, Aka("Water Temperature")]
+        [Parameter, Aka("Water Temperature"), CalculationUnits(CommonUnits.celsius), DisplayUnit(CommonUnits.celsius)]
         public double WaterTemperature { get; set; }
 
         [Parameter, Aka("First Order DOC Release Rate at 20ºC")]
@@ -59,7 +69,7 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Max DOC Released from Litter at 20ºC")]
         public double MaxDOCReleasedAt20DegreeC { get; set; }
         
-        [Parameter, Aka("DOC Decay Constant at 20ºC")]
+        [Parameter, Aka("DOC Decomposition rate at 20ºC")]
         public double DOCDecayConstantAt20DegreeC { get; set; }
 
         [Parameter, Aka("Water Quality Factor")]

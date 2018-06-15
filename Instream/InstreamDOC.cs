@@ -46,7 +46,7 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Primary Production Reaeration")]
         public double PrimaryProductionReaeration { get; set; }
 
-        [Parameter, Aka("Water Temperature")]
+        [Parameter, Aka("Water Temperature"), CalculationUnits(CommonUnits.celsius), DisplayUnit(CommonUnits.celsius)]
         public double WaterTemperature { get; set; }
 
         [Parameter]
@@ -65,7 +65,7 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Max DOC Released from Litter at 20ºC")]
         public double MaxDOCReleasedAt20DegreeC { get; set; }
 
-        [Parameter, Aka("DOC Decay Constant at 20ºC")]
+        [Parameter, Aka("DOC Decomposition rate at 20ºC")]
         public double DOCDecayConstantAt20DegreeC { get; set; }
 
         [Parameter, Aka("Water Quality Factor")]

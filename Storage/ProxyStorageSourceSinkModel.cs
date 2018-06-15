@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FlowMatters.Source.DODOC.Core;
 using RiverSystem;
+using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.ManagedExtensions;
 
@@ -12,7 +13,8 @@ namespace FlowMatters.Source.DODOC.Storage
 {
     public abstract class ProxyStorageSourceSinkModel : StorageSourceSinkModel
     {
-        [Parameter, Aka("Flood Plain Elevation")] public double FloodplainElevation { get; set; }
+        [Parameter, Aka("Flood Plain Elevation"), CalculationUnits(CommonUnits.metres), DisplayUnit(CommonUnits.metres)] 
+        public double FloodplainElevation { get; set; }
 
         public DoDocModel Worker { get; private set; }
 
