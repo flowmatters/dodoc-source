@@ -187,9 +187,9 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.ConcentrationDoc = constituentConcentration;
 
             Worker.MaxAccumulationArea = MaxAccumulationArea;
-            Worker.LeafAccumulationConstant = LeafAccumulationConstant;
+            Worker.LeafAccumulationConstant = LeafA;
             Worker.ReaerationCoefficient = ReaerationCoefficient;
-            Worker.LeafA = LeafA;
+            Worker.LeafA = LeafAccumulationConstant;
             Worker.LeafK1 = LeafK1;
             Worker.LeafK2 = LeafK2;
             Worker.InitialLeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable;

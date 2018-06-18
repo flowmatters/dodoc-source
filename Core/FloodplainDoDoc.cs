@@ -443,7 +443,7 @@ namespace FlowMatters.Source.DODOC.Core
             var docMilligrams = existingDOCMassKg*KG_TO_MG;
 
             // calculate the accumulation value by looking up agaist elevation
-            var leafAccumulation = LeafA.f(Elevation);
+            var leafAccumulationConstant = LeafAccumulationConstant.f(Elevation);
                  
             if (Areal.Area.LessOrEqual(0.0))
                 FloodCounter = 0;
@@ -462,9 +462,7 @@ namespace FlowMatters.Source.DODOC.Core
                 if (Areal.Area.Less(zone.AreaM2))
                     continue;
 
-                double wetleafKg = zone.NewAreaM2*M2_TO_HA*
-                                 ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable) + 
-                                 LeafAccumulationConstant);
+                double wetleafKg = zone.NewAreaM2*M2_TO_HA* ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable) + leafAccumulationConstant);
 
                 TotalWetLeaf += wetleafKg;
                 double leafDOC = wetleafKg*1000*DocMax*(LeachingRate); // ??? How is this converting kg->mg (*1e-6)
@@ -484,9 +482,9 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
-                    zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (LeafAccumulationConstant* leafAccumulation);
+                    zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
                     double MaxmimumNonReadilyDegradable = 2850d;
-                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (LeafAccumulationConstant*(1 - leafAccumulation)));
+                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
                 }
             }
 

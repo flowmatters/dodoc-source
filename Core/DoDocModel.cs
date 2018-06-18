@@ -132,13 +132,13 @@ namespace FlowMatters.Source.DODOC.Core
 
         #region Parameters from valcon
         [Parameter]
-        public LinearPerPartFunction LeafA { get; set; }
+        public LinearPerPartFunction LeafAccumulationConstant { get; set; }
         [Parameter]
         public double LeafK1 { get; set; }
         [Parameter]
         public double LeafK2 { get; set; }
         [Parameter]
-        public double LeafAccumulationConstant { get; set; }
+        public double LeafA { get; set; }
         [Parameter]
         public double ReaerationCoefficient { get; set; }
 
@@ -202,7 +202,7 @@ namespace FlowMatters.Source.DODOC.Core
         public double DocMax { get; protected set; }
 
         [Output]
-        public double LeafAccumulation => LeafA.f(Elevation);
+        public double LeafAccumulation => LeafAccumulationConstant.f(Elevation);
 
         public double Elevation { get; set; }
 

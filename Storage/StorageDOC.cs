@@ -33,13 +33,13 @@ namespace FlowMatters.Source.DODOC.Storage
         [CalculationUnits(CommonUnits.squareMetres)]
         public double MaxAccumulationArea { get; set; }
 
-        [Parameter, Aka("Leaf Accumulation Constant")]
+        [Parameter, Aka("Fraction Degradeable")]
         public double LeafAccumulationConstant { get; set; }
 
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation", CommonUnits.none, CommonUnits.none)]
+        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation Constant", CommonUnits.none, CommonUnits.none)]
         public LinearPerPartFunction LeafA { get; set; }
 
         [Parameter, Aka("Leaf dry matter readily degradable decay rate")]
@@ -154,9 +154,9 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.ConcentrationDoc = constituentConcentration;
 
             Worker.MaxAccumulationArea = MaxAccumulationArea;
-            Worker.LeafAccumulationConstant = LeafAccumulationConstant;
+            Worker.LeafAccumulationConstant = LeafA;
             Worker.ReaerationCoefficient = ReaerationCoefficient;
-            Worker.LeafA = LeafA;
+            Worker.LeafA = LeafAccumulationConstant;
             Worker.LeafK1 = LeafK1;
             Worker.LeafK2 = LeafK2;
             Worker.InitialLeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable;
