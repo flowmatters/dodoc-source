@@ -19,9 +19,11 @@ namespace FlowMatters.Source.DODOC.Storage
             // set default values
             DOCDecayConstantAt20DegreeC = 0.03;
             FirstOrderDOCReleaseRateAt20DegreeC = 0.4;
+            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.3;
             LeafK1 = 0.03;
             LeafK2 = 0.003;
             MaxDOCReleasedAt20DegreeC = 40;
+            MaxDOCReleasedAt20DegreeCNonReadily = 80;
             ReaerationCoefficient = 0.08;
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;
@@ -63,12 +65,18 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Water Temperature"), CalculationUnits(CommonUnits.celsius), DisplayUnit(CommonUnits.celsius)]
         public double WaterTemperature { get; set; }
 
-        [Parameter, Aka("First Order DOC Release Rate at 20ºC")]
+        [Parameter, Aka("First Order DOC Release Rate at 20ºC - Readily")]
         public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
 
-        [Parameter, Aka("Max DOC Released from Litter at 20ºC")]
+        [Parameter, Aka("First Order DOC Release Rate at 20ºC - Non Readily")]
+        public double FirstOrderDOCReleaseRateAt20DegreeCNonReadily { get; set; }
+
+        [Parameter, Aka("Max DOC Released from Litter at 20ºC - Readily")]
         public double MaxDOCReleasedAt20DegreeC { get; set; }
-        
+
+        [Parameter, Aka("Max DOC Released from Litter at 20ºC - Non Readily")]
+        public double MaxDOCReleasedAt20DegreeCNonReadily { get; set; }
+
         [Parameter, Aka("DOC Decomposition rate at 20ºC")]
         public double DOCDecayConstantAt20DegreeC { get; set; }
 
@@ -140,10 +148,16 @@ namespace FlowMatters.Source.DODOC.Storage
         public double Leach1 { get; private set; }
 
         [Output]
+        public double Leach1NonReadily { get; private set; }
+
+        [Output]
         public double LeachingRate { get; private set; }
 
         [Output]
         public double DocMax { get; private set; }
+
+        [Output]
+        public double DocMaxNonReadily { get; private set; }
 
         [Output, Aka("Leaf Accumlation")]
         public double LeafAccumulation => LeafA.f(Worker.Elevation);
@@ -164,7 +178,9 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
+            Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeCNonReadily;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
+            Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
@@ -212,8 +228,10 @@ namespace FlowMatters.Source.DODOC.Storage
             FloodplainWetAreaHa = Worker.FloodplainWetAreaHa;
             FloodplainDryAreaHa = Worker.FloodplainDryAreaHa;
             Leach1 = Worker.Leach1;
+            Leach1NonReadily = Worker.Leach1NonReadily;
             LeachingRate = Worker.LeachingRate;
             DocMax = Worker.DocMax;
+            DocMaxNonReadily = Worker.DocMaxNonReadily;
         }
     }
 }

@@ -56,7 +56,12 @@ namespace FlowMatters.Source.DODOC.Core
             //   where DOC_k20C => is the DOC-k at 20 degrees. e.g. DOC_k20C for leaves is said to be 0.864 
             return DOC_k20 * 1.03 * (tempDegreeC - 20);
         }
-        
+
+        public double DOC_kNonReadily(double tempDegreeC)
+        {
+            return FirstOrderDOCReleaseRateAt20DegreeCNonReadily * 1.03 * (tempDegreeC - 20);
+        }
+
         /// <summary>
         /// DOC_max = maximum amount of DOC that can be leached from leaf litter
         /// </summary>
@@ -73,6 +78,11 @@ namespace FlowMatters.Source.DODOC.Core
             //   where T   => is the temperature in degree C
             //   returns m => maximum amount of DOC released (mg g^-1)
             return m20 * (0.93255 + 0.06745 * Math.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
+        }
+
+        public double DOC_maxNonReadily(double tempDegreeC)
+        {
+            return MaxDOCReleasedAt20DegreeCNonReadily * (0.93255 + 0.06745 * Math.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
         }
 
         /// <summary>
@@ -105,12 +115,18 @@ namespace FlowMatters.Source.DODOC.Core
         /// </summary>
         [Parameter]
         public double MaxDOCReleasedAt20DegreeC { get; set; }
-        
+
+        [Parameter]
+        public double MaxDOCReleasedAt20DegreeCNonReadily { get; set; }
+
         /// <summary>
         /// First order rate constant for decay of leaf / bark / trig litter at 20 degree C
         /// </summary>
         [Parameter]
         public double FirstOrderDOCReleaseRateAt20DegreeC { get; set; }
+
+        [Parameter]
+        public double FirstOrderDOCReleaseRateAt20DegreeCNonReadily { get; set; }
 
         [Parameter]
         public double DOCDecayConstantAt20DegreeC { get; set; }
@@ -199,7 +215,13 @@ namespace FlowMatters.Source.DODOC.Core
         public double Leach1 { get; protected set; }
 
         [Output]
+        public double Leach1NonReadily { get; protected set; }
+
+        [Output]
         public double DocMax { get; protected set; }
+
+        [Output]
+        public double DocMaxNonReadily { get; protected set; }
 
         [Output]
         public double LeafAccumulation => LeafAccumulationConstant.f(Elevation);

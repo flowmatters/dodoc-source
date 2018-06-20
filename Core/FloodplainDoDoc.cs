@@ -454,9 +454,14 @@ namespace FlowMatters.Source.DODOC.Core
             //Get maximum amount of DOC that can be leached from leaf litter based on temperature.
             DocMax = DOC_max(WaterTemperatureEst);
 
+            Leach1NonReadily = DOC_kNonReadily(WaterTemperatureEst);
+            DocMaxNonReadily = DOC_maxNonReadily(WaterTemperatureEst);
+
+
             DOCEnteringWater = 0;
             TotalWetLeaf = 0;
             LeachingRate = 1 - Math.Exp(-Leach1 * Sigma);
+            var leachingRateNonReadily = 1 - Math.Exp(-Leach1NonReadily * Sigma);
             foreach (var zone in Zones)
             {
                 if (Areal.Area.Less(zone.AreaM2))
@@ -473,7 +478,7 @@ namespace FlowMatters.Source.DODOC.Core
                   zone(floodrch,isub,ii,3) = max(0.,zone(floodrch,isub,ii,3)-(zone(floodrch,isub,ii,3) * (1 - Exp(-decomp1 * sigma *  86400))))
                 */
                 zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-LeachingRate));
-                zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1-LeachingRate));
+                zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1- leachingRateNonReadily));
             }
 
             docMilligrams += DOCEnteringWater;

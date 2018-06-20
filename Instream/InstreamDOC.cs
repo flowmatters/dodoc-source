@@ -197,7 +197,9 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
+            Worker.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = FirstOrderDOCReleaseRateAt20DegreeC;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
+            Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeC;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
