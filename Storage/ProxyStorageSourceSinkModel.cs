@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FlowMatters.Source.DODOC.Core;
 using RiverSystem;
+using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.ManagedExtensions;
 
@@ -12,7 +13,8 @@ namespace FlowMatters.Source.DODOC.Storage
 {
     public abstract class ProxyStorageSourceSinkModel : StorageSourceSinkModel
     {
-        [Parameter] public double FloodplainElevation { get; set; }
+        [Parameter, Aka("Flood Plain Elevation"), CalculationUnits(CommonUnits.metres), DisplayUnit(CommonUnits.metres)] 
+        public double FloodplainElevation { get; set; }
 
         public DoDocModel Worker { get; private set; }
 
@@ -28,7 +30,7 @@ namespace FlowMatters.Source.DODOC.Storage
         private DoDocModel GetWorker()
         {
             StorageAreal storageAreal = new StorageAreal(StorageModel,FloodplainElevation);
-            return CentralSourceSinkModel.Instance.GetModel(storageAreal,true);
+            return CentralSourceSinkModel.Instance.GetModel(storageAreal);
         }
 
         public override void runTimeStep(DateTime now, double theTimeStepInSeconds)
@@ -46,6 +48,7 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.Debug = Debug;
             var constituentConcentration = TotalInitialVolume.EqualWithTolerance(0.0) ? 0.0 : (UnprocessedLoad / TotalInitialVolume);
             Worker.WorkingVolume = TotalInitialVolume;
+            Worker.Elevation = StorageModel.Level;
             UpdateWorker(constituentConcentration);
         }
 

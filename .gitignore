@@ -37,3 +37,18 @@ Compiled
 
 *.sln.include
 
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/\.idea/\.name
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/\.idea/contentModel\.xml
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/\.idea/indexLayout\.xml
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/\.idea/modules\.xml
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/\.idea/vcs\.xml
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/\.idea/workspace\.xml
+
+\.idea/\.idea\.FlowMatters\.Source\.DODOC/riderModule\.iml
+.vs/

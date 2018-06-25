@@ -1,14 +1,11 @@
-﻿using RiverSystem;
-
-namespace FlowMatters.Source.DODOC.Instream
+﻿namespace FlowMatters.Source.DODOC.Storage
 {
-    public class InstreamDO : ProxyLinkSourceSinkModel
+    public class StorageDO : ProxyStorageSourceSinkModel
     {
-        public override LinkSourceSinkModel CloneForMultipleDivisions()
+        public StorageDO()
         {
-            return new InstreamDO();
         }
-		
+
 
         protected override void UpdateWorker(double constituentConcentration)
         {
