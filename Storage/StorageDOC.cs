@@ -1,7 +1,14 @@
-﻿using RiverSystem.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using RiverSystem.Api.NetworkElements.Storage;
+using RiverSystem.Attributes;
+using RiverSystem.Prototyping;
+using RiverSystem.Storages.Geometry;
 using TIME.Core;
 using TIME.Core.Metadata;
 using TIME.Science.Mathematics.Functions;
+using TIME.Science.Utils;
 
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -185,6 +192,27 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
             Worker.StaticHeadLoss = StaticHeadLoss;
+
+            Worker.AreaForHeightLookup = StorageModel.StoreGeometry.surfaceAreaForHeight;
+
+            var heightForSurfaceAreeaLookup = new Func<double, double>(surfaceArea =>
+            {
+                var points = StorageModel.StoreGeometry.Cast<DiscreteStoreGeometryEntry>().ToList();
+
+                for (var i = 0; i < points.Count; i++)
+                {
+                    var point = points[i];
+                    if (i == points.Count - 1)
+                        return point.height;
+                    var nextPoint = points[i + 1];
+
+                    if (surfaceArea >= point.surfaceArea && surfaceArea <= nextPoint.surfaceArea)
+                        return MathUtils.linearInterpolation(surfaceArea, point.surfaceArea, point.height, nextPoint.surfaceArea, nextPoint.height);
+                }
+                throw new Exception($"Could not lookup height for surface area: {surfaceArea}");
+            });
+
+            Worker.HeightForAreaLookup = heightForSurfaceAreeaLookup;
 
             if (ProductionCoefficients == null)
             {
