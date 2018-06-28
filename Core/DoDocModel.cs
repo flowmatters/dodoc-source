@@ -231,7 +231,10 @@ namespace FlowMatters.Source.DODOC.Core
         public double DocMaxNonReadily { get; protected set; }
 
         [Output]
-        public double LeafAccumulation => LeafAccumulationConstant.f(Elevation);
+        public virtual double TotalZoneAccumulation { get; }
+
+        [Output]
+        public virtual double AverageZoneAccumulation { get; }
 
         public double Elevation { get; set; }
 

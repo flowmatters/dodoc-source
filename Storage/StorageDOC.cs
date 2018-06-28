@@ -166,8 +166,11 @@ namespace FlowMatters.Source.DODOC.Storage
         [Output]
         public double DocMaxNonReadily { get; private set; }
 
-        [Output, Aka("Leaf Accumlation")]
-        public double LeafAccumulation => LeafA.f(Worker.Elevation);
+        [Output, Aka("Total Zone Leaf Accumlation")]
+        public double LeafAccumulation { get; private set; }
+
+        [Output, Aka("Average Zone Leaf Accumlation")]
+        public double AverageLeafAccumulation { get; private set; }
 
 
         protected override void UpdateWorker(double constituentConcentration)
@@ -260,6 +263,8 @@ namespace FlowMatters.Source.DODOC.Storage
             LeachingRate = Worker.LeachingRate;
             DocMax = Worker.DocMax;
             DocMaxNonReadily = Worker.DocMaxNonReadily;
+            LeafAccumulation = Worker.TotalZoneAccumulation;
+            AverageLeafAccumulation = Worker.AverageZoneAccumulation;
         }
     }
 }

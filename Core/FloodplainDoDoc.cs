@@ -72,6 +72,10 @@ namespace FlowMatters.Source.DODOC.Core
             get { return Zones.Sum(z => z.WetMassKg(1.0)); }
         }
 
+        public override double AverageZoneAccumulation => Zones.Count == 0 ? 0 : Zones.Sum(z => z.LeafAccumulation) / ZoneCount;
+
+        public override double TotalZoneAccumulation => Zones.Sum(z => z.LeafAccumulation);
+
         public int FloodCounter { get; set; }
 
         public FloodplainDoDoc()
@@ -464,7 +468,7 @@ namespace FlowMatters.Source.DODOC.Core
             //use cumulativeArea to keep track of area up the floodplain
 
             var cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
-            var lowerload = LeafAccumulationConstant.f(FloodplainElevation);
+            var lowerElevation = FloodplainElevation;
 
             foreach (var zone in Zones)
             {
@@ -475,9 +479,9 @@ namespace FlowMatters.Source.DODOC.Core
                 cumulativeArea += zone.AreaM2; //increment cumulative area
 
                 var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-                var upperload = LeafAccumulationConstant.f(upperelevation);
-                var leafAccumulationConstant = (upperload + lowerload) / 2;              //very basic integration of the accumulation table over the zone area, not sure if better methods are readily available?
-                lowerload = upperload; //update for next zone
+                var leafAccumulationConstant = IntergrateElevations(lowerElevation, upperelevation);
+                zone.LeafAccumulation = leafAccumulationConstant;
+                lowerElevation = upperelevation; //update for next zone
 
                 double wetleafKg = zone.NewAreaM2*M2_TO_HA* ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable) + leafAccumulationConstant);
 
@@ -485,10 +489,6 @@ namespace FlowMatters.Source.DODOC.Core
                 double leafDOC = wetleafKg*1000*DocMax*(LeachingRate); // ??? How is this converting kg->mg (*1e-6)
                 DOCEnteringWater += leafDOC;
 
-                /*
-                  zone(floodrch,isub,ii,2) = max(0.,zone(floodrch,isub,ii,2)-(zone(floodrch,isub,ii,2) * (1 - Exp(-decomp1 * sigma *  86400))))
-                  zone(floodrch,isub,ii,3) = max(0.,zone(floodrch,isub,ii,3)-(zone(floodrch,isub,ii,3) * (1 - Exp(-decomp1 * sigma *  86400))))
-                */
                 zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-LeachingRate));
                 zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1- leachingRateNonReadily));
             }
@@ -496,46 +496,44 @@ namespace FlowMatters.Source.DODOC.Core
             docMilligrams += DOCEnteringWater;
 
             cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
-            lowerload = LeafAccumulationConstant.f(FloodplainElevation);
+            lowerElevation = FloodplainElevation;
 
             foreach (var zone in Zones)
             {
-                cumulativeArea += zone.AreaM2; //increment cumulative area
-
-                var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-                var upperload = LeafAccumulationConstant.f(upperelevation);
-                var leafAccumulationConstant = (upperload + lowerload) / 2;              //very basic integration of the accumulation table over the zone area, not sure if better methods are readily available?
-                lowerload = upperload; //update for next zone
-
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
+                    cumulativeArea += zone.AreaM2; //increment cumulative area
+                    var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                    var leafAccumulationConstant = IntergrateElevations(lowerElevation, upperelevation);
+                    lowerElevation = upperelevation; //update for next zone
+
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
                     double MaxmimumNonReadilyDegradable = 2850d;
                     zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
                 }
             }
 
-            //ConsumedDoc = (existingDOCMassKg * KG_TO_MG) * DocConsumptionCoefficient*Sigma;
             ConsumedDocMilligrams = docMilligrams * DocConsumptionCoefficient(WaterTemperature) * Sigma;
 
             docMilligrams = Math.Max(docMilligrams - ConsumedDocMilligrams,0.0);
 
             DissolvedOrganicCarbonLoad = docMilligrams * MG_TO_KG;
+        }
 
+        private double IntergrateElevations(double lowerElevation, double upperElevation)
+        {
+            var lowerLoad = LeafAccumulationConstant.f(lowerElevation);
+            var upperLoad = LeafAccumulationConstant.f(upperElevation);
 
-/*
-                                                ! consumption of DOC by microbial activity (temp dependent)
-                                    
-                                                Rchlod(Irch,2)=1.
-                                            Valcon(Ircvld(Irch,WQno))=subloadDOC/fac
-                                            DOCcalc(irch,isub,1)=1.
-                                            if ( subrchdata(irch,isub,4).le.zerost ) then 
-                                                Valcon(Ircvld(Irch,WQno))=0.
-                                            endif  
-                                            continue
-                                    
-                                                                                    */
+            var elevationPoints = LeafAccumulationConstant.Select(p => p.Key).Where(p => p > lowerElevation && p < upperElevation).ToArray();
 
+            var extraLoad = elevationPoints.Select(p => LeafAccumulationConstant.f(p)).Sum();
+
+            return (lowerLoad + upperLoad + extraLoad) / (2 + elevationPoints.Length);
+
+            //var pointsInRange = new List<double> {lower, upper};
+            //pointsInRange.AddRange(LeafAccumulationConstant.Select(e => e.Value).Where(point => (point > lower && point < upper)).ToList());
+            //return pointsInRange.Average();
         }
         
         private void PrintZones(double deltaArea)
@@ -594,6 +592,8 @@ namespace FlowMatters.Source.DODOC.Core
         public double NewAreaM2 { get; set; }
         public bool Wet { get; }
         public bool Dry { get { return !Wet; } }
+
+        public double LeafAccumulation { get; set; }
 
         internal double DryMassKg(double byArea)
         {
