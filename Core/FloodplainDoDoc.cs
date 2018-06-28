@@ -442,8 +442,6 @@ namespace FlowMatters.Source.DODOC.Core
 
             var docMilligrams = existingDOCMassKg*KG_TO_MG;
 
-            // calculate the accumulation value by looking up agaist elevation
-            var leafAccumulationConstant = LeafAccumulationConstant.f(Elevation);
                  
             if (Areal.Area.LessOrEqual(0.0))
                 FloodCounter = 0;
@@ -462,10 +460,24 @@ namespace FlowMatters.Source.DODOC.Core
             TotalWetLeaf = 0;
             LeachingRate = 1 - Math.Exp(-Leach1 * Sigma);
             var leachingRateNonReadily = 1 - Math.Exp(-Leach1NonReadily * Sigma);
+
+            //use cumulativeArea to keep track of area up the floodplain
+
+            var cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
+            var lowerload = LeafAccumulationConstant.f(FloodplainElevation);
+
             foreach (var zone in Zones)
             {
                 if (Areal.Area.Less(zone.AreaM2))
                     continue;
+
+
+                cumulativeArea += zone.AreaM2; //increment cumulative area
+
+                var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                var upperload = LeafAccumulationConstant.f(upperelevation);
+                var leafAccumulationConstant = (upperload + lowerload) / 2;              //very basic integration of the accumulation table over the zone area, not sure if better methods are readily available?
+                lowerload = upperload; //update for next zone
 
                 double wetleafKg = zone.NewAreaM2*M2_TO_HA* ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable) + leafAccumulationConstant);
 
@@ -483,8 +495,18 @@ namespace FlowMatters.Source.DODOC.Core
 
             docMilligrams += DOCEnteringWater;
 
+            cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
+            lowerload = LeafAccumulationConstant.f(FloodplainElevation);
+
             foreach (var zone in Zones)
             {
+                cumulativeArea += zone.AreaM2; //increment cumulative area
+
+                var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                var upperload = LeafAccumulationConstant.f(upperelevation);
+                var leafAccumulationConstant = (upperload + lowerload) / 2;              //very basic integration of the accumulation table over the zone area, not sure if better methods are readily available?
+                lowerload = upperload; //update for next zone
+
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
@@ -581,6 +603,12 @@ namespace FlowMatters.Source.DODOC.Core
         public double WetMassKg(double byArea)
         {
             return Dry ? 0.0 : (NewAreaM2 * M2_TO_HA) * byArea;
+        }
+
+        public override string ToString()
+        {
+            var status = Wet ? "Wet" : "Dry";
+            return $"{AreaM2} - {status}";
         }
     }
 }
