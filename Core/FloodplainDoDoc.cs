@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RiverSystem;
 using TIME.ManagedExtensions;
 
 namespace FlowMatters.Source.DODOC.Core
@@ -527,15 +526,47 @@ namespace FlowMatters.Source.DODOC.Core
 
             var elevationPoints = LeafAccumulationConstant.Select(p => p.Key).Where(p => p > lowerElevation && p < upperElevation).ToArray();
 
-            var extraLoad = elevationPoints.Select(p => LeafAccumulationConstant.f(p)).Sum();
+            var loads = elevationPoints.Select(p => LeafAccumulationConstant.f(p)).ToList(); //change here, get all loads, not sum
+            var areas = elevationPoints.Select(p => AreaForHeightLookup(p, false) * 0.0001).ToList(); // get areas as well
 
-            return (lowerLoad + upperLoad + extraLoad) / (2 + elevationPoints.Length);
+            loads.Insert(0, lowerLoad);
+            loads.Add(upperLoad);
 
-            //var pointsInRange = new List<double> {lower, upper};
-            //pointsInRange.AddRange(LeafAccumulationConstant.Select(e => e.Value).Where(point => (point > lower && point < upper)).ToList());
-            //return pointsInRange.Average();
+            areas.Insert(0, AreaForHeightLookup(lowerElevation, false) * 0.0001);
+            areas.Add(AreaForHeightLookup(upperElevation, false) * 0.0001);
+
+            var lowerElevationPoints = LeafAccumulationConstant.Where(p => p.Key < lowerElevation);
+            var previousElevationPoint = lowerElevationPoints.Any() ? lowerElevationPoints.Last().Key : lowerElevation;
+            var previousLoad = LeafAccumulationConstant.f(previousElevationPoint);
+            var previousArea = AreaForHeightLookup(previousElevationPoint, false) * 0.0001;
+
+
+            var totalLoad = 0d;
+            var totalAreaBetween = 0d;
+            // start at the second element
+            for (var i = 0; i < loads.Count; i++)
+            {
+                double pArea;
+                double pLoad;
+                if (i == 0)
+                {
+                    pArea = previousArea;
+                    pLoad = previousLoad;
+                }
+                else
+                {
+                    pArea = areas[i - 1];
+                    pLoad = loads[i - 1];
+                }
+                var areaBetween = areas[i] - pArea;
+                totalLoad += areaBetween * (loads[i] + pLoad) / 2;
+                totalAreaBetween += areaBetween;
+            }
+
+            var accumulationRate = totalLoad / totalAreaBetween;
+            return accumulationRate;
         }
-        
+
         private void PrintZones(double deltaArea)
         {
             string logFn = "D:\\temp\\zone_stats.csv";
