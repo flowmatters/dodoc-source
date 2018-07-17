@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TIME.ManagedExtensions;
+using TIME.Science.Mathematics.Functions;
 
 namespace FlowMatters.Source.DODOC.Core
 {
@@ -433,9 +434,16 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 var newZone = new FloodplainData(false);
                 newZone.AreaM2 = Fac * EffectiveMaximumArea;
-                newZone.LeafDryMatterNonReadilyDegradable = InitialLeafDryMatterNonReadilyDegradable.f(Elevation);
-                newZone.LeafDryMatterReadilyDegradable = InitialLeafDryMatterReadilyDegradable.f(Elevation);
                 newZone.NewAreaM2 = newZone.AreaM2;
+
+                //lookup the area of the storage/reach at the elevation where the floodplain starts
+                var floodPlainArea = AreaForHeightLookup(FloodplainElevation, false);
+                var floodPlainAndZoneArea = floodPlainArea + newZone.NewAreaM2;
+                var zoneElevation = HeightForAreaLookup(floodPlainAndZoneArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+
+                newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterNonReadilyDegradable);
+                newZone.LeafDryMatterReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterReadilyDegradable);
+
                 Zones.Add(newZone);
             }
 
@@ -465,7 +473,6 @@ namespace FlowMatters.Source.DODOC.Core
             var leachingRateNonReadily = 1 - Math.Exp(-Leach1NonReadily * Sigma);
 
             //use cumulativeArea to keep track of area up the floodplain
-
             var cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
             var lowerElevation = FloodplainElevation;
 
@@ -478,7 +485,7 @@ namespace FlowMatters.Source.DODOC.Core
                 cumulativeArea += zone.AreaM2; //increment cumulative area
 
                 var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-                var leafAccumulationConstant = IntergrateElevations(lowerElevation, upperelevation);
+                var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
                 zone.LeafAccumulation = leafAccumulationConstant;
                 lowerElevation = upperelevation; //update for next zone
 
@@ -494,7 +501,8 @@ namespace FlowMatters.Source.DODOC.Core
 
             docMilligrams += DOCEnteringWater;
 
-            cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
+            //lookup the area of the storage/reach at the elevation where the floodplain starts
+            cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); 
             lowerElevation = FloodplainElevation;
 
             foreach (var zone in Zones)
@@ -503,7 +511,7 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     cumulativeArea += zone.AreaM2; //increment cumulative area
                     var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-                    var leafAccumulationConstant = IntergrateElevations(lowerElevation, upperelevation);
+                    var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
                     lowerElevation = upperelevation; //update for next zone
 
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
@@ -519,14 +527,14 @@ namespace FlowMatters.Source.DODOC.Core
             DissolvedOrganicCarbonLoad = docMilligrams * MG_TO_KG;
         }
 
-        private double IntergrateElevations(double lowerElevation, double upperElevation)
+        private double IntergrateElevationsForAccumulation(double lowerElevation, double upperElevation, LinearPerPartFunction accumulationLookup)
         {
-            var lowerLoad = LeafAccumulationConstant.f(lowerElevation);
-            var upperLoad = LeafAccumulationConstant.f(upperElevation);
+            var lowerLoad = accumulationLookup.f(lowerElevation);
+            var upperLoad = accumulationLookup.f(upperElevation);
 
-            var elevationPoints = LeafAccumulationConstant.Select(p => p.Key).Where(p => p > lowerElevation && p < upperElevation).ToArray();
+            var elevationPoints = accumulationLookup.Select(p => p.Key).Where(p => p > lowerElevation && p < upperElevation).ToArray();
 
-            var loads = elevationPoints.Select(p => LeafAccumulationConstant.f(p)).ToList(); //change here, get all loads, not sum
+            var loads = elevationPoints.Select(p => accumulationLookup.f(p)).ToList(); //change here, get all loads, not sum
             var areas = elevationPoints.Select(p => AreaForHeightLookup(p, false) * 0.0001).ToList(); // get areas as well
 
             loads.Insert(0, lowerLoad);
@@ -535,9 +543,9 @@ namespace FlowMatters.Source.DODOC.Core
             areas.Insert(0, AreaForHeightLookup(lowerElevation, false) * 0.0001);
             areas.Add(AreaForHeightLookup(upperElevation, false) * 0.0001);
 
-            var lowerElevationPoints = LeafAccumulationConstant.Where(p => p.Key < lowerElevation);
+            var lowerElevationPoints = accumulationLookup.Where(p => p.Key < lowerElevation);
             var previousElevationPoint = lowerElevationPoints.Any() ? lowerElevationPoints.Last().Key : lowerElevation;
-            var previousLoad = LeafAccumulationConstant.f(previousElevationPoint);
+            var previousLoad = accumulationLookup.f(previousElevationPoint);
             var previousArea = AreaForHeightLookup(previousElevationPoint, false) * 0.0001;
 
 

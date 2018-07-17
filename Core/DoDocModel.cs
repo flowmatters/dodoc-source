@@ -156,6 +156,9 @@ namespace FlowMatters.Source.DODOC.Core
         #region Parameters from valcon
         [Parameter]
         public LinearPerPartFunction LeafAccumulationConstant { get; set; }
+        public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
+        public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
+
         [Parameter]
         public double LeafK1 { get; set; }
         [Parameter]
@@ -195,9 +198,6 @@ namespace FlowMatters.Source.DODOC.Core
                 return Areal.MaxArea;
             }
         }
-        
-        public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
-        public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         protected DateTime Last;
         [Output]

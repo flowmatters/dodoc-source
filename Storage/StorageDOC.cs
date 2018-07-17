@@ -48,7 +48,7 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation Constant", CommonUnits.none, CommonUnits.none)]
+        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction LeafA { get; set; }
 
         [Parameter, Aka("Leaf dry matter readily degradable decay rate")]
