@@ -58,8 +58,7 @@ namespace FlowMatters.Source.DODOC.Storage
         public double LeafK2 { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres,
-            "Initial Leaf dry matter non readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter non readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         [Parameter]
