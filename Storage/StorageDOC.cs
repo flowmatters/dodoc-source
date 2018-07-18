@@ -205,7 +205,11 @@ namespace FlowMatters.Source.DODOC.Storage
                 {
                     var point = points[i];
                     if (i == points.Count - 1)
-                        return point.height;
+                    {
+                        var lowerPoint = points[i - 1];
+                        return MathUtils.linearInterpolation(surfaceArea, lowerPoint.surfaceArea, lowerPoint.height, point.surfaceArea, point.height);
+                    }
+                        
                     var nextPoint = points[i + 1];
 
                     if (surfaceArea >= point.surfaceArea && surfaceArea <= nextPoint.surfaceArea)
