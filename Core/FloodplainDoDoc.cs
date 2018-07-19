@@ -571,8 +571,11 @@ namespace FlowMatters.Source.DODOC.Core
                 totalAreaBetween += areaBetween;
             }
 
-            var accumulationRate = totalLoad / totalAreaBetween;
-            return accumulationRate;
+            // if we're accumulating across no area then our rate is 0
+            if (totalAreaBetween <= 0)
+                return 0;
+
+            return totalLoad / totalAreaBetween;
         }
 
         private void PrintZones(double deltaArea)

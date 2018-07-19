@@ -35,6 +35,26 @@ namespace FlowMatters.Source.DODOC.Storage
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;
             WaterTemperature = 20;
+
+            _heightForSurfaceAreaLookup = surfaceArea =>
+            {
+                var points = StorageModel.StoreGeometry.Cast<DiscreteStoreGeometryEntry>().ToList();
+                for (var i = 0; i < points.Count; i++)
+                {
+                    var point = points[i];
+                    if (i == points.Count - 1)
+                    {
+                        var lowerPoint = points[i - 1];
+                        return MathUtils.linearInterpolation(surfaceArea, lowerPoint.surfaceArea, lowerPoint.height, point.surfaceArea, point.height);
+                    }
+
+                    var nextPoint = points[i + 1];
+
+                    if (surfaceArea >= point.surfaceArea && surfaceArea <= nextPoint.surfaceArea)
+                        return MathUtils.linearInterpolation(surfaceArea, point.surfaceArea, point.height, nextPoint.surfaceArea, nextPoint.height);
+                }
+                throw new Exception($"Could not lookup height for surface area: {surfaceArea}");
+            };
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
@@ -171,6 +191,8 @@ namespace FlowMatters.Source.DODOC.Storage
         [Output, Aka("Average Zone Leaf Accumlation")]
         public double AverageLeafAccumulation { get; private set; }
 
+        private Func<double, double> _heightForSurfaceAreaLookup;
+
 
         protected override void UpdateWorker(double constituentConcentration)
         {
@@ -197,28 +219,7 @@ namespace FlowMatters.Source.DODOC.Storage
 
             Worker.AreaForHeightLookup = StorageModel.StoreGeometry.surfaceAreaForHeight;
 
-            var heightForSurfaceAreeaLookup = new Func<double, double>(surfaceArea =>
-            {
-                var points = StorageModel.StoreGeometry.Cast<DiscreteStoreGeometryEntry>().ToList();
-
-                for (var i = 0; i < points.Count; i++)
-                {
-                    var point = points[i];
-                    if (i == points.Count - 1)
-                    {
-                        var lowerPoint = points[i - 1];
-                        return MathUtils.linearInterpolation(surfaceArea, lowerPoint.surfaceArea, lowerPoint.height, point.surfaceArea, point.height);
-                    }
-                        
-                    var nextPoint = points[i + 1];
-
-                    if (surfaceArea >= point.surfaceArea && surfaceArea <= nextPoint.surfaceArea)
-                        return MathUtils.linearInterpolation(surfaceArea, point.surfaceArea, point.height, nextPoint.surfaceArea, nextPoint.height);
-                }
-                throw new Exception($"Could not lookup height for surface area: {surfaceArea}");
-            });
-
-            Worker.HeightForAreaLookup = heightForSurfaceAreeaLookup;
+            Worker.HeightForAreaLookup = _heightForSurfaceAreaLookup;
 
             if (ProductionCoefficients == null)
             {
