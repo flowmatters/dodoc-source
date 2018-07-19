@@ -428,7 +428,7 @@ namespace FlowMatters.Source.DODOC.Core
                 Zones.RemoveRange(minZone,removedDryZones);
         }
 
-        protected override void ProcessDoc()
+        protected override void ProcessDoc(DateTime now)
         {
             if (Zones.Count == 0)
             {
@@ -437,12 +437,12 @@ namespace FlowMatters.Source.DODOC.Core
                 newZone.NewAreaM2 = newZone.AreaM2;
 
                 //lookup the area of the storage/reach at the elevation where the floodplain starts
-                var floodPlainArea = AreaForHeightLookup(FloodplainElevation, false);
+                var floodPlainArea = AreaForHeightLookup(FloodplainElevation, now);
                 var floodPlainAndZoneArea = floodPlainArea + newZone.NewAreaM2;
-                var zoneElevation = HeightForAreaLookup(floodPlainAndZoneArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                var zoneElevation = HeightForAreaLookup(floodPlainAndZoneArea, now); //get the elevation at the upper extent of this zone based on the total storage/reach area
 
-                newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterNonReadilyDegradable);
-                newZone.LeafDryMatterReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterReadilyDegradable);
+                newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterNonReadilyDegradable, now);
+                newZone.LeafDryMatterReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterReadilyDegradable, now);
 
                 Zones.Add(newZone);
             }
@@ -473,7 +473,7 @@ namespace FlowMatters.Source.DODOC.Core
             var leachingRateNonReadily = 1 - Math.Exp(-Leach1NonReadily * Sigma);
 
             //use cumulativeArea to keep track of area up the floodplain
-            var cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
+            var cumulativeArea = AreaForHeightLookup(FloodplainElevation, now); //lookup the area of the storage/reach at the elevation where the floodplain starts
             var lowerElevation = FloodplainElevation;
 
             foreach (var zone in Zones)
@@ -484,8 +484,8 @@ namespace FlowMatters.Source.DODOC.Core
 
                 cumulativeArea += zone.AreaM2; //increment cumulative area
 
-                var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-                var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
+                var upperelevation = HeightForAreaLookup(cumulativeArea, now); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant, now);
                 zone.LeafAccumulation = leafAccumulationConstant;
                 lowerElevation = upperelevation; //update for next zone
 
@@ -502,7 +502,7 @@ namespace FlowMatters.Source.DODOC.Core
             docMilligrams += DOCEnteringWater;
 
             //lookup the area of the storage/reach at the elevation where the floodplain starts
-            cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); 
+            cumulativeArea = AreaForHeightLookup(FloodplainElevation, now); 
             lowerElevation = FloodplainElevation;
 
             foreach (var zone in Zones)
@@ -510,8 +510,8 @@ namespace FlowMatters.Source.DODOC.Core
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
                     cumulativeArea += zone.AreaM2; //increment cumulative area
-                    var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-                    var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
+                    var upperelevation = HeightForAreaLookup(cumulativeArea, now); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                    var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant, now);
                     lowerElevation = upperelevation; //update for next zone
 
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
@@ -527,7 +527,7 @@ namespace FlowMatters.Source.DODOC.Core
             DissolvedOrganicCarbonLoad = docMilligrams * MG_TO_KG;
         }
 
-        private double IntergrateElevationsForAccumulation(double lowerElevation, double upperElevation, LinearPerPartFunction accumulationLookup)
+        private double IntergrateElevationsForAccumulation(double lowerElevation, double upperElevation, LinearPerPartFunction accumulationLookup, DateTime now)
         {
             var lowerLoad = accumulationLookup.f(lowerElevation);
             var upperLoad = accumulationLookup.f(upperElevation);
@@ -535,18 +535,18 @@ namespace FlowMatters.Source.DODOC.Core
             var elevationPoints = accumulationLookup.Select(p => p.Key).Where(p => p > lowerElevation && p < upperElevation).ToArray();
 
             var loads = elevationPoints.Select(p => accumulationLookup.f(p)).ToList(); //change here, get all loads, not sum
-            var areas = elevationPoints.Select(p => AreaForHeightLookup(p, false) * 0.0001).ToList(); // get areas as well
+            var areas = elevationPoints.Select(p => AreaForHeightLookup(p, now) * 0.0001).ToList(); // get areas as well
 
             loads.Insert(0, lowerLoad);
             loads.Add(upperLoad);
 
-            areas.Insert(0, AreaForHeightLookup(lowerElevation, false) * 0.0001);
-            areas.Add(AreaForHeightLookup(upperElevation, false) * 0.0001);
+            areas.Insert(0, AreaForHeightLookup(lowerElevation, now) * 0.0001);
+            areas.Add(AreaForHeightLookup(upperElevation, now) * 0.0001);
 
             var lowerElevationPoints = accumulationLookup.Where(p => p.Key < lowerElevation);
             var previousElevationPoint = lowerElevationPoints.Any() ? lowerElevationPoints.Last().Key : lowerElevation;
             var previousLoad = accumulationLookup.f(previousElevationPoint);
-            var previousArea = AreaForHeightLookup(previousElevationPoint, false) * 0.0001;
+            var previousArea = AreaForHeightLookup(previousElevationPoint, now) * 0.0001;
 
 
             var totalLoad = 0d;

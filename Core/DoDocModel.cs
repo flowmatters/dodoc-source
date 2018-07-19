@@ -119,9 +119,9 @@ namespace FlowMatters.Source.DODOC.Core
         [Parameter]
         public double FloodplainElevation { get; set; }
 
-        public Func<double, bool, double> AreaForHeightLookup { get; set; }
+        public Func<double, DateTime, double> AreaForHeightLookup { get; set; }
 
-        public Func<double, double> HeightForAreaLookup { get; set; }
+        public Func<double, DateTime, double> HeightForAreaLookup { get; set; }
 
         [Parameter]
         public double MaxDOCReleasedAt20DegreeCNonReadily { get; set; }
@@ -238,15 +238,15 @@ namespace FlowMatters.Source.DODOC.Core
 
         public double Elevation { get; set; }
 
-        public void Run(DateTime dt)
+        public void Run(DateTime now)
         {
-            if (dt.Date == Last.Date)
+            if (now.Date == Last.Date)
                 return;
 
-            Last = dt;
+            Last = now;
 
-            PreTimeStep(dt);
-            ProcessDoc();
+            PreTimeStep(now);
+            ProcessDoc(now);
 
             ProcessDo();
         }
@@ -259,7 +259,7 @@ namespace FlowMatters.Source.DODOC.Core
             Sigma = Math.Pow(1.05, WaterTemperatureEst - 20);
         }
 
-        protected abstract void ProcessDoc();
+        protected abstract void ProcessDoc(DateTime now);
         protected abstract double SoilO2mg();
 
         private void ProcessDo()
@@ -304,7 +304,6 @@ namespace FlowMatters.Source.DODOC.Core
                 DissolvedOxygenLoad = Math.Max(subloadO2, 0.0);
             else
                 DissolvedOxygenLoad = 0.0;
-
         }
 
     }

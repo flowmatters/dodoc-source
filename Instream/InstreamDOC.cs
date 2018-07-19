@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FlowMatters.Source.DODOC.Core;
 using RiverSystem;
 using RiverSystem.Api.Utils;
@@ -33,6 +34,20 @@ namespace FlowMatters.Source.DODOC.Instream
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;
             WaterTemperature = 20;
+
+            _surfaceAreaForHeightLookup = (height, now) =>
+            {
+                var width = Link.RatingCurveLibrary.WidthForlevel(height, now);
+                var surfaceArea = width * Link.Length;
+                return surfaceArea;
+            };
+
+            _heightForSurfaceAreaLookup = (surfaceArea, now) =>
+            {
+                var width = surfaceArea / Link.Length;
+                var height = Link.RatingCurveLibrary.LevelForWidth(width, now);
+                return height;
+            };
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
@@ -164,6 +179,10 @@ namespace FlowMatters.Source.DODOC.Instream
         public double LeafAccumulation => LeafA.f(Worker.Elevation);
 
 
+        private readonly Func<double, DateTime, double> _heightForSurfaceAreaLookup;
+
+        private readonly Func<double, DateTime, double> _surfaceAreaForHeightLookup;
+
         public override LinkSourceSinkModel CloneForMultipleDivisions()
         {
             return new InstreamDOC
@@ -221,6 +240,11 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
             Worker.StaticHeadLoss = StaticHeadLoss;
+
+            Worker.AreaForHeightLookup = _surfaceAreaForHeightLookup;
+            Worker.HeightForAreaLookup = _heightForSurfaceAreaLookup;
+
+
 
             if (ProductionCoefficients == null)
             {

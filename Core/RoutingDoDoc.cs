@@ -1,8 +1,10 @@
-﻿namespace FlowMatters.Source.DODOC.Core
+﻿using System;
+
+namespace FlowMatters.Source.DODOC.Core
 {
     public class RoutingDoDoc : DoDocModel
     {
-        protected override void ProcessDoc()
+        protected override void ProcessDoc(DateTime now)
         {
             var load = ConcentrationDoc * WorkingVolume;
             ConsumedDocMilligrams = load * DocConsumptionCoefficient(WaterTemperature) * Sigma * KG_TO_MG;

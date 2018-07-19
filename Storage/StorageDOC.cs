@@ -36,7 +36,7 @@ namespace FlowMatters.Source.DODOC.Storage
             WaterQualityFactor = 0.65;
             WaterTemperature = 20;
 
-            _heightForSurfaceAreaLookup = surfaceArea =>
+            _heightForSurfaceAreaLookup = (surfaceArea, now) =>
             {
                 var points = StorageModel.StoreGeometry.Cast<DiscreteStoreGeometryEntry>().ToList();
                 for (var i = 0; i < points.Count; i++)
@@ -55,6 +55,8 @@ namespace FlowMatters.Source.DODOC.Storage
                 }
                 throw new Exception($"Could not lookup height for surface area: {surfaceArea}");
             };
+
+            _surfaceAreaForHeightLookup = (height, now) => StorageModel.StoreGeometry.surfaceAreaForHeight(height);
         }
 
         // WHEN ADDING PROPERTIES, REMEMBER TO CLONE!
@@ -191,7 +193,9 @@ namespace FlowMatters.Source.DODOC.Storage
         [Output, Aka("Average Zone Leaf Accumlation")]
         public double AverageLeafAccumulation { get; private set; }
 
-        private Func<double, double> _heightForSurfaceAreaLookup;
+        private readonly Func<double, DateTime, double> _heightForSurfaceAreaLookup;
+
+        private readonly Func<double, DateTime, double> _surfaceAreaForHeightLookup;
 
 
         protected override void UpdateWorker(double constituentConcentration)
@@ -217,7 +221,7 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.WaterQualityFactor = WaterQualityFactor;
             Worker.StaticHeadLoss = StaticHeadLoss;
 
-            Worker.AreaForHeightLookup = StorageModel.StoreGeometry.surfaceAreaForHeight;
+            Worker.AreaForHeightLookup = _surfaceAreaForHeightLookup;
 
             Worker.HeightForAreaLookup = _heightForSurfaceAreaLookup;
 
