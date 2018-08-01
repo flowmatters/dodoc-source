@@ -481,19 +481,30 @@ namespace FlowMatters.Source.DODOC.Core
                 if (Areal.Area.Less(zone.AreaM2))
                     continue;
 
+                //increment cumulative area
+                cumulativeArea += zone.AreaM2; 
 
-                cumulativeArea += zone.AreaM2; //increment cumulative area
-
-                var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                //get the elevation at the upper extent of this zone based on the total storage/reach area
+                var upperelevation = HeightForAreaLookup(cumulativeArea); 
                 var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
                 zone.LeafAccumulation = leafAccumulationConstant;
                 lowerElevation = upperelevation; //update for next zone
 
-                double wetleafKg = zone.NewAreaM2*M2_TO_HA* ((zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable) + leafAccumulationConstant);
+                var totalWetleafKg = zone.NewAreaM2 * M2_TO_HA * (zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable + leafAccumulationConstant);
 
-                TotalWetLeaf += wetleafKg;
-                double leafDOC = wetleafKg*1000*DocMax*(LeachingRate); // ??? How is this converting kg->mg (*1e-6)
-                DOCEnteringWater += leafDOC;
+                // Split the total wet leaf into 'Readily Degradable' and 'Non-Readily Degradable' components. The leafAccumulationConstant is split using the existing proportions.
+                var readilyDegradableProportion = 
+                    zone.LeafDryMatterReadilyDegradable.SafeDivide( zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable );
+
+                TotalWetLeaf += totalWetleafKg;
+
+                //TODO - Check the conversion below. How is this converting kg->mg (*1e-6) ???
+
+                // Use the approriate Leaching Rate for the different types of mass (i.e. readily degradable & non-readily degradable)
+                var readilyDegradibleDoc = totalWetleafKg * readilyDegradableProportion * 1000 * DocMax * LeachingRate;
+                var nonReadilyDegradibleDoc = totalWetleafKg * (1-readilyDegradableProportion) * 1000 * DocMax * leachingRateNonReadily;
+
+                DOCEnteringWater += readilyDegradibleDoc + nonReadilyDegradibleDoc;
 
                 zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-LeachingRate));
                 zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1- leachingRateNonReadily));
