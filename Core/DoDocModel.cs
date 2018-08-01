@@ -298,10 +298,9 @@ namespace FlowMatters.Source.DODOC.Core
             var doFromRegulatedScructureKg = saturationOxygenKg - (saturationOxygenKg - totalOxygenUnconstrainedKg) / deficitRatio;
 
             var totalOxygen = Math.Min(doFromRegulatedScructureKg, saturationOxygenKg);
-            var subloadO2 = totalOxygen / Fac;
 
             if (WorkingVolume.Greater(0.0))
-                DissolvedOxygenLoad = Math.Max(subloadO2, 0.0);
+                DissolvedOxygenLoad = Math.Max(totalOxygen, 0.0);
             else
                 DissolvedOxygenLoad = 0.0;
 
