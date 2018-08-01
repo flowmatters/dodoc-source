@@ -29,8 +29,13 @@ namespace FlowMatters.Source.DODOC.Storage
 
         private DoDocModel GetWorker()
         {
-            StorageAreal storageAreal = new StorageAreal(StorageModel,FloodplainElevation);
-            return CentralSourceSinkModel.Instance.GetModel(storageAreal);
+            var storageAreal = new StorageAreal(StorageModel,FloodplainElevation);
+
+            var doDocModel = CentralSourceSinkModel.Instance.GetModel(storageAreal);
+
+            doDocModel.FloodplainElevation = FloodplainElevation;
+
+            return doDocModel;
         }
 
         public override void runTimeStep(DateTime now, double theTimeStepInSeconds)
