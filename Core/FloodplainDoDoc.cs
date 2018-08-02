@@ -490,7 +490,6 @@ namespace FlowMatters.Source.DODOC.Core
 
             //Start at the Floodplain elevation. Get the area and Elevation
             var lowerElevation = FloodplainElevation;
-            var lowerArea = AreaForHeightLookup(FloodplainElevation, false);
 
             // Order the zones by elevation
             var zonesByElevation = Zones.OrderBy( z => z.ElevationM ).ToList();
@@ -502,16 +501,12 @@ namespace FlowMatters.Source.DODOC.Core
                 
                 //get the elevation at the upper extent of this zone
                 var upperelevation = zone.ElevationM;
-                var upperArea = zone.AreaM2;
-
-                // determine the area this zone covers (that does not overlap with other zones)
-                var effectiveArea = Math.Max(0, upperArea - lowerArea);
-
+                
                 // Determine how much leaf is accumulated across this Zone using the elevations.
                 var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
                 zone.LeafAccumulation = leafAccumulationConstant;
 
-                var totalWetleafKg = effectiveArea * M2_TO_HA * (zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable + leafAccumulationConstant);
+                var totalWetleafKg = zone.NewAreaM2 * M2_TO_HA * (zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable + leafAccumulationConstant);
 
                 // Split the total wet leaf into 'Readily Degradable' and 'Non-Readily Degradable' components. The leafAccumulationConstant is split using the existing proportions.
                 var readilyDegradableProportion = 
@@ -532,7 +527,6 @@ namespace FlowMatters.Source.DODOC.Core
                 
                 //update for next zone
                 lowerElevation = upperelevation;
-                lowerArea = upperArea;
             }
 
             docMilligrams += DOCEnteringWater;

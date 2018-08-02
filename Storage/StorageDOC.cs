@@ -7,6 +7,7 @@ using RiverSystem.Prototyping;
 using RiverSystem.Storages.Geometry;
 using TIME.Core;
 using TIME.Core.Metadata;
+using TIME.Core.Units;
 using TIME.Science.Mathematics.Functions;
 using TIME.Science.Utils;
 
@@ -152,10 +153,10 @@ namespace FlowMatters.Source.DODOC.Storage
         [Output]
         public double ConsumedDocMilligrams { get; private set; }
 
-        [Output]
+        [Output, CalculationUnits(CommonUnits.milligrams)]
         public double DOCEnteringWater { get; private set; }
 
-        [Output]
+        [Output, CalculationUnits(CommonUnits.kilograms)]
         public double TotalWetLeaf { get; private set; }
 
         [Output]
