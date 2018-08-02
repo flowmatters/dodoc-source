@@ -12,7 +12,7 @@
         /// <summary>
         /// This corressponds to the surface area at this Zones Elevation, minus the area at the floodplain elevation (sometimes called the disregarded area).
         /// </summary>
-        public double AreaM2 { get; set; }
+        public double CumulativeAreaM2 { get; set; }
 
         /// <summary>
         /// The elevation of the Zone.
@@ -24,10 +24,10 @@
 
 
         /// <summary>
-        /// The difference between this zone and... a "different" Zone???
-        /// TODO - In the work we have done so far, this value has been concerning. Is it always the difference between this Zone and the next Zone at the lower elevation
+        /// The difference between this zone and the Zone below it
+        /// The logic in class <see cref="FloodplainDoDoc"/> is responsible for maintaining this
         /// </summary>
-        public double NewAreaM2 { get; set; }
+        public double ZoneAreaM2 { get; set; }
 
         public bool Wet { get; }
         public bool Dry { get { return !Wet; } }
@@ -36,18 +36,18 @@
 
         internal double DryMassKg(double byArea)
         {
-            return Wet ? 0.0 : (NewAreaM2*M2_TO_HA)*byArea;
+            return Wet ? 0.0 : (ZoneAreaM2*M2_TO_HA)*byArea;
         }
 
         public double WetMassKg(double byArea)
         {
-            return Dry ? 0.0 : (NewAreaM2 * M2_TO_HA) * byArea;
+            return Dry ? 0.0 : (ZoneAreaM2 * M2_TO_HA) * byArea;
         }
 
         public override string ToString()
         {
             var status = Wet ? "Wet" : "Dry";
-            return $"{AreaM2} - {status}";
+            return $"{CumulativeAreaM2} - {status}";
         }
     }
 }
