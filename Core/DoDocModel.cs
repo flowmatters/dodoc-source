@@ -50,16 +50,15 @@ namespace FlowMatters.Source.DODOC.Core
         {
             //NOTE: Previously a hardcoded array => { get; set; } = {0.0, 0.38016, 0.40608, 0.42336, 0.4752, 0.71712, 0.864};
            
-            var DOC_k20 = FirstOrderDOCReleaseRateAt20DegreeC;
 
             //DOC_k = DOC_k20C * 1.03(T-20)        ### with default DOC_k20C = 0.864 for leaves (as per below).
             //   where DOC_k20C => is the DOC-k at 20 degrees. e.g. DOC_k20C for leaves is said to be 0.864 
-            return DOC_k20 * 1.03 * (tempDegreeC - 20);
+            return FirstOrderDOCReleaseRateAt20DegreeC * Math.Pow(1.03, tempDegreeC - 20);
         }
 
         public double DOC_kNonReadily(double tempDegreeC)
         {
-            return FirstOrderDOCReleaseRateAt20DegreeCNonReadily * 1.03 * (tempDegreeC - 20);
+            return FirstOrderDOCReleaseRateAt20DegreeCNonReadily * Math.Pow(1.03 , tempDegreeC - 20);
         }
 
         /// <summary>
@@ -209,10 +208,10 @@ namespace FlowMatters.Source.DODOC.Core
         [Output]
         public double Reaeration { get; private set; }
 
-        [Output]
+        [Output, CalculationUnits(CommonUnits.milligrams)]
         public double DOCEnteringWater { get; protected set; }
 
-        [Output]
+        [Output, CalculationUnits(CommonUnits.kilograms)]
         public double TotalWetLeaf { get; protected set; }
 
         [Output]
