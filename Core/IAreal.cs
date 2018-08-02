@@ -9,6 +9,11 @@ namespace FlowMatters.Source.DODOC.Core
     public interface IAreal
     {
         double Area { get; }
+
+        double Elevation { get; }
         double MaxArea { get; }
+        double MaxElevation { get; }
+
+        DateTime SimulationNow { get; set; }
     }
 }

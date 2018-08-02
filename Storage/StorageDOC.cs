@@ -209,7 +209,7 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
-            Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeCNonReadily;
+            Worker.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = FirstOrderDOCReleaseRateAt20DegreeCNonReadily;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
             Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;

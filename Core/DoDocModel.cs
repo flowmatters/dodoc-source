@@ -243,6 +243,7 @@ namespace FlowMatters.Source.DODOC.Core
             if (dt.Date == Last.Date)
                 return;
 
+            Areal.SimulationNow = dt;
             Last = dt;
 
             PreTimeStep(dt);

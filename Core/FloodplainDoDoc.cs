@@ -170,6 +170,7 @@ namespace FlowMatters.Source.DODOC.Core
                     {
                         var newDryZone = new FloodplainData(false);
                         newDryZone.AreaM2 = zone.AreaM2;
+                        newDryZone.ElevationM = zone.ElevationM;
                         newDryZone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable;
                         newDryZone.LeafDryMatterNonReadilyDegradable = zone.LeafDryMatterNonReadilyDegradable;
                         newDryZone.NewAreaM2 = zone.AreaM2;
@@ -207,8 +208,10 @@ namespace FlowMatters.Source.DODOC.Core
                         shortleaf2 += zone.LeafDryMatterNonReadilyDegradable* (zone.AreaM2 - Areal.Area) /
                                       Zones[lastFloodZone].AreaM2;
 
+                        //TODO - This code looks strange. Is the newDryZone ever used? Is this whole block meaningless?
                         var newDryZone = new FloodplainData(false);
                         newDryZone.AreaM2 = Zones[lastFloodZone].AreaM2;
+                        newDryZone.ElevationM = Zones[lastFloodZone].ElevationM;
                         newDryZone.LeafDryMatterReadilyDegradable = shortleaf1;
                         newDryZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
                         newDryZone.NewAreaM2 = newDryZone.AreaM2;
@@ -300,6 +303,8 @@ namespace FlowMatters.Source.DODOC.Core
 
                 var newZone = new FloodplainData(false);
                 newZone.AreaM2 = Zones[lastFloodZone].AreaM2;
+                newZone.ElevationM = Zones[lastFloodZone].ElevationM;
+
                 newZone.LeafDryMatterReadilyDegradable = shortleaf1;
                 newZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
                 newZone.NewAreaM2 = reducedArea;
@@ -307,6 +312,7 @@ namespace FlowMatters.Source.DODOC.Core
 
                 zone.NewAreaM2 -= zone.AreaM2 - Areal.Area;
                 zone.AreaM2 = Areal.Area;
+                zone.ElevationM = Areal.Elevation;
                 if (zone.NewAreaM2.Less(0.0))
                     zone.NewAreaM2 = Areal.Area;
 
@@ -323,6 +329,8 @@ namespace FlowMatters.Source.DODOC.Core
 
                 var newZone = new FloodplainData(false);
                 newZone.AreaM2 = last.AreaM2;
+                newZone.ElevationM = last.ElevationM;
+
                 newZone.LeafDryMatterReadilyDegradable = last.LeafDryMatterReadilyDegradable;
                 newZone.LeafDryMatterNonReadilyDegradable = last.LeafDryMatterNonReadilyDegradable;
                 newZone.NewAreaM2 = reducedArea;
@@ -330,6 +338,8 @@ namespace FlowMatters.Source.DODOC.Core
 
                 last.NewAreaM2 -= last.AreaM2 - Areal.Area;
                 last.AreaM2 = Areal.Area;
+                last.ElevationM = Areal.Elevation;
+
                 if (last.NewAreaM2.Less(0.0))
                 {
                     last.NewAreaM2 = Areal.Area;
@@ -404,6 +414,8 @@ namespace FlowMatters.Source.DODOC.Core
 
             var newZone = new FloodplainData(true);
             newZone.AreaM2 = Areal.Area;
+            newZone.ElevationM = Areal.Elevation;
+
             newZone.LeafDryMatterReadilyDegradable = shortleaf1;
             newZone.LeafDryMatterNonReadilyDegradable = shortleaf2;
             newZone.NewAreaM2 = newarea;
@@ -428,6 +440,10 @@ namespace FlowMatters.Source.DODOC.Core
                 Zones.RemoveRange(minZone,removedDryZones);
         }
 
+        /// <summary>
+        /// Main method for processing Dissolved Organic Carbon.
+        /// Manages the addition and deletion of 'Zones', the leaf matter that resides in them, and the leaving of DOC from that matter into the water
+        /// </summary>
         protected override void ProcessDoc()
         {
             if (Zones.Count == 0)
@@ -435,6 +451,7 @@ namespace FlowMatters.Source.DODOC.Core
                 var newZone = new FloodplainData(false);
                 newZone.AreaM2 = Fac * EffectiveMaximumArea;
                 newZone.NewAreaM2 = newZone.AreaM2;
+                newZone.ElevationM = Areal.MaxElevation;
 
                 //lookup the area of the storage/reach at the elevation where the floodplain starts
                 var floodPlainArea = AreaForHeightLookup(FloodplainElevation, false);
@@ -449,48 +466,52 @@ namespace FlowMatters.Source.DODOC.Core
 
             UpdateFloodedAreas();
 
-            double existingDOCMassKg = ConcentrationDoc * WorkingVolume; // kg/m^3 * m^3 = kg
-
-            var docMilligrams = existingDOCMassKg*KG_TO_MG;
-
-                 
+            // kg/m^3 * m^3 = kg
+            var existingDocMassKg = ConcentrationDoc * WorkingVolume;
+            var docMilligrams = existingDocMassKg * KG_TO_MG;
+            
             if (Areal.Area.LessOrEqual(0.0))
                 FloodCounter = 0;
 
             //!the DOC dissolution rate constant is temp dependent
             //Get the first order rate constant for decay of leaf litter based on temperature. 
             Leach1 = DOC_k(WaterTemperatureEst);
+
             //Get maximum amount of DOC that can be leached from leaf litter based on temperature.
             DocMax = DOC_max(WaterTemperatureEst);
 
             Leach1NonReadily = DOC_kNonReadily(WaterTemperatureEst);
             DocMaxNonReadily = DOC_maxNonReadily(WaterTemperatureEst);
-
-
+            
             DOCEnteringWater = 0;
             TotalWetLeaf = 0;
             LeachingRate = 1 - Math.Exp(-Leach1 * Sigma);
             var leachingRateNonReadily = 1 - Math.Exp(-Leach1NonReadily * Sigma);
 
-            //use cumulativeArea to keep track of area up the floodplain
-            var cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); //lookup the area of the storage/reach at the elevation where the floodplain starts
+            //Start at the Floodplain elevation. Get the area and Elevation
             var lowerElevation = FloodplainElevation;
+            var lowerArea = AreaForHeightLookup(FloodplainElevation, false);
 
-            foreach (var zone in Zones)
+            // Order the zones by elevation
+            var zonesByElevation = Zones.OrderBy( z => z.ElevationM ).ToList();
+
+            foreach (var zone in zonesByElevation)
             {
                 if (Areal.Area.Less(zone.AreaM2))
                     continue;
+                
+                //get the elevation at the upper extent of this zone
+                var upperelevation = zone.ElevationM;
+                var upperArea = zone.AreaM2;
 
-                //increment cumulative area
-                cumulativeArea += zone.AreaM2; 
+                // determine the area this zone covers (that does not overlap with other zones)
+                var effectiveArea = Math.Max(0, upperArea - lowerArea);
 
-                //get the elevation at the upper extent of this zone based on the total storage/reach area
-                var upperelevation = HeightForAreaLookup(cumulativeArea); 
+                // Determine how much leaf is accumulated across this Zone using the elevations.
                 var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
                 zone.LeafAccumulation = leafAccumulationConstant;
-                lowerElevation = upperelevation; //update for next zone
 
-                var totalWetleafKg = zone.NewAreaM2 * M2_TO_HA * (zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable + leafAccumulationConstant);
+                var totalWetleafKg = effectiveArea * M2_TO_HA * (zone.LeafDryMatterReadilyDegradable + zone.LeafDryMatterNonReadilyDegradable + leafAccumulationConstant);
 
                 // Split the total wet leaf into 'Readily Degradable' and 'Non-Readily Degradable' components. The leafAccumulationConstant is split using the existing proportions.
                 var readilyDegradableProportion = 
@@ -508,26 +529,31 @@ namespace FlowMatters.Source.DODOC.Core
 
                 zone.LeafDryMatterReadilyDegradable = Math.Max(0, zone.LeafDryMatterReadilyDegradable*(1-LeachingRate));
                 zone.LeafDryMatterNonReadilyDegradable = Math.Max(0, zone.LeafDryMatterNonReadilyDegradable*(1- leachingRateNonReadily));
+                
+                //update for next zone
+                lowerElevation = upperelevation;
+                lowerArea = upperArea;
             }
 
             docMilligrams += DOCEnteringWater;
-
-            //lookup the area of the storage/reach at the elevation where the floodplain starts
-            cumulativeArea = AreaForHeightLookup(FloodplainElevation, false); 
+            
+            // Reset the lower elevation to start the next loop
             lowerElevation = FloodplainElevation;
 
-            foreach (var zone in Zones)
+            foreach (var zone in zonesByElevation)
             {
                 if (Areal.Area.Less(zone.AreaM2) && zone.Dry)
                 {
-                    cumulativeArea += zone.AreaM2; //increment cumulative area
-                    var upperelevation = HeightForAreaLookup(cumulativeArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
+                    var upperelevation = zone.ElevationM;
                     var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
-                    lowerElevation = upperelevation; //update for next zone
 
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
-                    double MaxmimumNonReadilyDegradable = 2850d;
-                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(MaxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
+
+                    const double maxmimumNonReadilyDegradable = 2850d;
+                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(maxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
+
+                    //update for next zone
+                    lowerElevation = upperelevation;
                 }
             }
 
@@ -628,40 +654,6 @@ namespace FlowMatters.Source.DODOC.Core
         soilo2 = 148162 * (1. - Exp(-0.093 * (2. ** (temperature - 20.)) * subrchdata(irch,isub,5))) * subrchdata(irch,isub,2)
            */
             return 148162*(1 - Math.Exp(-0.093*(Math.Pow(2, WaterTemperatureEst - 20))*FloodCounter))*Areal.Area;
-        }
-    }
-
-    public class FloodplainData
-    {
-        public FloodplainData(bool wet)
-        {
-            Wet = wet;
-        }
-
-        public double M2_TO_HA = 1e-4;
-        public double AreaM2 { get; set; }
-        public double LeafDryMatterReadilyDegradable { get; set; } // mass/ha
-        public double LeafDryMatterNonReadilyDegradable { get; set; } // mass/ha
-        public double NewAreaM2 { get; set; }
-        public bool Wet { get; }
-        public bool Dry { get { return !Wet; } }
-
-        public double LeafAccumulation { get; set; }
-
-        internal double DryMassKg(double byArea)
-        {
-            return Wet ? 0.0 : (NewAreaM2*M2_TO_HA)*byArea;
-        }
-
-        public double WetMassKg(double byArea)
-        {
-            return Dry ? 0.0 : (NewAreaM2 * M2_TO_HA) * byArea;
-        }
-
-        public override string ToString()
-        {
-            var status = Wet ? "Wet" : "Dry";
-            return $"{AreaM2} - {status}";
         }
     }
 }
