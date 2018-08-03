@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FlowMatters.Source.DODOC.Core;
 using RiverSystem;
 using RiverSystem.Api.Utils;
@@ -222,6 +223,8 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.WaterQualityFactor = WaterQualityFactor;
             Worker.StaticHeadLoss = StaticHeadLoss;
 
+            Worker.AreaForHeightLookup = AreaForHeightLookup;
+
             if (ProductionCoefficients == null)
             {
                 ProductionCoefficients = Worker.ProductionCoefficients;
@@ -241,6 +244,25 @@ namespace FlowMatters.Source.DODOC.Instream
             }
 
             Worker.Fac = 1.0 / Link.Divisions.Count;
+        }
+
+        /// <summary>
+        /// Determines the area for a specified height
+        /// </summary>
+        private double AreaForHeightLookup(double height, bool allowBelowMin)
+        {
+            var now = Worker.Areal.SimulationNow;
+            var ratingCurve = Division.Link.RatingCurveLibrary.GetCurve(now);
+
+            //TODO This looks a little messy. We've taken the same Linear Interpolation Method used in Flow Routing for consistancy. For some reason the first two params are a List and an IList which seems inconsistant.
+            var widthForHeight = AbstractLumpedFlowRouting.Lintrpl(
+                ratingCurve.Levels.ToList(),
+                ratingCurve.Widths,
+                height,
+                ratingCurve.Levels.Length);
+
+            // Determine the area by multiplying the width by the length of a division.
+            return widthForHeight * Division.Link.Length / Division.Link.NumberOfDivisions;
         }
 
         public override void SetUpLinkSourceSinkModel(IRiverReach link, Division division, Constituent constituent,

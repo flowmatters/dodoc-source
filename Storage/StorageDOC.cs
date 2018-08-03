@@ -219,9 +219,7 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.StaticHeadLoss = StaticHeadLoss;
 
             Worker.AreaForHeightLookup = StorageModel.StoreGeometry.surfaceAreaForHeight;
-
-            Worker.HeightForAreaLookup = _heightForSurfaceAreaLookup;
-
+            
             if (ProductionCoefficients == null)
             {
                 ProductionCoefficients = Worker.ProductionCoefficients;

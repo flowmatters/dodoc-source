@@ -452,14 +452,9 @@ namespace FlowMatters.Source.DODOC.Core
                 newZone.CumulativeAreaM2 = Fac * EffectiveMaximumArea;
                 newZone.ZoneAreaM2 = newZone.CumulativeAreaM2;
                 newZone.ElevationM = Areal.MaxElevation;
-
-                //lookup the area of the storage/reach at the elevation where the floodplain starts
-                var floodPlainArea = AreaForHeightLookup(FloodplainElevation, false);
-                var floodPlainAndZoneArea = floodPlainArea + newZone.ZoneAreaM2;
-                var zoneElevation = HeightForAreaLookup(floodPlainAndZoneArea); //get the elevation at the upper extent of this zone based on the total storage/reach area
-
-                newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterNonReadilyDegradable);
-                newZone.LeafDryMatterReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, zoneElevation, InitialLeafDryMatterReadilyDegradable);
+                
+                newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, newZone.ElevationM, InitialLeafDryMatterNonReadilyDegradable);
+                newZone.LeafDryMatterReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, newZone.ElevationM, InitialLeafDryMatterReadilyDegradable);
 
                 Zones.Add(newZone);
             }
