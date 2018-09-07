@@ -195,7 +195,11 @@ namespace FlowMatters.Source.DODOC.Instream
                 DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
 
                 ProductionCoefficients = ProductionCoefficients?.ToArray(),
-                ProductionBreaks = ProductionBreaks?.ToArray()
+                ProductionBreaks = ProductionBreaks?.ToArray(),
+
+                StructureRerationCoefficient = StructureRerationCoefficient,
+                WaterQualityFactor = WaterQualityFactor,
+                StaticHeadLoss = StaticHeadLoss,
             };
         }
 
