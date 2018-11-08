@@ -41,6 +41,7 @@
   <ItemGroup>
     <Reference Include="RiverSystem.Api">
       <Private>False</Private>
+      <HintPath>..\..\Source\Source_4.6.3.7918_Beta\RiverSystem.Api.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -68,13 +69,16 @@
     </Reference>
     <Reference Include="RiverSystem">
       <Private>False</Private>
+      <HintPath>..\..\Source\Source_4.6.3.7918_Beta\RiverSystem.dll</HintPath>
     </Reference>
     <Reference Include="RiverSystem.Persistence">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
+      <HintPath>..\..\Source\Source_4.6.3.7918_Beta\RiverSystem.Persistence.dll</HintPath>
     </Reference>
     <Reference Include="TIME">
       <Private>False</Private>
+      <HintPath>..\..\Source\Source_4.6.3.7918_Beta\TIME.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

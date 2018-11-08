@@ -513,7 +513,7 @@ namespace FlowMatters.Source.DODOC.Core
 
                 // Use the approriate Leaching Rate for the different types of mass (i.e. readily degradable & non-readily degradable)
                 var readilyDegradibleDoc = totalWetleafKg * readilyDegradableProportion * 1000 * DocMax * LeachingRate;
-                var nonReadilyDegradibleDoc = totalWetleafKg * (1-readilyDegradableProportion) * 1000 * DocMax * leachingRateNonReadily;
+                var nonReadilyDegradibleDoc = totalWetleafKg * (1-readilyDegradableProportion) * 1000 * DocMaxNonReadily * leachingRateNonReadily;
 
                 DOCEnteringWater += readilyDegradibleDoc + nonReadilyDegradibleDoc;
 
