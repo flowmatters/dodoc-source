@@ -26,12 +26,12 @@ namespace FlowMatters.Source.DODOC.Storage
             
             // set default values
             DOCDecayConstantAt20DegreeC = 0.03;
-            FirstOrderDOCReleaseRateAt20DegreeC = 0.4;
-            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.3;
+            FirstOrderDOCReleaseRateAt20DegreeC = 0.86;
+            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.125;
             LeafK1 = 0.03;
             LeafK2 = 0.003;
-            MaxDOCReleasedAt20DegreeC = 40;
-            MaxDOCReleasedAt20DegreeCNonReadily = 80;
+            MaxDOCReleasedAt20DegreeC = 80;
+            MaxDOCReleasedAt20DegreeCNonReadily = 10;
             ReaerationCoefficient = 0.08;
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;

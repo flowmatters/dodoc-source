@@ -117,6 +117,12 @@ namespace FlowMatters.Source.DODOC.Instream
             set { Feature.MaxDOCReleasedAt20DegreeC = value; }
         }
 
+        public double MaxDOCReleasedFromComponentOfLitterAt20DegreeCNonReadily
+        {
+            get { return Feature.MaxDOCReleasedAt20DegreeCNonReadily; }
+            set { Feature.MaxDOCReleasedAt20DegreeCNonReadily = value; }
+        }
+
         [Parameter]
         public double DOCDecayConstantAt20DegreeC
         {
