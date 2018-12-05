@@ -601,7 +601,9 @@ namespace FlowMatters.Source.DODOC.Core
             if (totalAreaBetween <= 0)
                 return 0;
 
-            return totalLoad / totalAreaBetween;
+            //leaf accumulation constant is a load in kg, not a rate in kg/ha
+            //return totalLoad / totalAreaBetween;
+            return totalLoad;
         }
 
         private void PrintZones(double deltaArea)
