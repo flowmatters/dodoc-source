@@ -59,9 +59,33 @@ namespace FlowMatters.Source.DODOC.Core
             get
             {
                 return Zones.Sum(z => z.WetMassKg(z.LeafDryMatterNonReadilyDegradable));
+              
             }
         }
 
+        public override double LeafDryMatterReadilyDegradableRate
+        {
+            get
+            {
+                return Zones.Sum(z => z.DryMassKg(z.LeafDryMatterReadilyDegradable)) / Zones.Sum(z => z.DryMassKg(1.0));
+            }
+        }
+
+        public override double LeafDryMatterNonReadilyDegradableRate
+        {
+            get
+            {
+                return Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable)) / Zones.Sum(z => z.DryMassKg(1.0));
+            }
+        }
+
+        public override double TotalDryMattergm2
+        {
+            get
+            {
+                return (Zones.Sum(z => z.DryMassKg(z.LeafDryMatterReadilyDegradable)) + Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable))) / Zones.Sum(z => z.DryMassKg(1.0))*10; //*10 is to convert from kg/ha to g/m2
+            }
+        }
         public override double FloodplainDryAreaHa
         {
             get { return Zones.Sum(z => z.DryMassKg(1.0)); }
@@ -535,6 +559,7 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     var upperelevation = zone.ElevationM;
                     var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
+                    zone.LeafAccumulation = leafAccumulationConstant;
 
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
 
@@ -601,9 +626,8 @@ namespace FlowMatters.Source.DODOC.Core
             if (totalAreaBetween <= 0)
                 return 0;
 
-            //leaf accumulation constant is a load in kg, not a rate in kg/ha
-            //return totalLoad / totalAreaBetween;
-            return totalLoad;
+            return totalLoad / totalAreaBetween;
+            
         }
 
         private void PrintZones(double deltaArea)

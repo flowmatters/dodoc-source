@@ -111,6 +111,13 @@ namespace FlowMatters.Source.DODOC.Instream
         public double LeafDryMatterReadilyDegradable { get; private set; }
 
         [Output]
+        public double LeafDryMatterReadilyDegradableRate { get; private set; }
+
+        [Output]
+        public double LeafDryMatterNonReadilyDegradableRate { get; private set; }
+        [Output]
+        public double TotalDryMattergm2 { get; private set; }
+        [Output]
         public double LeafDryMatterNonReadilyDegradable { get; private set; }
 
         [Output]
@@ -285,6 +292,9 @@ namespace FlowMatters.Source.DODOC.Instream
             CountInundatedZones = Worker.CountInundatedZones;
             CountDryZones = Worker.CountDryZones;
             LeafDryMatterReadilyDegradable = Worker.LeafDryMatterReadilyDegradable;
+            LeafDryMatterReadilyDegradableRate = Worker.LeafDryMatterReadilyDegradableRate;
+            LeafDryMatterNonReadilyDegradableRate = Worker.LeafDryMatterNonReadilyDegradableRate;
+            TotalDryMattergm2 = Worker.TotalDryMattergm2;
             LeafDryMatterNonReadilyDegradable = Worker.LeafDryMatterNonReadilyDegradable;
             TemperatureEst = Worker.WaterTemperatureEst;
             SoilO2Kg = Worker.SoilO2Kg;

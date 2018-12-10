@@ -36,6 +36,10 @@ namespace FlowMatters.Source.DODOC.Core
         public virtual double LeafWetMatterReadilyDegradable => 0;
         public virtual double LeafWetMatterNonReadilyDegradable => 0;
 
+        public virtual double LeafDryMatterReadilyDegradableRate => 0;
+        public virtual double LeafDryMatterNonReadilyDegradableRate => 0;
+        public virtual double TotalDryMattergm2 => 0;
+
         public virtual double FloodplainDryAreaHa => 0;
         public virtual double FloodplainWetAreaHa => 0;
         

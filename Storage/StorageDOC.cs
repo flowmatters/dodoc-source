@@ -163,6 +163,13 @@ namespace FlowMatters.Source.DODOC.Storage
         public double LeafWetMatterReadilyDegradable { get; private set; }
 
         [Output]
+        public double LeafDryMatterReadilyDegradableRate { get; private set; }
+
+        [Output]
+        public double LeafDryMatterNonReadilyDegradableRate { get; private set; }
+        [Output]
+        public double TotalDryMattergm2 { get; private set; }
+        [Output]
         public double LeafWetMatterNonReadilyDegradable { get; private set; }
 
         [Output]
@@ -258,6 +265,9 @@ namespace FlowMatters.Source.DODOC.Storage
             DOCEnteringWater = Worker.DOCEnteringWater;
             TotalWetLeaf = Worker.TotalWetLeaf;
             LeafWetMatterReadilyDegradable = Worker.LeafWetMatterReadilyDegradable;
+            LeafDryMatterReadilyDegradableRate = Worker.LeafDryMatterReadilyDegradableRate;
+            LeafDryMatterNonReadilyDegradableRate = Worker.LeafDryMatterNonReadilyDegradableRate;
+            TotalDryMattergm2 = Worker.TotalDryMattergm2;
             LeafWetMatterNonReadilyDegradable = Worker.LeafWetMatterNonReadilyDegradable;
             FloodplainWetAreaHa = Worker.FloodplainWetAreaHa;
             FloodplainDryAreaHa = Worker.FloodplainDryAreaHa;
