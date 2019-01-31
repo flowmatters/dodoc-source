@@ -110,10 +110,10 @@ namespace FlowMatters.Source.DODOC.Instream
         [Output]
         public double LeafDryMatterReadilyDegradable { get; private set; }
 
-        [Output]
+        [Output,CalculationUnits(CommonUnits.kgPerHa)]
         public double LeafDryMatterReadilyDegradableRate { get; private set; }
 
-        [Output]
+        [Output, CalculationUnits(CommonUnits.kgPerHa)]
         public double LeafDryMatterNonReadilyDegradableRate { get; private set; }
         [Output]
         public double TotalDryMattergm2 { get; private set; }

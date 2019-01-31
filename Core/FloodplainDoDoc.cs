@@ -83,7 +83,7 @@ namespace FlowMatters.Source.DODOC.Core
         {
             get
             {
-                return (Zones.Sum(z => z.DryMassKg(z.LeafDryMatterReadilyDegradable)) + Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable))) / Zones.Sum(z => z.DryMassKg(1.0))*10; //*10 is to convert from kg/ha to g/m2
+                return (Zones.Sum(z => z.DryMassKg(z.LeafDryMatterReadilyDegradable)) + Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable))) / Zones.Sum(z => z.DryMassKg(1.0))/10.0; // 10 is to convert from kg/ha to g/m2
             }
         }
         public override double FloodplainDryAreaHa
@@ -563,7 +563,8 @@ namespace FlowMatters.Source.DODOC.Core
 
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
 
-                    const double maxmimumNonReadilyDegradable = 2850d;
+                    //set max litter accumulation to large value to no maximum limit
+                    const double maxmimumNonReadilyDegradable = 285000d;
                     zone.LeafDryMatterNonReadilyDegradable = Math.Min(maxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
 
                     //update for next zone
