@@ -39,8 +39,14 @@
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RiverSystem">
+      <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.dll</HintPath>
+    </Reference>
     <Reference Include="RiverSystem.Api">
-      <Private>False</Private>
+      <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="RiverSystem.Persistence">
+      <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.Persistence.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -66,15 +72,8 @@
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
-    <Reference Include="RiverSystem">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="RiverSystem.Persistence">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="TIME">
-      <Private>False</Private>
+      <HintPath>..\..\Source\Source_4.7.0.8165\TIME.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
