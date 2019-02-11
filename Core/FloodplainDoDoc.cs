@@ -59,9 +59,33 @@ namespace FlowMatters.Source.DODOC.Core
             get
             {
                 return Zones.Sum(z => z.WetMassKg(z.LeafDryMatterNonReadilyDegradable));
+              
             }
         }
 
+        public override double LeafDryMatterReadilyDegradableRate
+        {
+            get
+            {
+                return Zones.Sum(z => z.DryMassKg(z.LeafDryMatterReadilyDegradable)) / Zones.Sum(z => z.DryMassKg(1.0));
+            }
+        }
+
+        public override double LeafDryMatterNonReadilyDegradableRate
+        {
+            get
+            {
+                return Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable)) / Zones.Sum(z => z.DryMassKg(1.0));
+            }
+        }
+
+        public override double TotalDryMattergm2
+        {
+            get
+            {
+                return (Zones.Sum(z => z.DryMassKg(z.LeafDryMatterReadilyDegradable)) + Zones.Sum(z => z.DryMassKg(z.LeafDryMatterNonReadilyDegradable))) / Zones.Sum(z => z.DryMassKg(1.0))/10.0; // 10 is to convert from kg/ha to g/m2
+            }
+        }
         public override double FloodplainDryAreaHa
         {
             get { return Zones.Sum(z => z.DryMassKg(1.0)); }
@@ -513,7 +537,7 @@ namespace FlowMatters.Source.DODOC.Core
 
                 // Use the approriate Leaching Rate for the different types of mass (i.e. readily degradable & non-readily degradable)
                 var readilyDegradibleDoc = totalWetleafKg * readilyDegradableProportion * 1000 * DocMax * LeachingRate;
-                var nonReadilyDegradibleDoc = totalWetleafKg * (1-readilyDegradableProportion) * 1000 * DocMax * leachingRateNonReadily;
+                var nonReadilyDegradibleDoc = totalWetleafKg * (1-readilyDegradableProportion) * 1000 * DocMaxNonReadily * leachingRateNonReadily;
 
                 DOCEnteringWater += readilyDegradibleDoc + nonReadilyDegradibleDoc;
 
@@ -535,10 +559,12 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     var upperelevation = zone.ElevationM;
                     var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
+                    zone.LeafAccumulation = leafAccumulationConstant;
 
                     zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable*Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
 
-                    const double maxmimumNonReadilyDegradable = 2850d;
+                    //set max litter accumulation to large value to no maximum limit
+                    const double maxmimumNonReadilyDegradable = 285000d;
                     zone.LeafDryMatterNonReadilyDegradable = Math.Min(maxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable*Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
 
                     //update for next zone
@@ -602,6 +628,7 @@ namespace FlowMatters.Source.DODOC.Core
                 return 0;
 
             return totalLoad / totalAreaBetween;
+            
         }
 
         private void PrintZones(double deltaArea)

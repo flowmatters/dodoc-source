@@ -24,12 +24,12 @@ namespace FlowMatters.Source.DODOC.Instream
 
             // set default values
             DOCDecayConstantAt20DegreeC = 0.03;
-            FirstOrderDOCReleaseRateAt20DegreeC = 0.4;
-            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.3;
+            FirstOrderDOCReleaseRateAt20DegreeC = 0.86;
+            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.125;
             LeafK1 = 0.03;
             LeafK2 = 0.003;
-            MaxDOCReleasedAt20DegreeC = 40;
-            MaxDOCReleasedAt20DegreeCNonReadily = 80;
+            MaxDOCReleasedAt20DegreeC = 80;
+            MaxDOCReleasedAt20DegreeCNonReadily = 10;
             ReaerationCoefficient = 0.08;
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;
@@ -110,6 +110,13 @@ namespace FlowMatters.Source.DODOC.Instream
         [Output]
         public double LeafDryMatterReadilyDegradable { get; private set; }
 
+        [Output,CalculationUnits(CommonUnits.kgPerHa)]
+        public double LeafDryMatterReadilyDegradableRate { get; private set; }
+
+        [Output, CalculationUnits(CommonUnits.kgPerHa)]
+        public double LeafDryMatterNonReadilyDegradableRate { get; private set; }
+        [Output]
+        public double TotalDryMattergm2 { get; private set; }
         [Output]
         public double LeafDryMatterNonReadilyDegradable { get; private set; }
 
@@ -176,7 +183,7 @@ namespace FlowMatters.Source.DODOC.Instream
                 LeafAccumulationConstant = LeafAccumulationConstant,
 
                 ReaerationCoefficient = ReaerationCoefficient,
-                
+
                 LeafA = LeafA,
 
                 LeafK1 = LeafK1,
@@ -192,6 +199,7 @@ namespace FlowMatters.Source.DODOC.Instream
 
                 FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC,
                 MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
+                MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily,
                 DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
 
                 ProductionCoefficients = ProductionCoefficients?.ToArray(),
@@ -219,9 +227,9 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
-            Worker.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = FirstOrderDOCReleaseRateAt20DegreeC;
+            Worker.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = FirstOrderDOCReleaseRateAt20DegreeCNonReadily;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
-            Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeC;
+            Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
@@ -284,6 +292,9 @@ namespace FlowMatters.Source.DODOC.Instream
             CountInundatedZones = Worker.CountInundatedZones;
             CountDryZones = Worker.CountDryZones;
             LeafDryMatterReadilyDegradable = Worker.LeafDryMatterReadilyDegradable;
+            LeafDryMatterReadilyDegradableRate = Worker.LeafDryMatterReadilyDegradableRate;
+            LeafDryMatterNonReadilyDegradableRate = Worker.LeafDryMatterNonReadilyDegradableRate;
+            TotalDryMattergm2 = Worker.TotalDryMattergm2;
             LeafDryMatterNonReadilyDegradable = Worker.LeafDryMatterNonReadilyDegradable;
             TemperatureEst = Worker.WaterTemperatureEst;
             SoilO2Kg = Worker.SoilO2Kg;
