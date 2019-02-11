@@ -40,13 +40,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RiverSystem">
-      <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="RiverSystem.Api">
-      <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.Api.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="RiverSystem.Persistence">
-      <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.Persistence.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -73,7 +73,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="TIME">
-      <HintPath>..\..\Source\Source_4.7.0.8165\TIME.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
