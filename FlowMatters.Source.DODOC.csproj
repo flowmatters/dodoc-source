@@ -39,13 +39,16 @@
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RiverSystem">
+    <Reference Include="RiverSystem, Version=4.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.dll</HintPath>
     </Reference>
-    <Reference Include="RiverSystem.Api">
+    <Reference Include="RiverSystem.Api, Version=4.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.Api.dll</HintPath>
     </Reference>
-    <Reference Include="RiverSystem.Persistence">
+    <Reference Include="RiverSystem.Persistence, Version=4.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Source\Source_4.7.0.8165\RiverSystem.Persistence.dll</HintPath>
     </Reference>
     <Reference Include="System">
@@ -72,7 +75,8 @@
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
-    <Reference Include="TIME">
+    <Reference Include="TIME, Version=4.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Source\Source_4.7.0.8165\TIME.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -88,6 +92,7 @@
     <Compile Include="Instream\InstreamDOC.cs" />
     <Compile Include="Instream\InstreamDOCAPI.cs" />
     <Compile Include="Instream\ProxyLinkSourceSinkModel.cs" />
+    <Compile Include="MixingCriterion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\RoutingDoDoc.cs" />
     <Compile Include="Storage\ProxyStorageSourceSinkModel.cs" />
@@ -98,7 +103,9 @@
     <Compile Include="Storage\StorageDOCAPI.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DODOC.hbm.xml" />
+    <EmbeddedResource Include="DODOC.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
