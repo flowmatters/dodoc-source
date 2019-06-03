@@ -111,6 +111,12 @@ namespace FlowMatters.Source.DODOC.Storage
             set { Feature.FirstOrderDOCReleaseRateAt20DegreeC = value; }
         }
 
+        public double FirstOrderDOCReleaseRateAt20DegreeCNonReadily
+        {
+            get { return Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily; }
+            set { Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = value; }
+        }
+
         [Parameter]
         public double MaxDOCReleasedFromComponentOfLitterAt20DegreeC
         {

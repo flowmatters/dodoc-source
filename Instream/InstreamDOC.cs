@@ -198,6 +198,7 @@ namespace FlowMatters.Source.DODOC.Instream
                 WaterTemperature = WaterTemperature,
 
                 FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC,
+                FirstOrderDOCReleaseRateAt20DegreeCNonReadily=FirstOrderDOCReleaseRateAt20DegreeCNonReadily,
                 MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
                 MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily,
                 DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
