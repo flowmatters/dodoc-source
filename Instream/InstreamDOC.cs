@@ -47,13 +47,13 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Litter Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction LeafA { get; set; }
 
-        [Parameter, Aka("Leaf dry matter readily degradable decay rate")]
+        [Parameter, Aka("Readily degradable dry litter decay rate")]
         public double LeafK1 { get; set; }
 
-        [Parameter, Aka("Leaf dry matter non readily degradable decay rate")]
+        [Parameter, Aka("Non-readily degradable dry litter decay rate")]
         public double LeafK2 { get; set; }
 
 
@@ -64,11 +64,11 @@ namespace FlowMatters.Source.DODOC.Instream
         public double WaterTemperature { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter non readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial non-readily degradable dry litter", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial readily degradable dry litter", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
         [Parameter, Aka("First Order DOC Release Rate at 20ºC - Readily")]
