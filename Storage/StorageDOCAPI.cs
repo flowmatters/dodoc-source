@@ -111,11 +111,23 @@ namespace FlowMatters.Source.DODOC.Storage
             set { Feature.FirstOrderDOCReleaseRateAt20DegreeC = value; }
         }
 
+        public double FirstOrderDOCReleaseRateAt20DegreeCNonReadily
+        {
+            get { return Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily; }
+            set { Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = value; }
+        }
+
         [Parameter]
         public double MaxDOCReleasedFromComponentOfLitterAt20DegreeC
         {
             get { return Feature.MaxDOCReleasedAt20DegreeC;}
             set { Feature.MaxDOCReleasedAt20DegreeC = value; }
+        }
+
+        public double MaxDOCReleasedFromComponentOfLitterAt20DegreeCNonReadily
+        {
+            get { return Feature.MaxDOCReleasedAt20DegreeCNonReadily; }
+            set { Feature.MaxDOCReleasedAt20DegreeCNonReadily = value; }
         }
 
         [Parameter]

@@ -36,6 +36,10 @@ namespace FlowMatters.Source.DODOC.Core
         public virtual double LeafWetMatterReadilyDegradable => 0;
         public virtual double LeafWetMatterNonReadilyDegradable => 0;
 
+        public virtual double LeafDryMatterReadilyDegradableRate => 0;
+        public virtual double LeafDryMatterNonReadilyDegradableRate => 0;
+        public virtual double TotalDryMattergm2 => 0;
+
         public virtual double FloodplainDryAreaHa => 0;
         public virtual double FloodplainWetAreaHa => 0;
         
@@ -254,7 +258,8 @@ namespace FlowMatters.Source.DODOC.Core
             if (WaterTemperature > 0)
                 WaterTemperatureEst = WaterTemperature;
 
-            Sigma = Math.Pow(1.05, WaterTemperatureEst - 20);
+            //all temperature conversions are handled elsewhere, set this to 0.
+            Sigma = 1.0; //Math.Pow(1.05, WaterTemperatureEst - 20);
         }
 
         protected abstract void ProcessDoc();
@@ -274,7 +279,8 @@ namespace FlowMatters.Source.DODOC.Core
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
 
             // +++TODO Check unit conversions!
-            var reaerationmg = ReaerationCoefficient * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L)) * WorkingVolume * M3_to_L;
+            //Add temperature dependance for rearation coefficient
+            var reaerationmg = ReaerationCoefficient * Math.Pow(1.024, WaterTemperatureEst - 20) * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L)) * WorkingVolume * M3_to_L;
             Reaeration = reaerationmg*MG_TO_KG;
 
             int i;
@@ -300,7 +306,7 @@ namespace FlowMatters.Source.DODOC.Core
             if (WorkingVolume.Greater(0.0))
                 DissolvedOxygenLoad = Math.Max(totalOxygen, 0.0);
             else
-                DissolvedOxygenLoad = 0.0;
+                DissolvedOxygenLoad = double.NaN;
 
         }
 
