@@ -26,12 +26,12 @@ namespace FlowMatters.Source.DODOC.Storage
             
             // set default values
             DOCDecayConstantAt20DegreeC = 0.03;
-            FirstOrderDOCReleaseRateAt20DegreeC = 0.4;
-            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.3;
+            FirstOrderDOCReleaseRateAt20DegreeC = 0.86;
+            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.125;
             LeafK1 = 0.03;
             LeafK2 = 0.003;
-            MaxDOCReleasedAt20DegreeC = 40;
-            MaxDOCReleasedAt20DegreeCNonReadily = 80;
+            MaxDOCReleasedAt20DegreeC = 80;
+            MaxDOCReleasedAt20DegreeCNonReadily = 10;
             ReaerationCoefficient = 0.08;
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;
@@ -69,21 +69,21 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Litter Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction LeafA { get; set; }
 
-        [Parameter, Aka("Leaf dry matter readily degradable decay rate")]
+        [Parameter, Aka("Readily degradable dry litter decay rate")]
         public double LeafK1 { get; set; }
 
-        [Parameter, Aka("Leaf dry matter non readily degradable decay rate")]
+        [Parameter, Aka("Non-readily degradable dry litter decay rate")]
         public double LeafK2 { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter non readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial non-readily degradable dry litter", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial readily degradable dry litter", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
         [Parameter, Aka("Primary Production Reaeration")]
@@ -162,6 +162,13 @@ namespace FlowMatters.Source.DODOC.Storage
         [Output]
         public double LeafWetMatterReadilyDegradable { get; private set; }
 
+        [Output,CalculationUnits(CommonUnits.kgPerHa)]
+        public double LeafDryMatterReadilyDegradableRate { get; private set; }
+
+        [Output, CalculationUnits(CommonUnits.kgPerHa)]
+        public double LeafDryMatterNonReadilyDegradableRate { get; private set; }
+        [Output]
+        public double TotalDryMattergm2 { get; private set; }
         [Output]
         public double LeafWetMatterNonReadilyDegradable { get; private set; }
 
@@ -258,6 +265,9 @@ namespace FlowMatters.Source.DODOC.Storage
             DOCEnteringWater = Worker.DOCEnteringWater;
             TotalWetLeaf = Worker.TotalWetLeaf;
             LeafWetMatterReadilyDegradable = Worker.LeafWetMatterReadilyDegradable;
+            LeafDryMatterReadilyDegradableRate = Worker.LeafDryMatterReadilyDegradableRate;
+            LeafDryMatterNonReadilyDegradableRate = Worker.LeafDryMatterNonReadilyDegradableRate;
+            TotalDryMattergm2 = Worker.TotalDryMattergm2;
             LeafWetMatterNonReadilyDegradable = Worker.LeafWetMatterNonReadilyDegradable;
             FloodplainWetAreaHa = Worker.FloodplainWetAreaHa;
             FloodplainDryAreaHa = Worker.FloodplainDryAreaHa;

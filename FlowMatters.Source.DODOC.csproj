@@ -39,8 +39,17 @@
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RiverSystem.Api">
-      <Private>False</Private>
+    <Reference Include="RiverSystem, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\RiverSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="RiverSystem.Api, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\RiverSystem.Api.dll</HintPath>
+    </Reference>
+    <Reference Include="RiverSystem.Persistence, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\RiverSystem.Persistence.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -66,15 +75,9 @@
     <Reference Include="System.Xml">
       <Private>False</Private>
     </Reference>
-    <Reference Include="RiverSystem">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="RiverSystem.Persistence">
+    <Reference Include="TIME, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="TIME">
-      <Private>False</Private>
+      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\TIME.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +92,7 @@
     <Compile Include="Instream\InstreamDOC.cs" />
     <Compile Include="Instream\InstreamDOCAPI.cs" />
     <Compile Include="Instream\ProxyLinkSourceSinkModel.cs" />
+    <Compile Include="MixingCriterion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\RoutingDoDoc.cs" />
     <Compile Include="Storage\ProxyStorageSourceSinkModel.cs" />
@@ -99,13 +103,18 @@
     <Compile Include="Storage\StorageDOCAPI.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DODOC.hbm.xml" />
+    <EmbeddedResource Include="DODOC.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
