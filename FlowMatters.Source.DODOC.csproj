@@ -15,9 +15,10 @@
     <TargetFrameworkProfile />
     <NoWarn>1591,1587</NoWarn>
     <LangVersion>6</LangVersion>
-    <RootPath>..\</RootPath>
+    <RootPath>$(MSBuildThisFileDirectory)..\</RootPath>
     <ReferencePath>$(RootPath)Output;$(RootPath)3rdParty</ReferencePath>
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
+    <ExcludeEWaterPdbPathMap>true</ExcludeEWaterPdbPathMap>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,45 +40,53 @@
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RiverSystem, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RiverSystem.Persistence">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\RiverSystem.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="RiverSystem.Api, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RiverSystem.Api">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\RiverSystem.Api.dll</HintPath>
-    </Reference>
-    <Reference Include="RiverSystem.Persistence, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\RiverSystem.Persistence.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Core">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml.Linq">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Data">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Net.Http">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml">
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
-    <Reference Include="TIME, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="RiverSystem">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Source\BlackwaterUncertainty\Source_4.8.2.8880_Beta\TIME.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="TIME">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
