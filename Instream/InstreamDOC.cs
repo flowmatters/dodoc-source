@@ -24,12 +24,12 @@ namespace FlowMatters.Source.DODOC.Instream
 
             // set default values
             DOCDecayConstantAt20DegreeC = 0.03;
-            FirstOrderDOCReleaseRateAt20DegreeC = 0.4;
-            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.3;
+            FirstOrderDOCReleaseRateAt20DegreeC = 0.86;
+            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = 0.125;
             LeafK1 = 0.03;
             LeafK2 = 0.003;
-            MaxDOCReleasedAt20DegreeC = 40;
-            MaxDOCReleasedAt20DegreeCNonReadily = 80;
+            MaxDOCReleasedAt20DegreeC = 80;
+            MaxDOCReleasedAt20DegreeCNonReadily = 10;
             ReaerationCoefficient = 0.08;
             StructureRerationCoefficient = 0.6;
             WaterQualityFactor = 0.65;
@@ -47,13 +47,13 @@ namespace FlowMatters.Source.DODOC.Instream
         [Parameter, Aka("Reaeration Coefficient")]
         public double ReaerationCoefficient { get; set; }
 
-        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Leaf Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [Parameter, Aka("Leaf A"), LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Litter Accumulation Constant", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction LeafA { get; set; }
 
-        [Parameter, Aka("Leaf dry matter readily degradable decay rate")]
+        [Parameter, Aka("Readily degradable dry litter decay rate")]
         public double LeafK1 { get; set; }
 
-        [Parameter, Aka("Leaf dry matter non readily degradable decay rate")]
+        [Parameter, Aka("Non-readily degradable dry litter decay rate")]
         public double LeafK2 { get; set; }
 
 
@@ -64,11 +64,11 @@ namespace FlowMatters.Source.DODOC.Instream
         public double WaterTemperature { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter non readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial non-readily degradable dry litter", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterNonReadilyDegradable { get; set; }
 
         [Parameter]
-        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial Leaf dry matter readily degradable", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
+        [LinearPerPartDescription("editor...", "Elevation", CommonUnits.metres, CommonUnits.metres, "Initial readily degradable dry litter", CommonUnits.kgPerHa, CommonUnits.kgPerHa)]
         public LinearPerPartFunction InitialLeafDryMatterReadilyDegradable { get; set; }
 
         [Parameter, Aka("First Order DOC Release Rate at 20ºC - Readily")]
@@ -110,6 +110,13 @@ namespace FlowMatters.Source.DODOC.Instream
         [Output]
         public double LeafDryMatterReadilyDegradable { get; private set; }
 
+        [Output,CalculationUnits(CommonUnits.kgPerHa)]
+        public double LeafDryMatterReadilyDegradableRate { get; private set; }
+
+        [Output, CalculationUnits(CommonUnits.kgPerHa)]
+        public double LeafDryMatterNonReadilyDegradableRate { get; private set; }
+        [Output]
+        public double TotalDryMattergm2 { get; private set; }
         [Output]
         public double LeafDryMatterNonReadilyDegradable { get; private set; }
 
@@ -176,7 +183,7 @@ namespace FlowMatters.Source.DODOC.Instream
                 LeafAccumulationConstant = LeafAccumulationConstant,
 
                 ReaerationCoefficient = ReaerationCoefficient,
-                
+
                 LeafA = LeafA,
 
                 LeafK1 = LeafK1,
@@ -191,7 +198,9 @@ namespace FlowMatters.Source.DODOC.Instream
                 WaterTemperature = WaterTemperature,
 
                 FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC,
+                FirstOrderDOCReleaseRateAt20DegreeCNonReadily=FirstOrderDOCReleaseRateAt20DegreeCNonReadily,
                 MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC,
+                MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily,
                 DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC,
 
                 ProductionCoefficients = ProductionCoefficients?.ToArray(),
@@ -219,9 +228,9 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.PrimaryProductionReaeration = PrimaryProductionReaeration;
             Worker.WaterTemperature = WaterTemperature;
             Worker.FirstOrderDOCReleaseRateAt20DegreeC = FirstOrderDOCReleaseRateAt20DegreeC;
-            Worker.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = FirstOrderDOCReleaseRateAt20DegreeC;
+            Worker.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = FirstOrderDOCReleaseRateAt20DegreeCNonReadily;
             Worker.MaxDOCReleasedAt20DegreeC = MaxDOCReleasedAt20DegreeC;
-            Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeC;
+            Worker.MaxDOCReleasedAt20DegreeCNonReadily = MaxDOCReleasedAt20DegreeCNonReadily;
             Worker.DOCDecayConstantAt20DegreeC = DOCDecayConstantAt20DegreeC;
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
@@ -284,6 +293,9 @@ namespace FlowMatters.Source.DODOC.Instream
             CountInundatedZones = Worker.CountInundatedZones;
             CountDryZones = Worker.CountDryZones;
             LeafDryMatterReadilyDegradable = Worker.LeafDryMatterReadilyDegradable;
+            LeafDryMatterReadilyDegradableRate = Worker.LeafDryMatterReadilyDegradableRate;
+            LeafDryMatterNonReadilyDegradableRate = Worker.LeafDryMatterNonReadilyDegradableRate;
+            TotalDryMattergm2 = Worker.TotalDryMattergm2;
             LeafDryMatterNonReadilyDegradable = Worker.LeafDryMatterNonReadilyDegradable;
             TemperatureEst = Worker.WaterTemperatureEst;
             SoilO2Kg = Worker.SoilO2Kg;
