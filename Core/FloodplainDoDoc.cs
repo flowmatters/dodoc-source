@@ -7,7 +7,7 @@ using TIME.Science.Mathematics.Functions;
 
 namespace FlowMatters.Source.DODOC.Core
 {
-    class FloodplainDoDoc : DoDocModel
+    public class FloodplainDoDoc : DoDocModel
     {
         public List<FloodplainData> Zones { get; private set;  }
         protected double PreviousArea { get; set; }
