@@ -714,15 +714,19 @@ namespace FlowMatters.Source.DODOC.Core
             // Process in increasing order
             var increasingHeights = uniqueHeights.OrderBy( h => h).ToArray();
 
-            var previousCumulativeArea = 0.0;
-            var previousHeight = double.MinValue;
-
+            
             // Due to the odd nature of the Zones collection, we shall sort the Zones into Dry and Wet
             var increasingWetZoneArray = new List<FloodplainData>();
             var tempDryZoneArray = new List<FloodplainData>();
 
-            foreach (var height in increasingHeights)
+            var previousCumulativeArea = 0.0;
+
+            // Create the first zone from the lowest height to the next lowest height
+            var previousHeight = increasingHeights[0];
+            
+            for (var i  = 1; i < increasingHeights.Length; i++)
             {
+                var height = increasingHeights[i];
                 // Avoid duplicates
                 if (height.EqualWithTolerance(previousHeight))
                     continue;
