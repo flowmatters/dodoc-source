@@ -7,9 +7,31 @@ using TIME.Science.Mathematics.Functions;
 
 namespace FlowMatters.Source.DODOC.Core
 {
-    class FloodplainDoDoc : DoDocModel
+    public class FloodplainDoDoc : DoDocModel
     {
+        /// <summary>
+        /// Determine whether the Floodplain has been initialised or not
+        /// </summary>
+        private bool _initialised;
+
+        /// <summary>
+        /// The state of the area modelled in the Floodplain
+        /// 
+        /// The Zones collection has a very specific state. 
+        /// This state has been carried over (presumably) from the FORTRAN implemenation.
+        /// The rules are...
+        /// 1. Dry zones are grouped together and come first in the collection
+        /// 2. Dry zones are ordered by DECREASING area
+        /// 3. Wet zones are grouped together and come last in the collection
+        /// 4. Wet zones are ordered by INCREASING area
+        /// </summary>
         public List<FloodplainData> Zones { get; private set;  }
+
+
+        /// <summary>
+        /// Tracks the prior surface area of the storage.
+        /// Used to determine whether there has been an increase of decrease in the amount of wet area coverage
+        /// </summary>
         protected double PreviousArea { get; set; }
 
         public override int ZoneCount { get { return Zones.Count; } }
@@ -104,9 +126,15 @@ namespace FlowMatters.Source.DODOC.Core
 
         public FloodplainDoDoc()
         {
-            Zones = new List<FloodplainData>();
+            _initialised = false;
         }
 
+
+        /// <summary>
+        /// The objective of this procedure is to reorder the Zone list so that all Dry zones come before Wet zones
+        /// 
+        /// Note: this method seems to be 
+        /// </summary>
         private void GroupDryZones()
         {
             if (Zones.Count <= 1)
@@ -114,15 +142,20 @@ namespace FlowMatters.Source.DODOC.Core
 
             for (int i = 0; i < (Zones.Count-1); i++)
             {
+                // Find the first spot where a where a Wet zone comes after a Dry zone
                 if (Zones[i].Dry && Zones[i + 1].Wet)
                 {
                     for (int j = i; j < (Zones.Count - 1); j++)
                     {
+                        // Find the first Dry zone to the follow the wet zone and put it back at index 'i+1'
+                        // This should be in front of all Wet zones
                         if (Zones[j].Wet && Zones[j + 1].Dry)
                         {
                             FloodplainData tmp = Zones[j + 1];
                             Zones.RemoveAt(j + 1);
                             Zones.Insert(i+1,tmp);
+                            
+                            // Only move one Dry zone then break back to the outer loop
                             break;
                         }
                     }
@@ -146,8 +179,13 @@ namespace FlowMatters.Source.DODOC.Core
             }
         }
 
+
+        /// <summary>
+        /// Main processing update of the Zone state
+        /// </summary>
         private void UpdateFloodedAreas()
         {
+            // Find whether the water level has increased or decreased
             double deltaArea = Areal.Area - PreviousArea;
             PreviousArea = Areal.Area;
 
@@ -156,6 +194,7 @@ namespace FlowMatters.Source.DODOC.Core
                 deltaArea = 0.0; // +++TODO Hack hack hack...
             }
 
+            // Decide what to do based on how the area has changed
             if (deltaArea > 0)
             {
                 IncreaseFloodedZones(deltaArea);
@@ -173,8 +212,10 @@ namespace FlowMatters.Source.DODOC.Core
                 EndOfFlood();
             }
 
+
             RemoveInsignificantZones();
 
+            // Sort the Zones so the collection is back in the required order
             GroupDryZones();
 
             if(Debug) PrintZones(deltaArea);
@@ -273,11 +314,22 @@ namespace FlowMatters.Source.DODOC.Core
             FloodCounter = 0;
         }
 
+
+        /// <summary>
+        /// If the area has not changed, the Zones do not change state
+        /// </summary>
         private void StableFloodZones()
         {
             FloodCounter++;
         }
 
+
+        /// <summary>
+        /// The area has reduced.
+        /// One of the Wet zones will now be reduced to cover the new resulting area.
+        /// Possibly some of the Wet zones will be removed entirely.
+        /// A new Dry Zone will be created to cover the area that is now dry.
+        /// </summary>
         private void ContractFloodedZones(double reducedArea)
         {
             FloodCounter++;
@@ -285,6 +337,13 @@ namespace FlowMatters.Source.DODOC.Core
             for (int i = 0; i < Zones.Count; i++)
             {
                 var zone = Zones[i];
+
+                // Skip past all the Dry zones
+                // We are looking for the Wet zone covers the current elevation
+                // This is the zone that will be split into separate Wet and Dry zones
+
+                // Since Wet zones are ordered by INCREASING area, 
+                // we search through the collection looking for the FIRST to have an area GREATER than the current floodplain area
                 if (Areal.Area.GreaterOrEqual(zone.CumulativeAreaM2) || zone.Dry)
                     continue;
 
@@ -298,6 +357,7 @@ namespace FlowMatters.Source.DODOC.Core
                 }
                 else
                 {
+                    // We want to find the range of Wet zones that need to be removed as they will be replaced by a Dry zone 
                     for (int j = (i + 1); j < Zones.Count; j++)
                     {
                         if (Zones[j].Wet)
@@ -325,6 +385,7 @@ namespace FlowMatters.Source.DODOC.Core
                     // !use remaining area
                 shortleaf2 += (zone.LeafDryMatterNonReadilyDegradable*ratioReducedArea);
 
+                // Create a new Dry zone to cover the area of all Wet zones that have been removed or resized.
                 var newZone = new FloodplainData(false);
                 newZone.CumulativeAreaM2 = Zones[lastFloodZone].CumulativeAreaM2;
                 newZone.ElevationM = Zones[lastFloodZone].ElevationM;
@@ -334,12 +395,15 @@ namespace FlowMatters.Source.DODOC.Core
                 newZone.ZoneAreaM2 = reducedArea;
                 Zones.Add(newZone);
 
+                // Resize the Wet zone that will be split
                 zone.ZoneAreaM2 -= zone.CumulativeAreaM2 - Areal.Area;
                 zone.CumulativeAreaM2 = Areal.Area;
                 zone.ElevationM = Areal.Elevation;
+
                 if (zone.ZoneAreaM2.Less(0.0))
                     zone.ZoneAreaM2 = Areal.Area;
 
+                // Remove the Wet zones that have been replaced
                 if (Areal.Area.EqualWithTolerance(0.0))
                     Zones.RemoveRange(i, removeWetZones);
                 else
@@ -347,6 +411,9 @@ namespace FlowMatters.Source.DODOC.Core
                 return;
             }
 
+
+            // TODO - I don't know how this code is reached
+            // TODO - It seems to me that to pass the IF statement below, it would also not have gotten out of the prior loop...
             if (Areal.Area.Less(Zones.Last().CumulativeAreaM2) && Zones.Last().Wet)
             {
                 var last = Zones.Last();
@@ -371,6 +438,13 @@ namespace FlowMatters.Source.DODOC.Core
             }
         }
 
+        
+        /// <summary>
+        /// The area has increased.
+        /// A Dry zone will be reduced in size as the water level encroaches on it
+        /// Possible several Dry zones will be removed entirely as they are covered.
+        /// A new Wet zone will cover the area that is now wet
+        /// </summary>
         private void IncreaseFloodedZones(double newarea)
         {
             FloodCounter++;
@@ -385,6 +459,14 @@ namespace FlowMatters.Source.DODOC.Core
             else
             {
                 minDryZone = Zones.Count-1;
+
+                // We are looking for the Dry zone covers the current elevation
+                // This is the zone that will be split into separate Wet and Dry zones
+
+                // Since Dry zones are ordered by DECREASING area, 
+                // we search through the collection in REVERSE,
+                // looking for the zone with area GREATER than the current floodplain area
+                // Any Dry zone with an area Less than the current floodplain area will be removed
                 for (int i = (Zones.Count - 1); i >= 0; i--)
                 {
                     if (Areal.Area.Less(Zones[i].CumulativeAreaM2) && Zones[i].Dry)
@@ -408,6 +490,7 @@ namespace FlowMatters.Source.DODOC.Core
                 {
                     shortleaf1 = 0d;
                     shortleaf2 = 0d;
+                    
                     for (int i = (Zones.Count - 1); i >= minDryZone; i--)
                     {
                         if (Zones[i].Wet) continue;
@@ -445,12 +528,14 @@ namespace FlowMatters.Source.DODOC.Core
             newZone.ZoneAreaM2 = newarea;
             Zones.Add(newZone);
 
+            // Adjust the area of the dry zone that will be split by the new water level
             if (minDryZone >= 0)
                 Zones[minDryZone].ZoneAreaM2 = Zones[minDryZone].CumulativeAreaM2 - Areal.Area;
 
             int removedDryZones = 0;
             int minZone = Zones.Count;
 
+            // Find the range of Dry zones that will be covered by the new Wet zone and remove them
             for (int i = (Zones.Count - 1); i >= 0 ; i--)
             {
                 if (Areal.Area.GreaterOrEqual(Zones[i].CumulativeAreaM2)&&Zones[i].Dry)
@@ -464,23 +549,16 @@ namespace FlowMatters.Source.DODOC.Core
                 Zones.RemoveRange(minZone,removedDryZones);
         }
 
+
         /// <summary>
         /// Main method for processing Dissolved Organic Carbon.
         /// Manages the addition and deletion of 'Zones', the leaf matter that resides in them, and the leaving of DOC from that matter into the water
         /// </summary>
         protected override void ProcessDoc()
         {
-            if (Zones.Count == 0)
+            if (!_initialised)
             {
-                var newZone = new FloodplainData(false);
-                newZone.CumulativeAreaM2 = Fac * EffectiveMaximumArea;
-                newZone.ZoneAreaM2 = newZone.CumulativeAreaM2;
-                newZone.ElevationM = Areal.MaxElevation;
-                
-                newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, newZone.ElevationM, InitialLeafDryMatterNonReadilyDegradable);
-                newZone.LeafDryMatterReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, newZone.ElevationM, InitialLeafDryMatterReadilyDegradable);
-
-                Zones.Add(newZone);
+                InitialiseZones();
             }
 
             UpdateFloodedAreas();
@@ -577,6 +655,161 @@ namespace FlowMatters.Source.DODOC.Core
             docMilligrams = Math.Max(docMilligrams - ConsumedDocMilligrams,0.0);
 
             DissolvedOrganicCarbonLoad = docMilligrams * MG_TO_KG;
+        }
+
+
+        /// <summary>
+        /// Initialises the Floodplain with Zones representing the initial state of the leaf matter
+        /// </summary>
+        public void InitialiseZones()
+        {
+            Zones = new List<FloodplainData>();
+
+            if (InitialiseWithMultipleZones)
+            {
+                InitialiseMultipleZones();
+            }
+            else
+            {
+                InitialiseSingleZone();
+            }
+            _initialised = true;
+        }
+
+
+        /// <summary>
+        /// Initialises the Zones using the "InitialLeafDryMatter" lookup tables
+        /// 
+        /// The precise logic used here depends on the nature of the <see cref="Zones"/> collection
+        /// </summary>
+        private void InitialiseMultipleZones()
+        {
+            // Get the min and max heights of the storage
+            var minHeight = Areal.MinElevation;
+            var maxHeight = Areal.MaxElevation;
+
+            // Build a collection of all the unique points when the leaf matter changes
+            // Include the Min and Max elevations as valid points
+            var uniqueHeights = new HashSet<double>
+            {
+                minHeight,
+                maxHeight
+            };
+            
+            foreach (var height in InitialLeafDryMatterReadilyDegradable.ToUnsortedArray().Select(p => p.Key))
+            {
+                if (!uniqueHeights.Contains(height) && height > minHeight)
+                    uniqueHeights.Add(height);
+            }
+
+            foreach (var height in InitialLeafDryMatterNonReadilyDegradable.ToUnsortedArray().Select(p => p.Key))
+            {
+                if (!uniqueHeights.Contains(height) && height > minHeight)
+                    uniqueHeights.Add(height);
+            }
+
+            // Add the current elevation
+            uniqueHeights.Add(Elevation);
+
+            // Process in increasing order
+            var increasingHeights = uniqueHeights.OrderBy( h => h).ToArray();
+
+            
+            // Due to the odd nature of the Zones collection, we shall sort the Zones into Dry and Wet
+            var increasingWetZoneArray = new List<FloodplainData>();
+            var tempDryZoneArray = new List<FloodplainData>();
+
+            var previousCumulativeArea = 0.0;
+
+            // Create the first zone from the lowest height to the next lowest height
+            var previousHeight = increasingHeights[0];
+            
+            for (var i  = 1; i < increasingHeights.Length; i++)
+            {
+                var height = increasingHeights[i];
+                // Avoid duplicates
+                if (height.EqualWithTolerance(previousHeight))
+                    continue;
+
+                // Anything at or below the current storage level is considered Wet
+                var isWet = height <= Elevation;
+
+                var area = Fac * AreaForHeightLookup(height, false);
+
+                // Get the initial leaf matter settings
+                var leafDryMatterNonReadilyDegradable = 
+                    IntergrateElevationsForAccumulation( 
+                        previousHeight, 
+                        height, 
+                        InitialLeafDryMatterNonReadilyDegradable);
+
+                var leafDryMatterReadilyDegradable =
+                    IntergrateElevationsForAccumulation(
+                        previousHeight, 
+                        height,
+                        InitialLeafDryMatterReadilyDegradable);
+
+                // Create the zone
+                var newZone = new FloodplainData(isWet)
+                {
+                    CumulativeAreaM2 = area,
+
+                    // Set the area this zone covers
+                    ZoneAreaM2 = area - previousCumulativeArea,
+                    ElevationM = height,
+                    LeafDryMatterNonReadilyDegradable = leafDryMatterNonReadilyDegradable,
+                    LeafDryMatterReadilyDegradable = leafDryMatterReadilyDegradable,
+                };
+                
+                // Keep track of the last area
+                previousCumulativeArea = area;
+
+                // Sort the zone into wet and dry
+                if (newZone.Dry)
+                {
+                    tempDryZoneArray.Add(newZone);
+                }
+                else
+                {
+                    increasingWetZoneArray.Add(newZone);
+                }
+            }
+
+            // The Zones collection has a very specific state. 
+            // This state has been carried over (presumably) from the FORTRAN implemenation.
+            // The rules are...
+            // 1. Dry zones are grouped together and come first in the collection
+            // 2. Dry zones are ordered by DECREASING area
+            // 3. Wet zones are grouped together and come last in the collection
+            // 4. Wet zones are ordered by INCREASING area
+
+            tempDryZoneArray.Reverse();
+            Zones.AddRange(tempDryZoneArray);
+            Zones.AddRange(increasingWetZoneArray);
+
+            // Also set the PreviousArea to the current Area so the Zones arenconsidered "stable" on the first timestep
+            PreviousArea = Areal.Area;
+        }
+
+
+        /// <summary>
+        /// Initialises the Floodplain
+        /// 
+        /// TODO - This method is due to be removed once the <see cref="InitialiseMultipleZones"/> method has been tested
+        /// </summary>
+        private void InitialiseSingleZone()
+        {
+            var newZone = new FloodplainData(false);
+            newZone.CumulativeAreaM2 = Fac * EffectiveMaximumArea;
+            newZone.ZoneAreaM2 = newZone.CumulativeAreaM2;
+            newZone.ElevationM = Areal.MaxElevation;
+
+            newZone.LeafDryMatterNonReadilyDegradable = IntergrateElevationsForAccumulation(Elevation, newZone.ElevationM,
+                InitialLeafDryMatterNonReadilyDegradable);
+            newZone.LeafDryMatterReadilyDegradable =
+                IntergrateElevationsForAccumulation(Elevation, newZone.ElevationM, InitialLeafDryMatterReadilyDegradable);
+
+            Zones.Add(newZone);
         }
 
         private double IntergrateElevationsForAccumulation(double lowerElevation, double upperElevation, LinearPerPartFunction accumulationLookup)
