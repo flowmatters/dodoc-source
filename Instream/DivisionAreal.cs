@@ -58,6 +58,20 @@ namespace FlowMatters.Source.DODOC.Instream
             }
         }
 
+        /// <summary>
+        /// The Minimimum elevation that can be reached in the Division
+        /// TODO - We believe the Storage Routing implementation of the DoDoc Model needs work. For the time being we are taking the lowest defined point in the current rating curve to represent the Min Elevation.
+        /// </summary>
+        public double MinElevation
+        {
+            get
+            {
+                var ratingCurve = _division.Link.RatingCurveLibrary.GetCurve(SimulationNow);
+
+                return ratingCurve.Levels.First();
+            }
+        }
+
         /// <summary> 
         /// The maximum area of the division
         /// TODO - The use of Double.MaxValue here looks unrealistic and dangerous. 
