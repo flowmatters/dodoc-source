@@ -690,7 +690,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             // Build a collection of all the unique points when the leaf matter changes
             // Include the Min and Max elevations as valid points
-            var uniqueHeights = new HashSet<double>
+            var uniqueHeights = new List<double>
             {
                 minHeight,
                 maxHeight
@@ -698,13 +698,13 @@ namespace FlowMatters.Source.DODOC.Core
             
             foreach (var height in InitialLeafDryMatterReadilyDegradable.ToUnsortedArray().Select(p => p.Key))
             {
-                if (!uniqueHeights.Contains(height) && height > minHeight)
+                if (height > minHeight)
                     uniqueHeights.Add(height);
             }
 
             foreach (var height in InitialLeafDryMatterNonReadilyDegradable.ToUnsortedArray().Select(p => p.Key))
             {
-                if (!uniqueHeights.Contains(height) && height > minHeight)
+                if (height > minHeight)
                     uniqueHeights.Add(height);
             }
 
@@ -763,6 +763,7 @@ namespace FlowMatters.Source.DODOC.Core
                 
                 // Keep track of the last area
                 previousCumulativeArea = area;
+                previousHeight = height;
 
                 // Sort the zone into wet and dry
                 if (newZone.Dry)
