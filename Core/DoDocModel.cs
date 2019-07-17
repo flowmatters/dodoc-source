@@ -178,6 +178,13 @@ namespace FlowMatters.Source.DODOC.Core
         [Parameter, CalculationUnits(CommonUnits.metres)]
         public double StaticHeadLoss { get; set; }
 
+
+        /// <summary>
+        /// Optional flag to specify how the Zones should be initialised
+        /// </summary>
+        [Parameter]
+        public bool InitialiseWithMultipleZones { get; set; }
+
         #endregion
 
         [Input]

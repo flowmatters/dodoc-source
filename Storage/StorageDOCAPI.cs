@@ -157,5 +157,13 @@ namespace FlowMatters.Source.DODOC.Storage
             get { return Feature.StaticHeadLoss; }
             set { Feature.StaticHeadLoss = value; }
         }
+        
+
+        [Parameter]
+        public bool InitialiseWithMultipleZones
+        {
+            get { return Feature.InitialiseWithMultipleZones; }
+            set { Feature.InitialiseWithMultipleZones = value; }
+        }
     }
 }

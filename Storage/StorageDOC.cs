@@ -116,6 +116,12 @@ namespace FlowMatters.Source.DODOC.Storage
         [Parameter, Aka("Static Head Loss"), CalculationUnits(CommonUnits.metres)]
         public double StaticHeadLoss { get; set; }
 
+        /// <summary>
+        /// Flag used to specify how the <see cref="FlowMatters.Source.DODOC.Core.FloodplainDoDoc"/> Zones are initialised
+        /// </summary>
+        [Parameter, Aka("Initialise With Multiple Zones")]
+        public bool InitialiseWithMultipleZones{ get; set; }
+
         public double[] ProductionCoefficients { get; set; }
 
         public double[] ProductionBreaks { get; set; }
@@ -224,6 +230,8 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.StructureRerationCoefficient = StructureRerationCoefficient;
             Worker.WaterQualityFactor = WaterQualityFactor;
             Worker.StaticHeadLoss = StaticHeadLoss;
+            Worker.InitialiseWithMultipleZones = InitialiseWithMultipleZones;
+
 
             Worker.AreaForHeightLookup = StorageModel.StoreGeometry.surfaceAreaForHeight;
             
