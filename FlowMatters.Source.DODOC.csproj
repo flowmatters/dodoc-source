@@ -43,12 +43,10 @@
     <Reference Include="RiverSystem.Persistence">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\Source\Source_4.9.0.9054\RiverSystem.Persistence.dll</HintPath>
     </Reference>
     <Reference Include="RiverSystem.Api">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\Source\Source_4.9.0.9054\RiverSystem.Api.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <SpecificVersion>False</SpecificVersion>
@@ -85,12 +83,10 @@
     <Reference Include="RiverSystem">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\Source\Source_4.9.0.9054\RiverSystem.dll</HintPath>
     </Reference>
     <Reference Include="TIME">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\Source\Source_4.9.0.9054\TIME.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
