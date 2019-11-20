@@ -18,11 +18,8 @@ namespace FlowMatters.Source.DODOC.Storage
                       _disregardedArea;
 
             MaxElevation = _storage.StoreGeometry.MaxHeight();
-
-            MinElevation = _storage.StoreGeometry.MinHeight();
         }
-
-        public double MinElevation { get; private set; }
+        
 
         private readonly IStorageModel _storage;
         private readonly double _disregardedArea;

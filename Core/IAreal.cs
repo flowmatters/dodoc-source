@@ -15,7 +15,5 @@ namespace FlowMatters.Source.DODOC.Core
         double MaxElevation { get; }
 
         DateTime SimulationNow { get; set; }
-
-        double MinElevation { get; }
     }
 }
