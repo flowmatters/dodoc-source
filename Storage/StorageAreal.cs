@@ -29,6 +29,11 @@ namespace FlowMatters.Source.DODOC.Storage
         /// </summary>
         public DateTime SimulationNow { get; set; }
 
+        public double AreaForHeightLookup(double elevation)
+        {
+            return _storage.StoreGeometry.surfaceAreaForHeight(elevation) - _disregardedArea;
+        }
+
         public double MaxArea { get; private set; }
 
         public double Area => Math.Max(0.0, _storage.SurfaceArea - _disregardedArea);
