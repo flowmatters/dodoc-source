@@ -688,8 +688,6 @@ namespace FlowMatters.Source.DODOC.Core
             var minHeight = FloodplainElevation;
             var maxHeight = Areal.MaxElevation;
 
-            var disregardedArea = Fac * AreaForHeightLookup(FloodplainElevation, false);
-
             // Build a collection of all the unique points when the leaf matter changes
             // Include the Min and Max elevations as valid points
             var uniqueHeights = new List<double>
@@ -736,7 +734,7 @@ namespace FlowMatters.Source.DODOC.Core
                 // Anything at or below the current storage level is considered Wet
                 var isWet = height <= Elevation;
 
-                var area = Fac * (AreaForHeightLookup(height, false) - disregardedArea);
+                var area = Fac * Areal.AreaForHeightLookup(height);
 
                 // Get the initial leaf matter settings
                 var leafDryMatterNonReadilyDegradable =
@@ -823,18 +821,18 @@ namespace FlowMatters.Source.DODOC.Core
             var elevationPoints = accumulationLookup.Select(p => p.Key).Where(p => p > lowerElevation && p < upperElevation).ToArray();
 
             var loads = elevationPoints.Select(p => accumulationLookup.f(p)).ToList(); //change here, get all loads, not sum
-            var areas = elevationPoints.Select(p => AreaForHeightLookup(p, false) * 0.0001).ToList(); // get areas as well
+            var areas = elevationPoints.Select(p => Areal.AreaForHeightLookup(p) * 0.0001).ToList(); // get areas as well
 
             loads.Insert(0, lowerLoad);
             loads.Add(upperLoad);
 
-            areas.Insert(0, AreaForHeightLookup(lowerElevation, false) * 0.0001);
-            areas.Add(AreaForHeightLookup(upperElevation, false) * 0.0001);
+            areas.Insert(0, Areal.AreaForHeightLookup(lowerElevation) * 0.0001);
+            areas.Add(Areal.AreaForHeightLookup(upperElevation) * 0.0001);
 
             var lowerElevationPoints = accumulationLookup.Where(p => p.Key < lowerElevation);
             var previousElevationPoint = lowerElevationPoints.Any() ? lowerElevationPoints.Last().Key : lowerElevation;
             var previousLoad = accumulationLookup.f(previousElevationPoint);
-            var previousArea = AreaForHeightLookup(previousElevationPoint, false) * 0.0001;
+            var previousArea = Areal.AreaForHeightLookup(previousElevationPoint) * 0.0001;
 
 
             var totalLoad = 0d;

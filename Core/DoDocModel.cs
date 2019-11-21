@@ -121,8 +121,7 @@ namespace FlowMatters.Source.DODOC.Core
 
         [Parameter]
         public double FloodplainElevation { get; set; }
-
-        public Func<double, bool, double> AreaForHeightLookup { get; set; }
+        
 
         [Parameter]
         public double MaxDOCReleasedAt20DegreeCNonReadily { get; set; }
