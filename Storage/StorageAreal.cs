@@ -18,11 +18,8 @@ namespace FlowMatters.Source.DODOC.Storage
                       _disregardedArea;
 
             MaxElevation = _storage.StoreGeometry.MaxHeight();
-
-            MinElevation = _storage.StoreGeometry.MinHeight();
         }
-
-        public double MinElevation { get; private set; }
+        
 
         private readonly IStorageModel _storage;
         private readonly double _disregardedArea;
@@ -31,6 +28,11 @@ namespace FlowMatters.Source.DODOC.Storage
         /// The current timestep the model is executing under
         /// </summary>
         public DateTime SimulationNow { get; set; }
+
+        public double AreaForHeightLookup(double elevation)
+        {
+            return _storage.StoreGeometry.surfaceAreaForHeight(elevation) - _disregardedArea;
+        }
 
         public double MaxArea { get; private set; }
 
