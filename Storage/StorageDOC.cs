@@ -232,8 +232,6 @@ namespace FlowMatters.Source.DODOC.Storage
             Worker.StaticHeadLoss = StaticHeadLoss;
             Worker.InitialiseWithMultipleZones = InitialiseWithMultipleZones;
 
-
-            Worker.AreaForHeightLookup = StorageModel.StoreGeometry.surfaceAreaForHeight;
             
             if (ProductionCoefficients == null)
             {

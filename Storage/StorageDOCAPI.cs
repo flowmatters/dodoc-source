@@ -94,14 +94,12 @@ namespace FlowMatters.Source.DODOC.Storage
         public double[] ProductionCoefficients
         {
             get { return Feature.ProductionCoefficients; }
-            set { Feature.ProductionCoefficients = value; }
         }
 
         [Parameter]
         public double[] ProductionBreaks
         {
             get { return Feature.ProductionBreaks; }
-            set { Feature.ProductionBreaks = value; }
         }
 
         [Parameter]

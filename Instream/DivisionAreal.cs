@@ -21,6 +21,22 @@ namespace FlowMatters.Source.DODOC.Instream
         /// </summary>
         public DateTime SimulationNow { get; set; }
 
+        public double AreaForHeightLookup(double height)
+        {
+            var ratingCurve = _division.Link.RatingCurveLibrary.GetCurve(SimulationNow);
+
+            //TODO This looks a little messy. We've taken the same Linear Interpolation Method used in Flow Routing for consistancy. For some reason the first two params are a List and an IList which seems inconsistant.
+            var widthForHeight = AbstractLumpedFlowRouting.Lintrpl(
+                ratingCurve.Levels.ToList(),
+                ratingCurve.Widths,
+                height,
+                ratingCurve.Levels.Length);
+
+            // Determine the area by multiplying the width by the length of a division.
+            return widthForHeight * _division.Link.Length / _division.Link.NumberOfDivisions;
+            
+        }
+
         public double Area => _division.Area;
 
         /// <summary>
@@ -55,20 +71,6 @@ namespace FlowMatters.Source.DODOC.Instream
                 var ratingCurve = _division.Link.RatingCurveLibrary.GetCurve(SimulationNow);
                 
                 return ratingCurve.Levels.Last();
-            }
-        }
-
-        /// <summary>
-        /// The Minimimum elevation that can be reached in the Division
-        /// TODO - We believe the Storage Routing implementation of the DoDoc Model needs work. For the time being we are taking the lowest defined point in the current rating curve to represent the Min Elevation.
-        /// </summary>
-        public double MinElevation
-        {
-            get
-            {
-                var ratingCurve = _division.Link.RatingCurveLibrary.GetCurve(SimulationNow);
-
-                return ratingCurve.Levels.First();
             }
         }
 
