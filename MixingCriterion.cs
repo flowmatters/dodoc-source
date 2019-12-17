@@ -63,7 +63,7 @@ namespace CustomFunctions
             //Qb - net uward long wave radiation
             double emittedLW = -emissivity_w * sigma * (Math.Pow(273.2 + WaterTemp, 4));
             double emissivity_a = 0.0000092 * (Math.Pow(273.2 + AirTemp, 2));
-            double absorbedLW = emissivity_a * sigma * (1 + 0.17 * (Math.Pow(0, 2))) * Math.Pow(273.2 + AirTemp, 4) * (1 - 0.3); //CHECK THIS - 0^2???
+            double absorbedLW = emissivity_a * sigma * (1 + 0.17 * (Math.Pow(0, 2))) * Math.Pow(273.2 + AirTemp, 4) * (1 - 0.3); //CHECK THIS - 0^2. O here is the assumed cloud cover.
             double Qb = absorbedLW + emittedLW;
 
             //Qe - heat flux of evaporation
@@ -83,6 +83,14 @@ namespace CustomFunctions
             double R;
 
             R = Math.Pow(velocity, 3) / (depth * (Qnet - (2.0 * Q_swnet / (kd * depth))) * (a * g) / (p * Cp));
+
+            //add some limits.
+            // Negative means the water column is cooling and therefore will stay well mixed. Set a value of 100,001
+            if (R < 0) R = 100001;
+
+            //Dont care about very large values, well mixed is well mixed. Truncate so easier to plot
+            if (R > 100000) R = 100000;
+
 
             return R;
         }
