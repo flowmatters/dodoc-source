@@ -279,7 +279,7 @@ namespace FlowMatters.Source.DODOC.Core
 
             DoCo2 = 1e-6 * ConsumedDocMilligrams * 2.667;
 
-            var saturatedo2mg_L = 13.41 * Math.Exp(-0.01905 * WaterTemperatureEst); // +++TODO CONFIRM UNITS????
+            var saturatedo2mg_L = 14.652 - 0.41022 * WaterTemperatureEst + 0.00799 * Math.Pow(WaterTemperatureEst, 2) - 7.7774e-5 * Math.Pow(WaterTemperatureEst, 3); //Cox (2003)
             var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L * MG_L_to_KG_M3);
             var existingWaterColumnDOKg = WorkingVolume * waterColumnConcentrationDOKg_M3;
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
