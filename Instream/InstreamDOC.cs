@@ -257,7 +257,7 @@ namespace FlowMatters.Source.DODOC.Instream
             Worker.Fac = 1.0 / Link.Divisions.Count;
         }
 
-        public override void SetUpLinkSourceSinkModel(IRiverReach link, Division division, Constituent constituent,
+        public override void SetUpLinkSourceSinkModel(IRoutingContainer link, Division division, Constituent constituent,
             SystemConstituentsConfiguration constituentsConfig)
         {
             base.SetUpLinkSourceSinkModel(link, division, constituent, constituentsConfig);
