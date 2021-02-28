@@ -1,13 +1,13 @@
 # Dissolved Oxygen / Dissolved Organic Carbon plugin for eWater Source
 
-A plugin to eWater Source for modelling blackwater events, based primarily on the model framework of Howitt et al. (2007).
+A plugin to eWater Source for modelling blackwater events, as described in Mosley et al. (2021).
 
 ## References:
-Howitt JA, Baldwin DS, Rees GN and Williams JL (2007). Modelling blackwater: predicting water quality during flooding of lowland river forests. Ecological Modelling 203 (3–4):229–242. doi:10.1016/j.ecolmodel.2006.11.017 
+Mosley, LM, Wallace T, Rahman J, Roberts T, Gibbs M (2021). An integrated model to predict and prevent hypoxia in floodplain-river systems. Journal of Environmental Management https://doi.org/10.1016/j.jenvman.2021.112213
 
 ## Instructions
 
-The Blackwater Plugin needs to be added using the “Tools”, “Plugin Manager” menu in Source, navigating to the plugin file (FlowMatters.Source.DODOC.dll), and following the prompts. The current plugin has been developed and tested in Source 4.2.4.
+The Blackwater Plugin needs to be added using the “Tools”, “Plugin Manager” menu in Source. Click the "Browse" button, and by default this will be the plugins folder in the Source install folder. Go into the "Community Plugins" folder and load the plugin file (FlowMatters.Source.DODOC.dll), and follow the prompts for Source to restart.
 
 ## Configuring a storage/floodplain model
 
