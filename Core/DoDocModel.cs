@@ -312,7 +312,7 @@ namespace FlowMatters.Source.DODOC.Core
             if (WorkingVolume.Greater(0.0))
                 DissolvedOxygenLoad = Math.Max(totalOxygen, 0.0);
             else
-                DissolvedOxygenLoad = double.NaN;
+                DissolvedOxygenLoad = 0.0;
 
         }
 
