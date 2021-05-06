@@ -583,8 +583,8 @@ namespace FlowMatters.Source.DODOC.Core
             
             DOCEnteringWater = 0;
             TotalWetLeaf = 0;
-            LeachingRate = 1 - ConsistentMaths.Exp(-Leach1 * Sigma);
-            var leachingRateNonReadily = 1 - ConsistentMaths.Exp(-Leach1NonReadily * Sigma);
+            LeachingRate = 1 - eWater.Utilities.Math.Exp(-Leach1 * Sigma);
+            var leachingRateNonReadily = 1 - eWater.Utilities.Math.Exp(-Leach1NonReadily * Sigma);
 
             //Start at the Floodplain elevation. Get the area and Elevation
             var lowerElevation = FloodplainElevation;
@@ -640,11 +640,11 @@ namespace FlowMatters.Source.DODOC.Core
                     var leafAccumulationConstant = IntergrateElevationsForAccumulation(lowerElevation, upperelevation, LeafAccumulationConstant);
                     zone.LeafAccumulation = leafAccumulationConstant;
 
-                    zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable* ConsistentMaths.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
+                    zone.LeafDryMatterReadilyDegradable = zone.LeafDryMatterReadilyDegradable* eWater.Utilities.Math.Exp(-LeafK1) + (leafAccumulationConstant * LeafA);
 
                     //set max litter accumulation to large value to no maximum limit
                     const double maxmimumNonReadilyDegradable = 285000d;
-                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(maxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable* ConsistentMaths.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
+                    zone.LeafDryMatterNonReadilyDegradable = Math.Min(maxmimumNonReadilyDegradable, zone.LeafDryMatterNonReadilyDegradable* eWater.Utilities.Math.Exp(-LeafK2) + (leafAccumulationConstant * (1 - LeafA)));
 
                     //update for next zone
                     lowerElevation = upperelevation;
@@ -904,7 +904,7 @@ namespace FlowMatters.Source.DODOC.Core
         endif
         soilo2 = 148162 * (1. - Exp(-0.093 * (2. ** (temperature - 20.)) * subrchdata(irch,isub,5))) * subrchdata(irch,isub,2)
            */
-            return 148162*(1 - ConsistentMaths.Exp(-0.093*(ConsistentMaths.Pow(2, WaterTemperatureEst - 20))*FloodCounter))*Areal.Area;
+            return 148162*(1 - eWater.Utilities.Math.Exp(-0.093*(eWater.Utilities.Math.Pow(2, WaterTemperatureEst - 20))*FloodCounter))*Areal.Area;
         }
     }
 }

@@ -58,12 +58,12 @@ namespace FlowMatters.Source.DODOC.Core
 
             //DOC_k = DOC_k20C * 1.03(T-20)        ### with default DOC_k20C = 0.864 for leaves (as per below).
             //   where DOC_k20C => is the DOC-k at 20 degrees. e.g. DOC_k20C for leaves is said to be 0.864 
-            return FirstOrderDOCReleaseRateAt20DegreeC * ConsistentMaths.Pow(1.03, tempDegreeC - 20);
+            return FirstOrderDOCReleaseRateAt20DegreeC * eWater.Utilities.Math.Pow(1.03, tempDegreeC - 20);
         }
 
         public double DOC_kNonReadily(double tempDegreeC)
         {
-            return FirstOrderDOCReleaseRateAt20DegreeCNonReadily * ConsistentMaths.Pow(1.03 , tempDegreeC - 20);
+            return FirstOrderDOCReleaseRateAt20DegreeCNonReadily * eWater.Utilities.Math.Pow(1.03 , tempDegreeC - 20);
         }
 
         /// <summary>
@@ -81,12 +81,12 @@ namespace FlowMatters.Source.DODOC.Core
             //   where m20 => is the value of m measured at 20 degree C
             //   where T   => is the temperature in degree C
             //   returns m => maximum amount of DOC released (mg g^-1)
-            return m20 * (0.93255 + 0.06745 * ConsistentMaths.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
+            return m20 * (0.93255 + 0.06745 * eWater.Utilities.Math.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
         }
 
         public double DOC_maxNonReadily(double tempDegreeC)
         {
-            return MaxDOCReleasedAt20DegreeCNonReadily * (0.93255 + 0.06745 * ConsistentMaths.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
+            return MaxDOCReleasedAt20DegreeCNonReadily * (0.93255 + 0.06745 * eWater.Utilities.Math.Pow(Math.E, 0.2047 * (tempDegreeC - 20)));
         }
 
         /// <summary>
@@ -280,14 +280,14 @@ namespace FlowMatters.Source.DODOC.Core
 
             DoCo2 = 1e-6 * ConsumedDocMilligrams * 2.667;
 
-            var saturatedo2mg_L = 14.652 - 0.41022 * WaterTemperatureEst + 0.00799 * ConsistentMaths.Pow(WaterTemperatureEst, 2) - 7.7774e-5 * ConsistentMaths.Pow(WaterTemperatureEst, 3); //Cox (2003)
+            var saturatedo2mg_L = 14.652 - 0.41022 * WaterTemperatureEst + 0.00799 * eWater.Utilities.Math.Pow(WaterTemperatureEst, 2) - 7.7774e-5 * eWater.Utilities.Math.Pow(WaterTemperatureEst, 3); //Cox (2003)
             var waterColumnConcentrationDOKg_M3 = Math.Min(ConcentrationDo, saturatedo2mg_L * MG_L_to_KG_M3);
             var existingWaterColumnDOKg = WorkingVolume * waterColumnConcentrationDOKg_M3;
             var waterColumnConcentrationDOmg_L = waterColumnConcentrationDOKg_M3 * KG_M3_to_MG_L;
 
             // +++TODO Check unit conversions!
             //Add temperature dependance for rearation coefficient
-            var reaerationmg = ReaerationCoefficient * ConsistentMaths.Pow(1.024, WaterTemperatureEst - 20) * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L)) * WorkingVolume * M3_to_L;
+            var reaerationmg = ReaerationCoefficient * eWater.Utilities.Math.Pow(1.024, WaterTemperatureEst - 20) * Math.Max(0, (saturatedo2mg_L /*mg.L-1*/ - waterColumnConcentrationDOmg_L)) * WorkingVolume * M3_to_L;
             Reaeration = reaerationmg*MG_TO_KG;
 
             int i;
