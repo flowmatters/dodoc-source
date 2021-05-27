@@ -40,6 +40,10 @@
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="eWater.Utilities.Math">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="RiverSystem.Persistence">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
