@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using RiverSystem.TaskDefinitions;
+using TIME.Science;
 
 namespace CustomFunctions
 {
@@ -32,7 +33,7 @@ namespace CustomFunctions
 
             double R;
 
-            R = Math.Pow(velocity, 3) / (depth * (Qnet - (2.0 * Qi / (kd * depth))) * (a * g) / (p * Cp));
+            R = eWater.Utilities.Math.Pow(velocity, 3) / (depth * (Qnet - (2.0 * Qi / (kd * depth))) * (a * g) / (p * Cp));
 
             return R;
         }
@@ -61,14 +62,14 @@ namespace CustomFunctions
             double depth = WSL - bottom_el;
 
             //Qb - net uward long wave radiation
-            double emittedLW = -emissivity_w * sigma * (Math.Pow(273.2 + WaterTemp, 4));
-            double emissivity_a = 0.0000092 * (Math.Pow(273.2 + AirTemp, 2));
-            double absorbedLW = emissivity_a * sigma * (1 + 0.17 * (Math.Pow(0, 2))) * Math.Pow(273.2 + AirTemp, 4) * (1 - 0.3); //CHECK THIS - 0^2. O here is the assumed cloud cover.
+            double emittedLW = -emissivity_w * sigma * (eWater.Utilities.Math.Pow(273.2 + WaterTemp, 4));
+            double emissivity_a = 0.0000092 * (eWater.Utilities.Math.Pow(273.2 + AirTemp, 2));
+            double absorbedLW = emissivity_a * sigma * (1 + 0.17 * (eWater.Utilities.Math.Pow(0, 2))) * eWater.Utilities.Math.Pow(273.2 + AirTemp, 4) * (1 - 0.3); //CHECK THIS - 0^2. O here is the assumed cloud cover.
             double Qb = absorbedLW + emittedLW;
 
             //Qe - heat flux of evaporation
-            double ea = RH / 100 * 610.6 * Math.Exp((17.27 * AirTemp) / (AirTemp + 237.3));
-            double es = 610.6 * Math.Exp((17.27 * WaterTemp) / (WaterTemp + 237.3));
+            double ea = RH / 100 * 610.6 * eWater.Utilities.Math.Exp((17.27 * AirTemp) / (AirTemp + 237.3));
+            double es = 610.6 * eWater.Utilities.Math.Exp((17.27 * WaterTemp) / (WaterTemp + 237.3));
             double qa = ea * 0.622 / 100000;
             double qs = es * 0.622 / 100000;
             double W10 = (WindSpeed * (Math.Log(10 / 0.000115))) / (Math.Log(2 / 0.000115));
@@ -82,7 +83,7 @@ namespace CustomFunctions
 
             double R;
 
-            R = Math.Pow(velocity, 3) / (depth * (Qnet - (2.0 * Q_swnet / (kd * depth))) * (a * g) / (p * Cp));
+            R = eWater.Utilities.Math.Pow(velocity, 3) / (depth * (Qnet - (2.0 * Q_swnet / (kd * depth))) * (a * g) / (p * Cp));
 
             //add some limits.
             // Negative means the water column is cooling and therefore will stay well mixed. Set a value of 100,001
