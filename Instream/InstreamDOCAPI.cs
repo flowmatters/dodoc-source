@@ -1,4 +1,5 @@
-﻿using RiverSystem.Api.NetworkElements.Common.Constituents;
+﻿using RiverSystem.Api;
+using RiverSystem.Api.NetworkElements.Common.Constituents;
 using RiverSystem.Api.Utils;
 using TIME.Core;
 using TIME.Core.Metadata;
@@ -11,6 +12,23 @@ namespace FlowMatters.Source.DODOC.Instream
     public class InstreamDOCAPI : ProcessingModel<InstreamDOC>
     {
         public new string Name => "Instream DOC";
+
+        public override void Initialise(ApiContext context, object feature)
+        {
+            base.Initialise(context, feature);
+
+            DOCDecayConstantAt20DegreeC = new DataPointer(context, Feature, () => Feature.DOCDecayConstantAt20DegreeC);
+            FirstOrderDOCReleaseRateAt20DegreeC = new DataPointer(context, Feature, () => Feature.FirstOrderDOCReleaseRateAt20DegreeC);
+            FirstOrderDOCReleaseRateAt20DegreeCNonReadily = new DataPointer(context, Feature, () => Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily);
+            LeafAccumulationConstant = new DataPointer(context, Feature, () => Feature.LeafAccumulationConstant);
+            LeafK1 = new DataPointer(context, Feature, () => Feature.LeafK1);
+            LeafK2 = new DataPointer(context, Feature, () => Feature.LeafK2);
+            MaxDOCReleasedFromComponentOfLitterAt20DegreeC = new DataPointer(context, Feature, () => Feature.MaxDOCReleasedAt20DegreeC);
+            MaxDOCReleasedFromComponentOfLitterAt20DegreeCNonReadily = new DataPointer(context, Feature, () => Feature.MaxDOCReleasedAt20DegreeCNonReadily);
+            ReaerationCoefficient = new DataPointer(context, Feature, () => Feature.ReaerationCoefficient);
+            WaterTemperature = new DataPointer(context, Feature, () => Feature.WaterTemperature);
+        }
+
 
         public bool IsFloodplain
         {
@@ -26,18 +44,14 @@ namespace FlowMatters.Source.DODOC.Instream
             set { Feature.MaxAccumulationArea = value; }
         }
 
-        [Parameter]
-        public double LeafAccumulationConstant
+        public DataPointer LeafAccumulationConstant
         {
-            get { return Feature.LeafAccumulationConstant; }
-            set { Feature.LeafAccumulationConstant = value; }
+            get;set;
         }
 
-        [Parameter]
-        public double ReaerationCoefficient
+        public DataPointer ReaerationCoefficient
         {
-            get { return Feature.ReaerationCoefficient; }
-            set { Feature.ReaerationCoefficient = value; }
+            get;set;
         }
         
         [Parameter]
@@ -47,18 +61,14 @@ namespace FlowMatters.Source.DODOC.Instream
             set { value.copyPointsTo(Feature.LeafA); }
         }
 
-        [Parameter]
-        public double LeafK1
+        public DataPointer LeafK1
         {
-            get { return Feature.LeafK1; }
-            set { Feature.LeafK1 = value; }
+            get;set;
         }
 
-        [Parameter]
-        public double LeafK2
+        public DataPointer LeafK2
         {
-            get { return Feature.LeafK2; }
-            set { Feature.LeafK2 = value; }
+            get;set;
         }
 
         [Parameter]
@@ -82,58 +92,35 @@ namespace FlowMatters.Source.DODOC.Instream
             set { Feature.PrimaryProductionReaeration = value; }
         }
 
-        [Parameter]
-        public double WaterTemperature
+        public DataPointer WaterTemperature
         {
-            get { return Feature.WaterTemperature; }
-            set { Feature.WaterTemperature = value; }
-        }
-
-        [Parameter]
-        public double[] ProductionCoefficients
-        {
-            get { return Feature.ProductionCoefficients; }
-            set { Feature.ProductionCoefficients = value; }
-        }
-
-        [Parameter]
-        public double[] ProductionBreaks
-        {
-            get { return Feature.ProductionBreaks; }
-            set { Feature.ProductionBreaks = value; }
+            get;set;
         }
         
-        [Parameter]
-        public double FirstOrderDOCReleaseRateAt20DegreeC
+        public DataPointer FirstOrderDOCReleaseRateAt20DegreeC
         {
-            get { return Feature.FirstOrderDOCReleaseRateAt20DegreeC; }
-            set { Feature.FirstOrderDOCReleaseRateAt20DegreeC = value; }
+            get; set;
         }
 
-        public double FirstOrderDOCReleaseRateAt20DegreeCNonReadily
+        public DataPointer FirstOrderDOCReleaseRateAt20DegreeCNonReadily
         {
-            get { return Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily; }
-            set { Feature.FirstOrderDOCReleaseRateAt20DegreeCNonReadily = value; }
+            get;
+            set;
         }
 
-        [Parameter]
-        public double MaxDOCReleasedFromComponentOfLitterAt20DegreeC
+        public DataPointer MaxDOCReleasedFromComponentOfLitterAt20DegreeC
         {
-            get { return Feature.MaxDOCReleasedAt20DegreeC;}
-            set { Feature.MaxDOCReleasedAt20DegreeC = value; }
+            get; set;
         }
 
-        public double MaxDOCReleasedFromComponentOfLitterAt20DegreeCNonReadily
+        public DataPointer MaxDOCReleasedFromComponentOfLitterAt20DegreeCNonReadily
         {
-            get { return Feature.MaxDOCReleasedAt20DegreeCNonReadily; }
-            set { Feature.MaxDOCReleasedAt20DegreeCNonReadily = value; }
+            get; set;
         }
 
-        [Parameter]
-        public double DOCDecayConstantAt20DegreeC
+        public DataPointer DOCDecayConstantAt20DegreeC
         {
-            get { return Feature.DOCDecayConstantAt20DegreeC; }
-            set { Feature.DOCDecayConstantAt20DegreeC = value; }
+            get;set;
         }
 
         [Parameter]
