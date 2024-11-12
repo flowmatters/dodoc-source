@@ -1,119 +1,42 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B5E958BE-6CA3-40F9-939A-00198F960D89}</ProjectGuid>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FlowMatters.Source.DODOC</RootNamespace>
-    <AssemblyName>FlowMatters.Source.DODOC</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <WarningLevel>4</WarningLevel>
-    <TargetFrameworkProfile />
     <NoWarn>1591,1587</NoWarn>
-    <LangVersion>7.3</LangVersion>
     <RootPath>$(MSBuildThisFileDirectory)..\</RootPath>
     <ReferencePath>$(RootPath)Output;$(RootPath)3rdParty</ReferencePath>
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
     <ExcludeEWaterPdbPathMap>true</ExcludeEWaterPdbPathMap>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyTitle>FlowMatters.Source.DODOC</AssemblyTitle>
+    <Product>FlowMatters.Source.DODOC</Product>
+    <Copyright>Copyright ©  2016</Copyright>
+    <AssemblyVersion>1.1.8.0</AssemblyVersion>
+    <FileVersion>1.1.8.0</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DebugSymbols>false</DebugSymbols>
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="eWater.Utilities.Math">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="RiverSystem.Persistence">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="RiverSystem.Api">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Core">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Data">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+      <HintPath>..\Output\net6.0\eWater.Utilities.Math.dll</HintPath>
     </Reference>
     <Reference Include="RiverSystem">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+      <HintPath>..\Output\net6.0\RiverSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="RiverSystem.Persistence">
+      <HintPath>..\Output\net6.0\RiverSystem.Persistence.dll</HintPath>
+    </Reference>
+    <Reference Include="RiverSystem.Api">
+      <HintPath>..\Output\net6.0\RiverSystem.Api.dll</HintPath>
     </Reference>
     <Reference Include="TIME">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+      <HintPath>..\Output\net6.0\TIME.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Core\FloodplainData.cs" />
-    <Compile Include="Core\IAreal.cs" />
-    <Compile Include="Core\CentralSourceSinkModel.cs" />
-    <Compile Include="Core\DoDocModel.cs" />
-    <Compile Include="Core\FloodplainDoDoc.cs" />
-    <Compile Include="Instream\DivisionAreal.cs" />
-    <Compile Include="Instream\InstreamDO.cs" />
-    <Compile Include="Instream\InstreamDOAPI.cs" />
-    <Compile Include="Instream\InstreamDOC.cs" />
-    <Compile Include="Instream\InstreamDOCAPI.cs" />
-    <Compile Include="Instream\ProxyLinkSourceSinkModel.cs" />
-    <Compile Include="MixingCriterion.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\RoutingDoDoc.cs" />
-    <Compile Include="Storage\ProxyStorageSourceSinkModel.cs" />
-    <Compile Include="Storage\StorageAreal.cs" />
-    <Compile Include="Storage\StorageDO.cs" />
-    <Compile Include="Storage\StorageDOAPI.cs" />
-    <Compile Include="Storage\StorageDOC.cs" />
-    <Compile Include="Storage\StorageDOCAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DODOC.hbm.xml">
@@ -124,17 +47,13 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="API\" />
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+  </ItemGroup>
 </Project>
