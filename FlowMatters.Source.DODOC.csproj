@@ -23,19 +23,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="eWater.Utilities.Math">
-      <HintPath>..\Output\net6.0\eWater.Utilities.Math.dll</HintPath>
+      <HintPath>..\Output\eWater.Utilities.Math.dll</HintPath>
     </Reference>
     <Reference Include="RiverSystem">
-      <HintPath>..\Output\net6.0\RiverSystem.dll</HintPath>
+      <HintPath>..\Output\RiverSystem.dll</HintPath>
     </Reference>
     <Reference Include="RiverSystem.Persistence">
-      <HintPath>..\Output\net6.0\RiverSystem.Persistence.dll</HintPath>
+      <HintPath>..\Output\RiverSystem.Persistence.dll</HintPath>
     </Reference>
     <Reference Include="RiverSystem.Api">
-      <HintPath>..\Output\net6.0\RiverSystem.Api.dll</HintPath>
+      <HintPath>..\Output\RiverSystem.Api.dll</HintPath>
     </Reference>
     <Reference Include="TIME">
-      <HintPath>..\Output\net6.0\TIME.dll</HintPath>
+      <HintPath>..\Output\TIME.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
