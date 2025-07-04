@@ -22,6 +22,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>$(RootPath)Output\Plugins\CommunityPlugins</OutputPath>
   </PropertyGroup>
+	<Import Project="$(RootPath)RiverSystem\Solutions\SDK.build.props" />
+	<Import Project="$(RootPath)RiverSystem\Solutions\SDK.build.targets" />
+	<Import Project="$(RootPath)RiverSystem\Solutions\NormalisePdbBuildRoot.targets" />
   <ItemGroup>
     <Reference Include="eWater.Utilities.Math">
       <HintPath>..\Output\eWater.Utilities.Math.dll</HintPath>
