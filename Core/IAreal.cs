@@ -17,5 +17,7 @@ namespace FlowMatters.Source.DODOC.Core
         DateTime SimulationNow { get; set; }
 
         double AreaForHeightLookup(double elevation);
+
+        string ElementName { get; }
     }
 }
