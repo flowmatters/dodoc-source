@@ -22,8 +22,8 @@ namespace FlowMatters.Source.DODOC.Assurance
                 FloodplainDoDoc.MaxAreaErrorInfo.ErrorLogged = false;
                 return new ValidationResult(
                     $"DODOC model at {FloodplainDoDoc.MaxAreaErrorInfo.Location} " +
-                    $"has a modelled area of {FloodplainDoDoc.MaxAreaErrorInfo.ModelledArea} m3 "+
-                    $"that has exceeded the Max Area of {FloodplainDoDoc.MaxAreaErrorInfo.MaxArea} m3.");
+                    $"has a modelled area of {FloodplainDoDoc.MaxAreaErrorInfo.ModelledArea} m2 "+
+                    $"that has exceeded the Max Area of {FloodplainDoDoc.MaxAreaErrorInfo.MaxArea} m2.");
             }
 
 
