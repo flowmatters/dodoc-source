@@ -34,6 +34,8 @@ namespace FlowMatters.Source.DODOC.Storage
             return _storage.StoreGeometry.surfaceAreaForHeight(elevation) - _disregardedArea;
         }
 
+        public string ElementName => _storage.Name;
+
         public double MaxArea { get; private set; }
 
         public double Area => Math.Max(0.0, _storage.SurfaceArea - _disregardedArea);

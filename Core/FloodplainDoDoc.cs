@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FlowMatters.Source.DODOC.Assurance;
 using TIME.ManagedExtensions;
 using TIME.Science;
 using TIME.Science.Mathematics.Functions;
@@ -14,6 +15,10 @@ namespace FlowMatters.Source.DODOC.Core
         /// Determine whether the Floodplain has been initialised or not
         /// </summary>
         private bool _initialised;
+
+        private double _maxAreaAtInitialisation;
+
+        public static MaxAreaErrorInfo MaxAreaErrorInfo = new MaxAreaErrorInfo();
 
         /// <summary>
         /// The state of the area modelled in the Floodplain
@@ -189,6 +194,7 @@ namespace FlowMatters.Source.DODOC.Core
             // Find whether the water level has increased or decreased
             double deltaArea = Areal.Area - PreviousArea;
             PreviousArea = Areal.Area;
+
 
             if (WorkingVolume.Less(0.0)) // Storage vs Flood storage???
             {
@@ -461,6 +467,11 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 minDryZone = Zones.Count-1;
 
+                // Check if the Zones representation is going to be corrupted
+                var modelledArea = Areal.Area;
+                if (modelledArea.GreaterOrEqual(_maxAreaAtInitialisation))
+                    LogMaxAccumulationError(modelledArea, _maxAreaAtInitialisation);
+
                 // We are looking for the Dry zone covers the current elevation
                 // This is the zone that will be split into separate Wet and Dry zones
 
@@ -548,6 +559,24 @@ namespace FlowMatters.Source.DODOC.Core
 
             if (removedDryZones > 0)
                 Zones.RemoveRange(minZone,removedDryZones);
+        }
+
+
+        /// <summary>
+        /// Special error logging functionality.
+        /// </summary>
+        /// <remarks>
+        /// Uses a bit of static memory to communicate with an Assurance Rule that runs at the end of the timestep.
+        /// Only logs one error across the network</remarks>
+        private void LogMaxAccumulationError(double modelledArea, double maxArea )
+        {
+            if (MaxAreaErrorInfo.ErrorLogged)
+                return;
+
+            MaxAreaErrorInfo.ErrorLogged = true;
+            MaxAreaErrorInfo.Location = Areal.ElementName;
+            MaxAreaErrorInfo.ModelledArea = modelledArea;
+            MaxAreaErrorInfo.MaxArea = maxArea;
         }
 
 
@@ -674,6 +703,10 @@ namespace FlowMatters.Source.DODOC.Core
             {
                 InitialiseSingleZone();
             }
+
+            MaxAreaErrorInfo.ErrorLogged = false;
+            _maxAreaAtInitialisation = Zones[0].CumulativeAreaM2;
+
             _initialised = true;
         }
 
