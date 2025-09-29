@@ -37,6 +37,8 @@ namespace FlowMatters.Source.DODOC.Instream
             
         }
 
+        public string ElementName => _division.Link.Name + " " + _division.Name;
+
         public double Area => _division.Area;
 
         /// <summary>
