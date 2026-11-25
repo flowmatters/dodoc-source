@@ -13,7 +13,7 @@ namespace FlowMatters.Source.DODOC.Storage
 {
     public abstract class ProxyStorageSourceSinkModel : StorageSourceSinkModel
     {
-        [Parameter, Aka("Flood Plain Elevation"), CalculationUnits(CommonUnits.metres), DisplayUnit(CommonUnits.metres)] 
+        [Parameter, Aka("Flood Plain Elevation"), CalculationUnits(CommonUnits.metres), DisplayUnit(CommonUnits.metres), PropertyId("2B69B527-C805-4022-AD40-2C86AC158A6A")] 
         public double FloodplainElevation { get; set; }
 
         public DoDocModel Worker { get; private set; }

@@ -1,5 +1,8 @@
-﻿namespace FlowMatters.Source.DODOC.Storage
+﻿using TIME.Core.Metadata;
+
+namespace FlowMatters.Source.DODOC.Storage
 {
+    [UsesGuidRecordingSystem]
     public class StorageDO : ProxyStorageSourceSinkModel
     {
         public StorageDO()
