@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using RiverSystem.Persistence.NHibernatePersistence.DatabaseUpgrades.Util_6_13_0.Constituents;
+using RiverSystem.Persistence.NHibernatePersistence.DatabaseUpgrades.Util_6_21_0.Constituents;
 
-namespace FlowMatters.Source.DODOC.Persistence.DatabaseUpgrades.Util_6_13_0
+namespace FlowMatters.Source.DODOC.Persistence.DatabaseUpgrades.Util_6_21_0
 {
     public class DODOCRecorderConstants : IConstituentRecorderTypesProvider
     {

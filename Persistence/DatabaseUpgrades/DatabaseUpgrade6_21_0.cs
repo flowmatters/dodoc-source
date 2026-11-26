@@ -1,16 +1,16 @@
 using System;
 using System.Data.Common;
-using RiverSystem.Persistence.NHibernatePersistence.DatabaseUpgrades.Util_6_13_0;
+using RiverSystem.Persistence.NHibernatePersistence.DatabaseUpgrades.Util_6_21_0;
 using TIME.Core;
 using TIME.Management;
 
 namespace FlowMatters.Source.DODOC.Persistence.DatabaseUpgrades
 {
-    public class DatabaseUpgrade6_13_0 : PluginDatabaseUpgradeBase
+    public class DatabaseUpgrade6_21_0 : PluginDatabaseUpgradeBase
     {
-        public DatabaseUpgrade6_13_0()
+        public DatabaseUpgrade6_21_0()
         {
-            DatabaseVersion = new DatabaseVersion(6, 13, 0);
+            DatabaseVersion = new DatabaseVersion(6, 21, 0);
             PluginVersion = new Version(1, 1, 9, 0);
         }
 
